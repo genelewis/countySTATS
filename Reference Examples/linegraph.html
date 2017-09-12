@@ -1,0 +1,41 @@
+<!--
+    This is a simple line graph made with D3 and SVG.
+
+    (I say graph, but that's generous terminology.  It doesn't have any axes
+    or units of measure.)
+
+    The lineData variable could (and should) be turned into a CSV or TSV file
+    with more data that D3 can then interpret.
+
+    Aaron
+-->
+
+<!DOCTYPE html>
+<html>
+    <title>Sampling more SVG Elements</title>
+    <body>
+        <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+        <script>
+            var lineData = [ {"x": 1, "y": 5}, {"x": 3, "y": 8},
+                {"x": 50, "y": 10}, {"x": 70, "y": -60},
+                {"x": 90, "y": -30}, {"x": 110, "y": 0},
+                {"x": 130, "y": 20}, {"x": 150, "y": 50},
+                {"x": 170, "y": 100}, {"x": 190, "y": 80} ];
+            //Accessor function:
+            var lineFunction = d3.line()
+                .x(function (d) {return d.x;})
+                .y(function (d) {return d.y + 300;});
+
+            //The SVG container:
+            var svgContainer = d3.select("body").append("svg")
+                .attr("width", 600)
+                .attr("height", 600);
+
+            var lineGraph = svgContainer.append("path")
+                .attr("d", lineFunction(lineData))
+                .attr("stroke", "blue")
+                .attr("stroke-width", 2)
+                .attr("fill", "none");
+        </script>
+    </body>
+</html>
