@@ -1,0 +1,794 @@
+[
+  {
+    "line": "National",
+    "county": "all",
+    "year": 1995,
+    "value": 5.6
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 1996,
+    "value": 5.4
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 1997,
+    "value": 4.9
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 1998,
+    "value": 4.5
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 1999,
+    "value": 4.2
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2000,
+    "value": 4
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2001,
+    "value": 4.7
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2002,
+    "value": 5.8
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2003,
+    "value": 6
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2004,
+    "value": 5.5
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2005,
+    "value": 5.1
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2006,
+    "value": 4.6
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2007,
+    "value": 4.6
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2008,
+    "value": 5.8
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2009,
+    "value": 9.3
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2010,
+    "value": 9.6
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2011,
+    "value": 8.9
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2012,
+    "value": 8.1
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2013,
+    "value": 7.4
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2014,
+    "value": 6.2
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2015,
+    "value": 5.3
+  },
+  {
+    "line": "National",
+    "county": "all",
+    "year": 2016,
+    "value": 4.9
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 1995,
+    "value": 4.6
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 1996,
+    "value": 4.2
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 1997,
+    "value": 4.2
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 1998,
+    "value": 4.4
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 1999,
+    "value": 3.6
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2000,
+    "value": 3.1
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2001,
+    "value": 3.7
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2002,
+    "value": 4.8
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2003,
+    "value": 5.6
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2004,
+    "value": 5
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2005,
+    "value": 4.5
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2006,
+    "value": 4.1
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2007,
+    "value": 4.1
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2008,
+    "value": 3.7
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2009,
+    "value": 6.7
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2010,
+    "value": 6.9
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2011,
+    "value": 6.2
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2012,
+    "value": 5.4
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2013,
+    "value": 5.4
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2014,
+    "value": 5.4
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2015,
+    "value": 4.4
+  },
+  {
+    "line": "State",
+    "county": "all",
+    "year": 2016,
+    "value": 4.9
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 1995,
+    "value": 5.1
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 1996,
+    "value": 5.9
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 1997,
+    "value": 6
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 1998,
+    "value": 7.2
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 1999,
+    "value": 5.6
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2000,
+    "value": 3.6
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2001,
+    "value": 4.1
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2002,
+    "value": 5
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2003,
+    "value": 8
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2004,
+    "value": 6.3
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2005,
+    "value": 4.9
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2006,
+    "value": 4.5
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2007,
+    "value": 4.8
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2008,
+    "value": 4.9
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2009,
+    "value": 8.3
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2010,
+    "value": 8.4
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2011,
+    "value": 7.3
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2012,
+    "value": 9
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2013,
+    "value": 9.4
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2014,
+    "value": 7.6
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2015,
+    "value": 6
+  },
+  {
+    "line": "County",
+    "county": "Adair",
+    "year": 2016,
+    "value": 6
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 1995,
+    "value": 1.5
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 1996,
+    "value": 2
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 1997,
+    "value": 1.4
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 1998,
+    "value": 2.3
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 1999,
+    "value": 1.8
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2000,
+    "value": 3
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2001,
+    "value": 3
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2002,
+    "value": 3.6
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2003,
+    "value": 4.1
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2004,
+    "value": 3.9
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2005,
+    "value": 4.4
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2006,
+    "value": 4.3
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2007,
+    "value": 4.4
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2008,
+    "value": 3.1
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2009,
+    "value": 5.1
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2010,
+    "value": 5.5
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2011,
+    "value": 4.8
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2012,
+    "value": 2.9
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2013,
+    "value": 3.3
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2014,
+    "value": 2.5
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2015,
+    "value": 2.9
+  },
+  {
+    "line": "County",
+    "county": "Alfalfa",
+    "year": 2016,
+    "value": 3.4
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 1995,
+    "value": 5.2
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 1996,
+    "value": 4.4
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 1997,
+    "value": 4.2
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 1998,
+    "value": 4.3
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 1999,
+    "value": 3.6
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2000,
+    "value": 3.6
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2001,
+    "value": 4.4
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2002,
+    "value": 5.1
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2003,
+    "value": 7.3
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2004,
+    "value": 6.4
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2005,
+    "value": 5.3
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2006,
+    "value": 5
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2007,
+    "value": 5.4
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2008,
+    "value": 4.6
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2009,
+    "value": 8.6
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2010,
+    "value": 8.5
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2011,
+    "value": 7.3
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2012,
+    "value": 6.7
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2013,
+    "value": 6.9
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2014,
+    "value": 6.1
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2015,
+    "value": 6.5
+  },
+  {
+    "line": "County",
+    "county": "Atoka",
+    "year": 2016,
+    "value": 6.7
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 1995,
+    "value": 2.9
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 1996,
+    "value": 2.4
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 1997,
+    "value": 2.5
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 1998,
+    "value": 3.9
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 1999,
+    "value": 3.8
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2000,
+    "value": 2.4
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2001,
+    "value": 2.6
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2002,
+    "value": 3.5
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2003,
+    "value": 3.9
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2004,
+    "value": 3.5
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2005,
+    "value": 3.3
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2006,
+    "value": 2.7
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2007,
+    "value": 2.7
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2008,
+    "value": 2.1
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2009,
+    "value": 3.6
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2010,
+    "value": 3.5
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2011,
+    "value": 3.3
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2012,
+    "value": 3
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2013,
+    "value": 3.4
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2014,
+    "value": 2.7
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2015,
+    "value": 2.7
+  },
+  {
+    "line": "County",
+    "county": "Beaver",
+    "year": 2016,
+    "value": 3.2
+  }
+]
