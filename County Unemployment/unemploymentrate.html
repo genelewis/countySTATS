@@ -141,15 +141,17 @@
                     var section = sect.options[sect.selectedIndex].value;
                 
                     data = filterJSON(json, "county", section);
+                    console.log('check');
+                    console.log(data);
                     //debugger
-                    data.forEach(function(d) {
+                    /*data.forEach(function(d) {
                         d.value = +d.value;
                         //d.year = parseDate(String(d.year));
                         d.active = true;
                     });
-                    //debugger
+                    //debugger*/
                         updateGraph(data);
-                        jQuery('h1.page-header').html(section);
+                        //jQuery('h1.page-header').html(section);
             });
             
             //generate initial graph

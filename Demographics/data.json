@@ -1,0 +1,26 @@
+[
+    {
+        "county": "all",
+        "Hispanic": 10,
+        "Black": 7,
+        "NatAm": 8,
+        "Other": 8,
+        "White": 67
+    },
+    {
+        "county": "Tulsa",
+        "Hispanic": 12,
+        "Black": 10,
+        "NatAm": 6,
+        "Other": 8,
+        "White": 64
+    },
+    {
+        "county": "Adair",
+        "Hispanic": 19,
+        "Black": 13,
+        "NatAm": 25,
+        "Other": 7,
+        "White": 36
+    }
+]
