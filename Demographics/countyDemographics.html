@@ -9,8 +9,22 @@
 </style>
 <body>
     <select id="inds">
-        <option value='Tulsa' selected='selected'>Tulsa</option>
-        <option value='Adair'>Adair</option>
+        
+        <option value='Adair' selected='selected'>Adair</option>
+        <option value='Alfalfa'>Alfalfa</option>
+        <option value='Atoka'>Atoka</option>
+        <option value='Beaver'>Beaver</option>
+        <option value='Beckham'>Beckham</option>
+        <option value='Blaine'>Blaine</option>
+        <option value='Bryan'>Bryan</option>
+        <option value='Caddo'>Caddo</option>
+        <option value='Canadian'>Canadian</option>
+        <option value='Carter'>Carter</option>
+        <option value='Cherokee'>Cherokee</option>
+        <option value='Choctaw'>Choctaw</option>
+        <option value='Cimarron'>Cimarron</option>
+        <option value='Cleveland'>Cleveland</option>
+        <option value='Tulsa'>Tulsa</option>
     </select>
     
     <div id="donut-charts"></div>
@@ -23,34 +37,34 @@
         var rawjson;
         var sect;
         var section;
-        d3.json("data2.json", function(error, json) {
+        d3.json("data.json", function(error, json) {
             
             d3.select('#inds')
                 .on('change', function() {
                     sect = document.getElementById('inds');
                     section = sect.options[sect.selectedIndex].value;
                     
-                    rawjson = filterJSON(json, 'county', section);
+                    rawjson = filterJSON(json, 'County', section);
                     console.log("DEBUG:");
                     console.log(rawjson); //debug
                     console.log(section);
                     
                     //donuts.update(genData(rawjson, section));
-                
-                    var donutData = genData(rawjson, section);
-                    var donuts = new DonutCharts();
-                    donuts.create(donutData);
-                    donute.update(genData(rawjson, section));
+                    var dataset = genData(rawjson, section)
+                    donuts.update(dataset, section);
+                    console.log("The graph has been updated");
+                    console.log(dataset);
+                    console.log(section);
                 });
             
             //generate initial graph
-            rawjson = filterJSON(json, 'county', 'Tulsa');
-            section = 'Tulsa';
+            rawjson = filterJSON(json, 'County', 'Adair');
+            section = 'Adair';
             console.log(rawjson);
            
             var donutData = genData(rawjson, section);
             var donuts = new DonutCharts();
-            donuts.create(donutData);
+            donuts.create(donutData, section);
             
         });
     });
@@ -180,11 +194,11 @@
                     break;
             }
         }
-        var updateDonut = function() {
+        var updateDonut = function(section) {
             
             var title = d3.select('.type');
             title.text(function(d) {
-                return d.type;
+                return section;
             });
             
             var eventObj = {
@@ -259,7 +273,7 @@
             paths.exit().remove();
             resetAllCenterText();
         }
-        this.create = function(dataset) {
+        this.create = function(dataset, section) {
             var $charts = $('#donut-charts');
             chart_m = $charts.innerWidth() / dataset.length / 2 * 0.14;
             chart_r = $charts.innerWidth() / dataset.length / 2 * 0.85;
@@ -280,55 +294,26 @@
                             .attr('transform', 'translate(' + (chart_r+chart_m) + ',' + (chart_r+chart_m) + ')');
             createLegend(getCatNames(dataset));
             createCenter();
-            updateDonut();
+            updateDonut(section);
         }
     
-        this.update = function(dataset) {
+        this.update = function(dataset,section) {
             // Assume no new categ of data enter
-            var donut = charts.selectAll(".donut")
+            var donut = charts.select(".donut")
                         .data(dataset);
-            updateDonut();
+            updateDonut(section);
         }
     }
     /*
      * Returns a json-like object.
      */
     function genData(data, section) {
-        /*var type = ['Tulsa County', 'Oklahoma'];
-        var unit = ['', ''];
-        var cat = ['Hispanic', 'Black', 'Native American', 'Other & More than one', 'White (Non-Hispanic)'];
-        var countyData = [12, 10, 6, 8, 64]; //should not be hard-coded like this
-        var stateData = [10, 7, 8, 8, 67];
-        var dataset = new Array();
-        for (var i = 0; i < type.length; i++) {
-            var data = new Array();
-            var total = 0;
-            for (var j = 0; j < cat.length; j++) {
-                var value;
-                if (i == 0) {
-                    value = countyData[j];
-                } else {
-                    value = stateData[j];
-                }
-                total += value;
-                data.push({
-                    "cat": cat[j],
-                    "val": value
-                });
-            }
-            dataset.push({
-                "type": type[i],
-                "unit": unit[i],
-                "data": data,
-                "total": total
-            });
-        }
-        return dataset;*/
         
         var cat = ['Hispanic', 'Black', 'Native American', 'Other & More than one', 'White (Non-Hispanic)'];
         var type = [section, 'Oklahoma'];
-        var stateData = [data[0].Hispanic, data[0].Black, data[0].NatAm, data[0].Other, data[0].White];
-        var countyData = [data[1].Hispanic, data[1].Black, data[1].NatAm, data[1].Other, data[1].White];
+        var countyData = [data[0].Hispanic, data[0].Black, data[0].NatAm, data[0].Other, data[0].White];
+        var stateData = [data[1].Hispanic, data[1].Black, data[1].NatAm, data[1].Other, data[1].White];
+        
         var dataset = new Array();
         for (var i = 0; i < type.length; i++) {
             var region = new Array();
