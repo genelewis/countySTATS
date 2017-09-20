@@ -7,6 +7,7 @@
         width: 960px;
     }
 </style>
+<title>County Demographics</title>
 <body>
     <select id="inds">
         
@@ -202,13 +203,6 @@
             });
             
             var eventObj = {
-                'animationend' : function(d, i, j) {
-                    pathAnim(d3.select(this), 1);
-                    var thisDonut = charts.select('.type' + j);
-                    thisDonut.select('.type').text(function(d) {
-                    return d.type;
-                    });
-                },
                 'mouseover': function(d, i, j) {
                     pathAnim(d3.select(this), 1);
                     var thisDonut = charts.select('.type' + j);
