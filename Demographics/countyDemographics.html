@@ -6,52 +6,92 @@
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         width: 960px;
     }
-    #refresh-btn {
-        float: right;
-        font-size: 12px;
-        border-radius: 0;
-    }
 </style>
+<title>County Demographics</title>
 <body>
-    <button type="button" id="refresh-btn">Refresh data</button>
+    <select id="inds">
+        
+        <option value='Adair' selected='selected'>Adair</option>
+        <option value='Alfalfa'>Alfalfa</option>
+        <option value='Atoka'>Atoka</option>
+        <option value='Beaver'>Beaver</option>
+        <option value='Beckham'>Beckham</option>
+        <option value='Blaine'>Blaine</option>
+        <option value='Bryan'>Bryan</option>
+        <option value='Caddo'>Caddo</option>
+        <option value='Canadian'>Canadian</option>
+        <option value='Carter'>Carter</option>
+        <option value='Cherokee'>Cherokee</option>
+        <option value='Choctaw'>Choctaw</option>
+        <option value='Cimarron'>Cimarron</option>
+        <option value='Cleveland'>Cleveland</option>
+        <option value='Tulsa'>Tulsa</option>
+    </select>
+    
     <div id="donut-charts"></div>
 
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script>
-
-    $(function() {
-
-        var donutData = genData();
-
-        var donuts = new DonutCharts();
-        donuts.create(donutData);
-
-        /*$('#refresh-btn').on('click', function refresh() {
-            donuts.update(genData);
-        });*/
-
-    });
     
-
+    <script>
+    $(function() {
+        var rawjson;
+        var sect;
+        var section;
+        d3.json("data.json", function(error, json) {
+            
+            d3.select('#inds')
+                .on('change', function() {
+                    sect = document.getElementById('inds');
+                    section = sect.options[sect.selectedIndex].value;
+                    
+                    rawjson = filterJSON(json, 'County', section);
+                    console.log("DEBUG:");
+                    console.log(rawjson); //debug
+                    console.log(section);
+                    
+                    //donuts.update(genData(rawjson, section));
+                    var dataset = genData(rawjson, section)
+                    donuts.update(dataset, section);
+                    console.log("The graph has been updated");
+                    console.log(dataset);
+                    console.log(section);
+                });
+            
+            //generate initial graph
+            rawjson = filterJSON(json, 'County', 'Adair');
+            section = 'Adair';
+            console.log(rawjson);
+           
+            var donutData = genData(rawjson, section);
+            var donuts = new DonutCharts();
+            donuts.create(donutData, section);
+            
+        });
+    });
+        
+    function filterJSON(json, key, value) {
+        var result = [];
+        json.forEach(function(val, idx, arr){
+            if(val[key] == value || val[key] == "all") {
+                result.push(val);
+            }
+        });
+        return result;
+    }
+    
     function DonutCharts() {
-
         var charts = d3.select('#donut-charts');
-
         var chart_m,
             chart_r,
             color = d3.scale.category20();
-
         var getCatNames = function(dataset) {
             var catNames = new Array();
-
             for (var i = 0; i < dataset[0].data.length; i++) {
                 catNames.push(dataset[0].data[i].cat);
             }
-            
             return catNames;
         }
-
         var createLegend = function(catNames) {
             var legends = charts.select('.legend')
                             .selectAll('g')
@@ -75,16 +115,14 @@
                     return d;
                 });
         }
-
         var createCenter = function(pie) {
-
+            //Animates the slices of the pie
             var eventObj = {
                 'mouseover': function(d, i) {
                     d3.select(this)
                         .transition()
                         .attr("r", chart_r * 0.65);
                 },
-
                 'mouseout': function(d, i) {
                     d3.select(this)
                         .transition()
@@ -92,7 +130,6 @@
                         .ease('bounce')
                         .attr("r", chart_r * 0.6);
                 },
-
                 'click': function(d, i) {
                     var paths = charts.selectAll('.clicked');
                     pathAnim(paths, 0);
@@ -100,9 +137,7 @@
                     resetAllCenterText();
                 }
             }
-
             var donuts = d3.selectAll('.donut');
-
             // The circle displaying total data.
             donuts.append("svg:circle")
                 .attr("r", chart_r * 0.6)
@@ -126,33 +161,20 @@
                     .attr('text-anchor', 'middle')
                     .style('fill', '#A2A2A2');
         }
-
         var setCenterText = function(thisDonut) {
             var sum = d3.sum(thisDonut.selectAll('.clicked').data(), function(d) {
                 return d.data.val;
             });
-
-            /*thisDonut.select('.value')
-                .text(function(d) {
-                    return (sum)? sum.toFixed(1) + d.unit
-                                : d.total.toFixed(1) + d.unit;
-                });*/
             thisDonut.select('.percentage')
                 .text(function(d) {
                     return (sum)? (sum/d.total*100).toFixed(2) + '%'
                                 : '';
                 });
         }
-
         var resetAllCenterText = function() {
-            /*charts.selectAll('.value')
-                .text(function(d) {
-                    return d.total.toFixed(1) + d.unit;
-                });*/
             charts.selectAll('.percentage')
                 .text('');
         }
-
         var pathAnim = function(path, dir) {
             switch(dir) {
                 case 0:
@@ -164,7 +186,6 @@
                             .outerRadius(chart_r)
                         );
                     break;
-
                 case 1:
                     path.transition()
                         .attr('d', d3.svg.arc()
@@ -174,17 +195,19 @@
                     break;
             }
         }
-
-        var updateDonut = function() {
-
+        var updateDonut = function(section) {
+            
+            var title = d3.select('.type');
+            title.text(function(d) {
+                return section;
+            });
+            
             var eventObj = {
-
                 'mouseover': function(d, i, j) {
                     pathAnim(d3.select(this), 1);
-
                     var thisDonut = charts.select('.type' + j);
                     thisDonut.select('.value').text(function(donut_d) {
-                        return d.data.cat;/*val.toFixed(1) + donut_d.unit;*/
+                        return d.data.cat;
                     });
                     thisDonut.select('.percentage').text(function(donut_d) {
                         return (d.data.val/donut_d.total*100).toFixed(2) + '%';
@@ -200,48 +223,39 @@
                     thisDonut.select('.value').text('');
                     setCenterText(thisDonut);
                 },
-
                 'click': function(d, i, j) {
                     var thisDonut = charts.select('.type' + j);
-
                     if (0 === thisDonut.selectAll('.clicked')[0].length) {
                         thisDonut.select('circle').on('click')();
                     }
-
                     var thisPath = d3.select(this);
                     var clicked = thisPath.classed('clicked');
                     pathAnim(thisPath, ~~(!clicked));
                     thisPath.classed('clicked', !clicked);
-
                     setCenterText(thisDonut);
                 }
             };
-
             var pie = d3.layout.pie()
                             .sort(null)
                             .value(function(d) {
                                 return d.val;
                             });
-
             var arc = d3.svg.arc()
                             .innerRadius(chart_r * 0.7)
                             .outerRadius(function() {
                                 return (d3.select(this).classed('clicked'))? chart_r * 1.08
                                                                            : chart_r;
                             });
-
             // Start joining data with paths
             var paths = charts.selectAll('.donut')
                             .selectAll('path')
                             .data(function(d, i) {
                                 return pie(d.data);
                             });
-
             paths
                 .transition()
                 .duration(1000)
                 .attr('d', arc);
-
             paths.enter()
                 .append('svg:path')
                     .attr('d', arc)
@@ -250,23 +264,18 @@
                     })
                     .style('stroke', '#FFFFFF')
                     .on(eventObj)
-
             paths.exit().remove();
-
             resetAllCenterText();
         }
-
-        this.create = function(dataset) {
+        this.create = function(dataset, section) {
             var $charts = $('#donut-charts');
             chart_m = $charts.innerWidth() / dataset.length / 2 * 0.14;
             chart_r = $charts.innerWidth() / dataset.length / 2 * 0.85;
-
             charts.append('svg')
                 .attr('class', 'legend')
                 .attr('width', '100%')
                 .attr('height', 80)
                /* .attr('transform', 'translate(0, 100)')*/;
-
             var donut = charts.selectAll('.donut')
                             .data(dataset)
                         .enter().append('svg:svg')
@@ -277,40 +286,32 @@
                                 return 'donut type' + i;
                             })
                             .attr('transform', 'translate(' + (chart_r+chart_m) + ',' + (chart_r+chart_m) + ')');
-
-            console.log("I am supposed to create a legend.")
             createLegend(getCatNames(dataset));
             createCenter();
-
-            updateDonut();
+            updateDonut(section);
         }
     
-        this.update = function(dataset) {
+        this.update = function(dataset,section) {
             // Assume no new categ of data enter
-            var donut = charts.selectAll(".donut")
+            var donut = charts.select(".donut")
                         .data(dataset);
-
-            updateDonut();
+            updateDonut(section);
         }
     }
-
-
     /*
      * Returns a json-like object.
      */
-    function genData() {
-        var type = ['Tulsa County', 'Oklahoma'];
-        var unit = ['', ''];
+    function genData(data, section) {
+        
         var cat = ['Hispanic', 'Black', 'Native American', 'Other & More than one', 'White (Non-Hispanic)'];
-        var countyData = [12, 10, 6, 8, 64]; //should not be hard-coded like this
-        var stateData = [10, 7, 8, 8, 67];
-
+        var type = [section, 'Oklahoma'];
+        var countyData = [data[0].Hispanic, data[0].Black, data[0].NatAm, data[0].Other, data[0].White];
+        var stateData = [data[1].Hispanic, data[1].Black, data[1].NatAm, data[1].Other, data[1].White];
+        
         var dataset = new Array();
-
         for (var i = 0; i < type.length; i++) {
-            var data = new Array();
+            var region = new Array();
             var total = 0;
-
             for (var j = 0; j < cat.length; j++) {
                 var value;
                 if (i == 0) {
@@ -319,20 +320,19 @@
                     value = stateData[j];
                 }
                 total += value;
-                data.push({
+                region.push({
                     "cat": cat[j],
                     "val": value
                 });
             }
-
             dataset.push({
                 "type": type[i],
-                "unit": unit[i],
-                "data": data,
+                "data": region,
                 "total": total
             });
         }
         return dataset;
     }
+    
     </script>
 </body>
