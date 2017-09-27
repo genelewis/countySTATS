@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>countySTATs - Master</title>
+    <style>
+      iframe {
+        border: solid 1px #eee;
+        border-bottom: solid 1px #ccc;
+        width: 960px;
+      }
+      body {
+        font-family: "Helvetica Neue", Helvetica, sans-serif;
+        margin: 2em auto 4em auto;
+        tab-size: 2;
+        -webkit-text-size-adjust: none;
+      }
+      .column {
+        max-width: 960px;
+        position: relative;
+        display: block;
+        margin: 0 auto;
+        padding: 0 10px;
+      }
+      h1 {
+        font-size: 46px;
+        font-weight: 500;
+        letter-spacing: -1px;
+        margin: 0.1em 0;
+      }
+      h1, p {
+        margin-left: 40px;
+      }
+      pre {
+        border-left: solid 2px #ccc;
+        padding-left: 18px;
+        margin: 2em 0 2em -20px;
+        max-width: 960px;
+        overflow-x: auto;
+      }
+
+
+    </style>
+  </head>
+  
+  <body>
+    <h1>CountySTATs - Master Mockup</h1>
+    <p>Updated September 22, 2017</p>
+    
+    <div class="column">
+      
+      <h2>Population</h2> 
+      <div class="population">
+        <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Population/Population.html" marginwidth="0" marginheight="0" style="height:500px;" scrolling="no"> </iframe>
+      </div>
+      
+      <h2>Demographics</h2>
+      <div class="demographics">
+        <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Demographics/countyDemographics.html" marginwidth="0" marginheight="0" style="height:600px;" scrolling="no"></iframe>
+      </div>
+      
+      <h2>Unemployment</h2>
+      <div class="unemployment">
+        <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/County Unemployment/unemploymentrate.html" marginwidth="0" marginheight="0" style="height:600px; width:1000px" scrolling="no"></iframe>
+      </div>
+      
+      <h2>Employment Sectors</h2>
+      <div class="employmentSectors">
+        <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" style="height:500px;" scrolling="no"></iframe>
+      </div>
+      
+      <h2>Educational Attainment</h2>
+      <div class="educationalAttainment">
+        <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Educational Attainment/educationalAttainment.html" marginwidth="0" marginheight="0" style="height:550px;" scrolling="no"></iframe>
+      </div>
+      
+    </div>
+  </body>
+</html>

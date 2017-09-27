@@ -1,6 +1,6 @@
-Level,Tulsa County,State,National
-Less than HS,11,14,14
-HS Diploma/GED,26,32,28
-Some College,24,24,21
-Associate Degree,8,7,8
-Bachelor's or Higher,30,23,29
+Level,National,State,Tulsa County,Fakey County
+Less than HS,14,14,11,16
+HS Diploma, 28,32,26,40
+Some College,21,24,24,25
+Associate's Degree,8,7,8,4
+Bachelor's or Higher,29,23,30,36
