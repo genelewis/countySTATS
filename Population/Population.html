@@ -85,7 +85,7 @@ body {
         })
       
         x.domain([data[0].year, data[data.length - 1].year]);
-        y.domain(d3.extent(data, function(d) { return d[selection]; }));
+        y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }), 500000)]);
       
         var xAxis = d3.axisBottom()
             .scale(x)
@@ -156,7 +156,7 @@ body {
               
               //update data
               selection = this.options[this.selectedIndex].value;
-              y.domain(d3.extent(data, function(d) { return d[selection]; }));
+              y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }), 200000)]);
               
               //make the transitions
               path.transition()

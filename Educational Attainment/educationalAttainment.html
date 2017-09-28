@@ -44,7 +44,7 @@
 <body>
   
   <svg width="960" height="500"></svg>
-  <div id="drop" align=center></div>
+  <div id="drop" align="center"></div>
 
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="d3-tip.js"></script>
@@ -87,13 +87,14 @@
       //Scale for bar coloring
         var z = function(d) {
             if (d == "National") {
-              return "#98abc5";
+              return "#336600";
             } else if (d == "State") {
-              return "#7b6888";
+              return "#85e085";
             } else {
-              return "#a05d56";
+              return "#29a329";
             }
         }
+        //'#d6f5d6', '#85e085', '#29a329'
 
       //Full list of places (national, state, adair, atoka...)
         var keys = data.columns.slice(1);
