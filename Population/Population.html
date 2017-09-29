@@ -7,20 +7,9 @@ body {
   font: 10px sans-serif;
 }
 
-.axis path,
-.axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.x.axis path {
-  display: none;
-}
-
 .line {
   fill: none;
-  stroke: steelblue;
+  stroke: firebrick;
   stroke-width: 1.5px;
 }
 
@@ -31,7 +20,7 @@ body {
 
 .focus circle {
   fill: none;
-  stroke: steelblue;
+  stroke: grey;
 }
 
 </style>
@@ -66,7 +55,7 @@ body {
         if (error) throw error;
             
         var x = d3.scaleTime()
-            .range([0, width])
+            .range([0, width]);
 
         var y = d3.scaleLinear()
             .range([height, 0]);
@@ -78,17 +67,16 @@ body {
       
         var keys = data.columns.slice(1);
         var selection = keys[0] //Hard coded for first county
-        console.log(selection);
         
         data.forEach(function(d) {
           d.year = parseDate(d.year);
         })
       
-        x.domain([data[0].year, data[data.length - 1].year]);
-        y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }), 500000)]);
+        x.domain(d3.extent(data, function(d) {return d.year}));
+        y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }), 50000)]);
       
-        var xAxis = d3.axisBottom()
-            .scale(x)
+        var xAxis = d3.axisBottom(x)
+            .ticks(10)
             .tickFormat(d3.timeFormat("%Y"));
 
         var yAxis = d3.axisLeft()
@@ -96,6 +84,7 @@ body {
             .scale(y);
       
         var line = d3.line()
+            .curve(d3.curveMonotoneX)
             .x(function(d) { return x(d.year); })
             .y(function(d) { return y(d[selection]); });
       
@@ -156,7 +145,7 @@ body {
               
               //update data
               selection = this.options[this.selectedIndex].value;
-              y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }), 200000)]);
+              y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }), 50000)]);
               
               //make the transitions
               path.transition()

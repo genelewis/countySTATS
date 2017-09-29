@@ -59,9 +59,7 @@
 
     //Begin by inserting the data
     d3.csv("data.csv", function(d, i, columns) {
-      
-      console.log('CONFIRM1');
-      
+            
       //Convert data string values into integers
       for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
       console.log(d);

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<style>
+<head>
+  <title>County Unemployment</title>
+  <style>
     body {font: 12px Helvetica;}
     path {
         stroke: #ccc;
@@ -60,200 +61,181 @@
         left:10px;
     }
 </style>
-<title>County Unemployment</title>
+  <meta charset="utf-8">
+</head>
+
 <body>
-    <!-- load the d3.js library -->
-    <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   
-    <svg width="960" height="500"></svg>
-    <div id="drop" algin="center">
-      <select id="inds">
-              <option value="Adair" selected="selected">Adair</option>
-              <option value="Alfalfa">Alfalfa</option>
-              <option value="Atoka">Atoka</option>
-              <option value="Beaver">Beaver</option>
-              <option value="Beckham">Beckham</option>
-              <option value="Blaine">Blaine</option>
-              <option value="Bryan">Bryan</option>
-              <option value="Caddo">Caddo</option>
-              <option value="Canadia">Canadia</option>
-      </select>
-    </div>
+  <svg width="960" height="500"></svg>
+  <div id="drop" align="center"></div>
+  
+  <!-- load the d3.js library -->
+  <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+  </script>
     
-    <!-- build the line graph-->
-    <script>
-        
-        function filterJSON(json, key, value) {
-            var result = [];
-            json.forEach(function(val, idx, arr){
-                if(val[key] == value || val[key] == "all") {
-                    result.push(val);
-                }
-            });
-            return result;
-        }
-        
-        //set the dimensions of the canvas / graph
-        var svg = d3.select("svg"),
-            margin = {top: 20, bottom: 30, left: 40, right: 20},
-            width = +svg.attr("width") - margin.left - margin.right,
-            height = +svg.attr("height") - margin.top - margin.bottom;
-        
-        //set the relevant ranges
-        var x = d3.time.scale().range([0, width]),
-            y = d3.scale.linear().range([height, 0]);
-        
-        //define the axes
-        var xAxis = d3.svg.axis().scale(x)
-            .orient("bottom").ticks(10)
-            .tickFormat(d3.format("^"));
-        
-        var yAxis = d3.svg.axis().scale(y)
-            .orient("left").ticks(10)
-            .tickFormat(d3.format("%"));
-        
-        //define the line
-        var stateline = d3.svg.line()
-            .interpolate("cardinal")
-            .x(function(d) {return x(d.year);})
-            .y(function(d) {return y(d.value);});
-        
-        //add the svg canvas
-        var graph = svg.append("g")
-              .attr("transform",
-                     "translate(" + margin.left + "," + margin.top + ")");
-        
-        //handle the data
-        var data;
-        d3.json("data.json", function(error, json) {
-            console.log(json)
-            
-            json.forEach(function(d) {
-                d.value = +d.value;
-            });
-            d3.select("#inds")
-                .on("change", function() {
-                    var sect = document.getElementById("inds");
-                    var section = sect.options[sect.selectedIndex].value;
-                
-                    data = filterJSON(json, "county", section);
-                    console.log('check');
-                    console.log(data);
-                    //debugger
-                    /*data.forEach(function(d) {
-                        d.value = +d.value;
-                        //d.year = parseDate(String(d.year));
-                        d.active = true;
-                    });
-                    //debugger*/
-                        updateGraph(data);
-                        //jQuery('h1.page-header').html(section);
-            });
-            
-            //generate initial graph
-            data = filterJSON(json, "county", "Adair");
-            updateGraph(data);
-        });
-        
-        var color = d3.scale.ordinal().range(["#48A36D",  "#0096ff", "#ff007e"]);
-        
-        function updateGraph(data) {
-            
-            //scale the range of the data
-            x.domain(d3.extent(data, function(d) {return d.year;}));
-            y.domain([d3.min(data, function(d) { return d.value; }) - .01, d3.max(data, function(d) {return d.value;}) + .02]);
-            
-            //nest the entries by the state
-            var dataNest = d3.nest()
-                .key(function(d) {return d.line;})
-                .entries(data);
-            
-            var result = dataNest.filter(function(val, idx, arr) {
-                return $("." + val.key).attr("fill") != "#ccc"; 
-				// matching the data with selector status
-            });
-            
-            var state = graph.selectAll(".line")
-                .data(result, function(d){return d.key});
+  <script>
+    
+    //set the dimensions of the canvas / graph
+    var svg = d3.select("svg"),
+        margin = {top: 20, bottom: 30, left: 40, right: 20},
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom;
+    
+    //add the svg canvas
+    var graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            state.enter().append("path")
-                .attr("class", "line");
-
-            state.transition()
-                .style("stroke", function(d,i) { return d.color = color(d.key); })
-                .attr("id", function(d){ return 'tag'+d.key.replace(/\s+/g, '');}) // assign ID
-                .attr("d", function(d){ return stateline(d.values) });
-
-            state.exit().remove();
-
-            //var legend = d3.select("#legend")
-            var legend = graph.append("g")
-                //.attr("font-family", "sans-serif")
-                //.attr("font-size", 10)
-                .attr("text-anchor", "end")
-              .selectAll("text")
-                .data(dataNest, function(d){return d.key});
-
-            //checkboxes
-            legend.enter().append("rect")
-                  .attr("width", 10)
-                  .attr("height", 10)
-                  .attr("x", width - 10)
-                  .attr("y", function (d, i) { return 0 +i*15; })  // spacing
-                  .attr("fill",function(d) { return color(d.key); })
-                  .attr("class", function(d,i){return "legendcheckbox " + d.key})
-                        .on("click", function(d){
-                              d.active = !d.active;
-                              d3.select(this).attr("fill", function(d){
-                                if(d3.select(this).attr("fill")  == "#ccc"){
-                                  return color(d.key);
-                                }else {
-                                  return "#ccc";
-                                }
-                              });
-
-                            var result = dataNest.filter(function(val,idx, arr){
-                            return $("." + val.key).attr("fill") != "#ccc"; 
-                            // matching the data with selector status
-                            });
-
-                           // Hide or show the lines based on the ID
-                           graph.selectAll(".line").data(result, function(d){return d.key})
-                             .enter()
-                             .append("path")
-                             .attr("class", "line")
-                             .style("stroke", function(d,i) { return d.color = color(d.key); })
-                             .attr("d", function(d){ return stateline(d.values); });
-
-                            graph.selectAll(".line").data(result, function(d){return d.key}).exit().remove()  
-                        });
-
-            // Add the Legend text
-            legend.enter().append("text")
-              .attr("x", width - 20)
-              .attr("y", function(d,i){return 10 +i*15;})
-              .attr("class", "legend");
-
-            legend.transition()
-              .style("fill", "#777" )
-              .text(function(d){return d.key;});
-
-            legend.exit().remove();
-
-            graph.selectAll(".axis").remove();
-
-            // Add the X Axis
-            graph.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
-
-            // Add the Y Axis
-            graph.append("g")
-                .attr("class", "y axis")
-                .call(yAxis);
-        };
+    //enter the data and begin working with it inside the main function
+    d3.csv("data.csv", function(d, i, columns) {
+      for (var i = 1, n = columns.length; i < n; ++i)
+        d[columns[i]] = +d[columns[i]];
+        return d;},
+          
+    //Main function:   
+    function(error, data) {
+      if (error) throw error;
       
-    </script>
+      var parseDate = d3.timeParse('%Y');
+      data.forEach(function(d) {
+          d.year = parseDate(d.year);
+        })
+      
+      //set the relevant ranges
+      var x = d3.scaleTime().range([0, width]),
+          y = d3.scaleLinear().range([height, 0]),
+          z = d3.scaleOrdinal().range(["#003366","#3366ff","#ff0000"]);
+
+      //define the axes
+      var xAxis = d3.axisBottom(x)
+          .ticks(20)
+          .tickFormat(d3.timeFormat("%Y"));
+
+      var yAxis = d3.axisLeft(y)
+          .ticks(20)
+          //.tickFormat(d3.format("%"));
+
+      //define the lines
+      var line = d3.line()
+          .curve(d3.curveBasis)
+          .x(function(d) {return x(d.year);})
+          .y(function(d) {return y(d.unemp);});
+      
+      //constructs dictionary of "places" (national, state, counties...)
+      var places = data.columns.slice(1).map(function(id) {
+        return{
+          id: id,
+          values: data.map(function(d) {
+            return {year: d.year, unemp: d[id]};
+          })
+        };
+      });
+      
+      console.log(places);
+      
+      var selection = places[2];
+      var currentPlaces = [places[0], places[1], selection];
+      
+      //scale the range of the data
+      x.domain(d3.extent(data, function(d) {return d.year}));
+      
+      y.domain([
+        d3.min(currentPlaces, function(c) { return d3.min(c.values, function(d) { return d.unemp; }); }) - 0.1,
+        d3.max(currentPlaces, function(c) { return d3.max(c.values, function(d) { return d.unemp; }); }) + 0.2
+      ]);
+      
+      z.domain(places.map(function(c) { return c.id; }));
+      
+      
+      //Build the graph axes and lines
+      graph.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+
+      graph.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+        .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", "0.71em")
+          .attr("fill", "#000")
+          .text("Percentage");   
+      
+      var place = graph.selectAll(".place")
+          .data(currentPlaces)
+          .enter().append("g")
+            .attr("class", "place");
+      
+      var lines = place.append("path")
+          .attr("class", "line")
+          .attr("d", function(d) { return line(d.values); })
+          .style("stroke", function(d) { return z(d.id); });
+
+      //Use the drop-down menu to control graph transitions
+      var selector = d3.select("#drop")
+          .append("select")
+          .attr("id","dropdown")
+          .on("change", function(d){
+
+            //update data
+            selection = this.options[this.selectedIndex].value;
+            currentPlaces[2] = places[places.findIndex(x => x.id == selection)]
+            
+            y.domain([
+              d3.min(currentPlaces, function(c) { return d3.min(c.values, function(d) { return d.unemp; }); }) - 0.1,
+              d3.max(currentPlaces, function(c) { return d3.max(c.values, function(d) { return d.unemp; }); }) + 0.2
+            ]);
+            
+            lines.data(currentPlaces);
+            legendText.data(currentPlaces);
+              
+            //Transition the lines:
+            lines.transition()
+                .attr("d", function(d) {
+                  console.log(d);
+                  return line(d.values); 
+                });
+            
+            //Rescale the Y axis
+            var t0 = svg.transition().duration(150);
+            var t1 = t0.transition();
+            t1.selectAll(".y.axis").call(yAxis);
+            
+            //Update the legend
+            legendText.transition()
+                .text(function(d) {return d.id;})
+          });
+      
+      //Input all the drop-down options
+      selector.selectAll("option")
+          .data(data.columns.slice(3))
+          .enter().append("option")
+          .attr("value", function(d){
+            return d;
+          })
+          .text(function(d){
+            return d;
+          });
+      
+      //Create the legend
+      var legend = graph.append("g")
+          .attr("text-anchor", "end")
+        .selectAll("text")
+          .data(currentPlaces, function(d) {return d.id;})
+        
+      var legendBox = legend.enter().append("rect")
+          .attr("width", 10)
+          .attr("height", 10)
+          .attr("x", width-10)
+          .attr("y", function(d, i) {return i*15;})
+          .attr("fill", function(d) {return z(d.id);})
+      
+      var legendText = legend.enter().append("text")
+          .attr("x", width - 20)
+          .attr("y", function(d, i) {return 10 +i*15;})
+          .attr("class", "legend")
+          .text(function(d) {return d.id;});
+    }); 
+  </script>
 </body>
