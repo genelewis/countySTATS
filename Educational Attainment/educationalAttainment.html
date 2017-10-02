@@ -2,42 +2,40 @@
 <head>
   <title>Educational Attainment</title>
   <style>
+    .axis .domain {
+      display: none;
+    }
 
-.axis .domain {
-  display: none;
-}
-  
-.d3-tip {
-  line-height: 1;
-  font-weight: bold;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border-radius: 2px;
-  font: 10px Arial;
-}
+    .d3-tip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+      font: 10px Arial;
+    }
 
-/* Creates a small triangle extender for the tooltip */
-.d3-tip:after {
-  box-sizing: border-box;
-  display: inline;
-  font-size: 10px;
-  width: 100%;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
-  position: absolute;
-  text-align: center;
-}
-  
-/* Style northward tooltips differently */
-.d3-tip.n:after {
-  margin: -1px 0 0 0;
-  top: 100%;
-  left: 0;
-}
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
 
-</style>
+    /* Style northward tooltips differently */
+    .d3-tip.n:after {
+      margin: -1px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
+  </style>
   <meta charset="utf-8">
 </head>
 
@@ -101,7 +99,7 @@
 
         x0.domain(data.map(function(d) { return d.Level; }));
         x1.domain(keys).rangeRound([0, x0.bandwidth()]);
-        y.domain([0, d3.max(data, function(d) { return d3.max(currentKeys, function(key) { return d[key]; }); })]).nice();
+        y.domain([0, d3.max(data, function(d) { return d3.max(currentKeys, function(key) { return d[key]; }); })+5]).nice();
 
       //Set up tooltips
         var tip = d3.tip()
@@ -171,13 +169,13 @@
                 currentKeys[2] = selection;
                 bars.data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
 
-                var t0 = svg.transition().duration(450).ease(d3.easeBounce);
+                var t0 = svg.transition().duration(250).ease(d3.easeExp);
                 t0.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
                   .attr("y", function(d){return y(d.value);})
-                  .ease(d3.easeBounce);
+                  .ease(d3.easeExp);
 
 
-                y.domain([0, d3.max(data, function(d) { return d3.max(currentKeys, function(key) { return d[key]; }); })]).nice();
+                y.domain([0, d3.max(data, function(d) { return d3.max(currentKeys, function(key) { return d[key]; }); }) + 5]).nice();
                 var t1 = t0.transition();
                 t1.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
                   .attr("y", function(d){return y(d.value);})
