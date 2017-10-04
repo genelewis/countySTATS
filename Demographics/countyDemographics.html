@@ -38,14 +38,14 @@
         var rawjson;
         var sect;
         var section;
-        d3.json("data.json", function(error, json) {
+        d3.csv("data.csv", function(error, data) {
             
             d3.select('#inds')
                 .on('change', function() {
                     sect = document.getElementById('inds');
                     section = sect.options[sect.selectedIndex].value;
                     
-                    rawjson = filterJSON(json, 'County', section);
+                    rawjson = filterDATA(data, 'County', section);
                     console.log("DEBUG:");
                     console.log(rawjson); //debug
                     console.log(section);
@@ -59,7 +59,7 @@
                 });
             
             //generate initial graph
-            rawjson = filterJSON(json, 'County', 'Adair');
+            rawjson = filterDATA(data, 'County', 'Adair');
             section = 'Adair';
             console.log(rawjson);
            
@@ -70,9 +70,11 @@
         });
     });
         
-    function filterJSON(json, key, value) {
+    function filterDATA(data, key, value) {
         var result = [];
-        json.forEach(function(val, idx, arr){
+        data.forEach(function(val, idx, arr){
+            console.log(val);
+            
             if(val[key] == value || val[key] == "all") {
                 result.push(val);
             }
@@ -244,8 +246,7 @@
             var arc = d3.svg.arc()
                             .innerRadius(chart_r * 0.7)
                             .outerRadius(function() {
-                                return (d3.select(this).classed('clicked'))? chart_r * 1.08
-                                                                           : chart_r;
+                                return (d3.select(this).classed('clicked'))? chart_r * 1.08 : chart_r;
                             });
             // Start joining data with paths
             var paths = charts.selectAll('.donut')
@@ -303,6 +304,8 @@
      * Returns a json-like object.
      */
     function genData(data, section) {
+      
+        console.log(data);
         
         var cat = ['Hispanic', 'Black', 'Native American', 'Other & More than one', 'White (Non-Hispanic)'];
         var type = [section, 'Oklahoma'];

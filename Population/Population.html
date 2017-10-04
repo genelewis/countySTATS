@@ -12,6 +12,25 @@ body {
   stroke: firebrick;
   stroke-width: 1.5px;
 }
+    
+path {
+  stroke: #ccc;
+  stroke-width: 1;
+}
+    
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+    
+.grid line {
+  stroke: lightgrey;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
 
 .overlay {
   fill: none;
@@ -73,7 +92,36 @@ body {
         })
       
         x.domain(d3.extent(data, function(d) {return d.year}));
-        y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }), 50000)]);
+        y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }) + 10000, 50000)]);
+      
+      // gridlines in x axis function
+        function make_x_gridlines() {		
+            return d3.axisBottom(x)
+                .ticks(10)
+        }
+
+      // gridlines in y axis function
+        function make_y_gridlines() {		
+            return d3.axisLeft(y)
+                .ticks(10)
+        }
+      
+      // add the X gridlines
+        graph.append("g")			
+            .attr("class", "grid")
+            .attr("transform", "translate(0," + height + ")")
+            .call(make_x_gridlines()
+                .tickSize(-height)
+                .tickFormat("")
+            )
+
+      // add the Y gridlines
+        graph.append("g")			
+            .attr("class", "grid")
+            .call(make_y_gridlines()
+                .tickSize(-width)
+                .tickFormat("")
+            )
       
         var xAxis = d3.axisBottom(x)
             .ticks(10)
@@ -143,16 +191,20 @@ body {
             .attr("id", "dropdown")
             .on("change", function(d) {
               
-              //update data
+            //update data
               selection = this.options[this.selectedIndex].value;
-              y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }), 50000)]);
+              y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }) + 10000, 50000)]);
+              legendText.data([selection]);
               
-              //make the transitions
+            //make the transitions
               path.transition()
                   .attr("d", line);
               
               d3.select('.y.axis').transition()
                   .call(yAxis);
+            //Update the legend
+              legendText.transition()
+                  .text(function(d) {return d;})
             });
 
         selector.selectAll("option")
@@ -164,6 +216,30 @@ body {
           .text(function(d){
             return d;
           });
+      
+      //Create the legend
+        var legend = graph.append("g")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 10)
+            .attr("text-anchor", "start")
+          .selectAll("g")
+            .data([selection])
+          .enter().append("g")
+            .attr("transform", "translate(" + ((-1*width)+23) + ", 5)");
+
+        var legendBox = legend.append("rect")
+            .attr("width", 19)
+            .attr("height", 19)
+            .attr("x", width-19)
+            .attr("fill", "firebrick")
+
+        var legendText = legend.append("text")
+            .attr("x", width + 3)
+            .attr("y", 9.5)
+            .attr("dy", "0.32em")
+            .attr("class", "legend")
+            .text(function(d) {return d;});
+
     });
 
   </script>
