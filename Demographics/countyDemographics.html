@@ -38,7 +38,7 @@
         var rawjson;
         var sect;
         var section;
-        d3.json("data.json", function(error, data) {
+        d3.csv("data.csv", function(error, data) {
             
             d3.select('#inds')
                 .on('change', function() {
@@ -71,9 +71,11 @@
     });
         
     function filterDATA(data, key, value) {
-        var result = [];
-        data.forEach(function(val, idx, arr){
-            console.log(val);
+        var result = {},
+            county = [],
+            state = [];
+        data.forEach(function(val, idx, columns){
+            if val
             
             if(val[key] == value || val[key] == "all") {
                 result.push(val);

@@ -98,14 +98,11 @@
         var currentKeys = [keys[0], keys[1], selection];
 
         x0.domain(data.map(function(d) { return d.Level; }));
-<<<<<<< HEAD
         x1.domain(keys).rangeRound([0, 3815]);
         y.domain([0, 50]).nice();
       
-=======
         x1.domain(keys).rangeRound([0, x0.bandwidth()]);
         y.domain([0, d3.max(data, function(d) { return d3.max(currentKeys, function(key) { return d[key]; }); })+5]).nice();
->>>>>>> b5d989059cdc08764df0533071fd5f4c457523d4
 
       //Set up tooltips
         var tip = d3.tip()
@@ -176,7 +173,6 @@
                 bars.data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
                 legendText.data(currentKeys.slice());
 
-<<<<<<< HEAD
               //update the county bars
                 var t0 = svg.transition().duration(450).ease(d3.easeBounce);
                 t0.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
