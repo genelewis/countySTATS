@@ -83,11 +83,11 @@
       //Scale for bar coloring
         var z = function(d) {
             if (d == "National") {
-              return "#336600";
+              return d3.rgb(127, 127, 127);
             } else if (d == "State") {
-              return "#85e085";
+              return d3.rgb(188, 189, 34);
             } else {
-              return "#29a329";
+              return d3.rgb(23, 190, 207);
             }
         }
         //'#d6f5d6', '#85e085', '#29a329'
@@ -100,9 +100,6 @@
         x0.domain(data.map(function(d) { return d.Level; }));
         x1.domain(keys).rangeRound([0, 3815]);
         y.domain([0, 50]).nice();
-      
-        x1.domain(keys).rangeRound([0, x0.bandwidth()]);
-        y.domain([0, d3.max(data, function(d) { return d3.max(currentKeys, function(key) { return d[key]; }); })+5]).nice();
 
       //Set up tooltips
         var tip = d3.tip()
@@ -184,11 +181,9 @@
                     .text(function(d) {return d;})
                 });
 
-
-              //Transition for the y-axis (decided to make constant):
+              //Transition for the y-axis (left in for posterity, but decided to make constant):
       
                 /*y.domain([0, d3.max(data, function(d) { return d3.max(currentKeys, function(key) { return d[key]; }); })+ 10]).nice();
-=======
                 var t0 = svg.transition().duration(250).ease(d3.easeExp);
                 t0.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
                   .attr("y", function(d){return y(d.value);})
@@ -196,7 +191,6 @@
 
 
                 y.domain([0, d3.max(data, function(d) { return d3.max(currentKeys, function(key) { return d[key]; }); }) + 5]).nice();
->>>>>>> b5d989059cdc08764df0533071fd5f4c457523d4
                 var t1 = t0.transition();
                 t1.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
                   .attr("y", function(d){return y(d.value);})
