@@ -51,7 +51,7 @@
         d3.csv("data.csv", function(error, data) {
             
             //generate initial graph
-            selection = 'Adair';
+            selection = 'Adair County';
             filteredData = filterDATA(data, selection);
             
             var columnheaders = d3.keys(data[0]),
