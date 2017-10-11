@@ -52,7 +52,7 @@
             
             //generate initial graph
             selection = 'Adair';
-            filteredData = filterData(data, selection);
+            filteredData = filterDATA(data, selection);
             
             var columnheaders = d3.keys(data[0]),
                 keys = columnheaders.slice(3);
@@ -73,8 +73,7 @@
                     
                     selection = this.options[this.selectedIndex].value;
                     
-                    filteredData = filterData(data, selection);
-                    rawjson = filterDATA(data, 'County', section);
+                    filteredData = filterDATA(data, selection);
                     console.log("DEBUG:");
                     console.log(filteredData); //debug
                     console.log(selection);
@@ -98,9 +97,10 @@
             });     
         });
     });
+    
         
-    function filterData(data, selection) {
-        var county = {},
+    function filterDATA(data, key) {
+       var county = {},
             state = {};
         data.forEach(function(val, idx, arr){
             var ethn = String(data[idx].Ethnicity);
@@ -110,34 +110,9 @@
             county[ethn] = countyval;
             state[ethn] = stateval;
             
-            //generate initial graph
-            rawjson = filterDATA(data, 'County', 'Adair');
-            section = 'Adair';
-            console.log(rawjson);
-           
-            var donutData = genData(rawjson, section);
-            var donuts = new DonutCharts();
-            donuts.create(donutData, section);
-            
-        });
-    });
-        
-    function filterDATA(data, key, value) {
-        var result = {},
-            county = [],
-            state = [];
-        data.forEach(function(val, idx, columns){
-            if val
-            
-            if(val[key] == value || val[key] == "all") {
-                result.push(val);
-            }
         });
         
-        console.log(county);
-        console.log(state);
-        return [county, state];
-        
+        return [county, state];  
     };
     
     function DonutCharts() {
@@ -277,10 +252,6 @@
             var eventObj = {
                 'mouseover': function(d, i, j) {
                     pathAnim(d3.select(this), 1);
-                    console.log(this)
-                    console.log(d)
-                    console.log(i)
-                    console.log(j)
                     var thisDonut = charts.select('.type' + j);
                     thisDonut.select('.value').text(function(donut_d) {
                         return d.data.cat;
@@ -381,10 +352,6 @@
     }
 
     function genData(data, selection) {
-    /*
-     * Returns a json-like object.
-     */
-    function genData(data, section) {
       
         console.log(data);
         
@@ -418,6 +385,6 @@
         }
         return dataset;
     }
-    
+    });
     </script>
 </body>
