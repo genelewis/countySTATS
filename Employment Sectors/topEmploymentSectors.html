@@ -46,6 +46,7 @@ h1 {
 <title>Top Employment Sectors</title>
 
 <svg width="960" height="500"></svg>
+<div id="drop" align="center"></div>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="d3-tip.js"></script>
 <script>
@@ -67,7 +68,7 @@ var y = d3.scaleLinear()
     .rangeRound([height, 0]);
 
 var z = d3.scaleOrdinal()
-    .range(["#972421", "#2f507f"]);
+    .range(["#972421", "#febd60"]);
 
 d3.csv("employmentSectors.csv", function(d, i, columns) {
   for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
@@ -75,49 +76,76 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
 }, function(error, data) {
   if (error) throw error;
 
-  var keys = data.columns.slice(1);
+  var selection = 'Adair County', //Initial value
+      keys = data.columns.slice(1),
+      currentKeys = ['State', selection];
   
-  var dataset = formatData(data, 'Adair County');
+  console.log(data);
+  
+  var dataset = formatData(data, selection);
+  
+  console.log("DEBUG");
+  console.log(dataset[0]);
 
-  x0.domain(dataset.map(function(d) { return d.Sector; }));
-  x1.domain(keys).rangeRound([0, x0.bandwidth()]);
-  y.domain([0, d3.max(data, function(d) { return d3.max(keys, function(key) { return d[key]; }); })]).nice();
+  x0.domain(dataset.map(function(d) { 
+    console.log(d.Sector);
+    return d.Sector; }));
+  x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
+  y.domain([0, 40]).nice();
   
   var tip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0])
     .html(function(d) {
-      return "<span style='color:grey'>" + d.value + "%</span>";
+      return "<span style='color:grey'>" + d.Value + "%</span>";
   })
   svg.call(tip);
                     
-
   var bars = graph.append("g")
-      .selectAll("g")
+      /*.selectAll("g")
       .data(dataset)
       .enter().append("g")
-        .attr("transform", function(d) { return "translate(" + x0(d.Sector) + ",0)"; })
+        .attr("class", "bargroup")
+        .attr("transform", function(d) { return "translate(" + x0(d.Sector) + ",0)"; }) */
       .selectAll("rect")
-      .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
-      .enter().append("rect")
-        .attr("x", function(d) { return x1(d.key); })
-        .attr("y", function(d) { return y(d.value); })
+      /*.data(function(d, i) { 
+        var dt = currentKeys.map(function(key) { return {key: key, value: data[i][key]}; });
+        console.log(dt);
+        return dt;  })*/
+      .data(dataset)
+
+  bars.enter().append("rect")
+        .attr("class", "bar")
+        .attr("transform", function(d,i) { 
+            if (i%2 == 0){
+              var offset = 6;
+            } else {
+              var offset = x1.bandwidth()+7;
+            }
+            return "translate(" + (x0(d.Sector) + offset) + ",0)"; })
+        .attr("x", function(d) { return x1(d.Sector); })
+        .attr("y", function(d, i) { return y(d.Value); })
         .attr("width", x1.bandwidth())
-        .attr("height", function(d) { return height - y(d.value); })
-        .attr("fill", function(d) { return z(d.key); })
+        .attr("height", function(d) { return height - y(d.Value); })
+        .attr("fill", function(d) { return z(d.Type); })
         .on('mouseover', function(d) {
-          d3.select(this).attr("fill", d3.rgb(z(d.key)).brighter(0.5));
+          d3.select(this).attr("fill", d3.rgb(z(d.Type)).brighter(0.5));
           tip.show(d);
         })
         .on('mouseout', function(d) {
-          d3.select(this).attr("fill", d3.rgb(z(d.key)).darker(0.1));
+          d3.select(this).attr("fill", d3.rgb(z(d.Type)).darker(0.1));
           tip.hide(d);
         });
 
-  var xaxis = graph.append("g")
+    bars.exit().remove();
+  
+  
+  var xAxis = d3.axisBottom(x0)
+
+  graph.append("g")
         .attr("class", "xaxis")
         .attr("transform", "translate(0," + (height) + ")")
-        .call(d3.axisBottom(x0))
+        .call(xAxis)
       .append("text")
         .attr("x", width/2)
         .attr("y", 30)
@@ -148,14 +176,29 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
 
           //update data
             selection = this.options[this.selectedIndex].value;
-            currentKeys[2] = selection;
-            bars.data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
-            legendText.data(currentKeys.slice());
+            currentKeys[1] = selection;
+
+            dataset = formatData(data, selection)
+          
+            x0.domain(dataset.map(function(d) { 
+                  return d.Sector; 
+              }));
+                    
+            d3.selectAll(".bar")
+              .data(dataset);
+            
+            legendText.data(currentKeys.slice().reverse());
+          
+            var t = svg.transition().duration(750);
+            t.select(".xaxis").call(xAxis);
 
           //update the county bars
             var t0 = svg.transition().duration(450).ease(d3.easeBounce);
-            t0.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
-              .attr("y", function(d){return y(d.value);})
+            t0.selectAll(".bar")
+              .attr("height", function(d) { 
+                console.log(d.Value);
+                return height - y(d.Value); })
+              .attr("y", function(d, i) { return y(d.Value); })
               .ease(d3.easeBounce);
 
           //Update the legend
@@ -164,7 +207,7 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
             });
   
   selector.selectAll("option")
-      .data(keys)
+      .data(keys.slice(1))
       .enter().append("option")
       .attr("value", function(d){
         return d;
@@ -178,7 +221,7 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
       .attr("font-size", 10)
       .attr("text-anchor", "end")
     .selectAll("g")
-    .data(keys.slice().reverse())
+    .data(currentKeys.slice().reverse())
     .enter().append("g")
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
@@ -197,21 +240,53 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
   });
   
   function formatData(data, selection){
-    var county = {},
-        state = {};
+    var filteredData = [];
     
     data.forEach(function(val, idx, arr){
       var sect = String(data[idx].Sector);
       var countyval = +val[selection];
       var stateval = +val['State'];
-
+      
       if (countyval != 0) {
-        county[sect] = countyval;
-        state[sect] = stateval;
+        var county = {},
+            state = {};
+        county["Sector"] = sect;
+        county["Value"] = countyval;
+        county["Type"] = "county";
+        state["Sector"] = sect;
+        state["Value"] = stateval;
+        state["Type"] = "state";
+        
+        filteredData.push(county);
+        filteredData.push(state);
       }
     });
     
-    return [county, state];
+    filteredData = sortData(filteredData, 0)
+    console.log(filteredData);
+    return filteredData;
+  }
+  
+  function sortData(filteredData, i) {
+    console.log(i)
+    var max = filteredData[i].Value;
+    for (var j = i; j < filteredData.length; j = j+2) {
+      if (filteredData[j].Value > max) {
+        max = filteredData[j].Value;
+        var temp = [filteredData[i], filteredData[i+1]];
+        filteredData[i] = filteredData[j];
+        filteredData[i+1] = filteredData[j+1];
+        filteredData[j] = temp[0];
+        filteredData[j+1] = temp[1];
+      }
+    }
+    console.log(filteredData);
+    
+    if (i == filteredData.length - 2) {
+      return filteredData;
+    } else {
+      return sortData(filteredData, i+2);
+    }
   }
   
 </script>
