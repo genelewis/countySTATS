@@ -45,35 +45,61 @@
   
   <body>
     <h1>CountySTATs - Master Mockup</h1>
-    <p>Updated September 29, 2017</p>
+    <p>Updated October 19, 2017</p>
+    
+    <div id="drop" align =center></div>
     
     <div class="column">
-      
-      <h2>Population</h2> 
-      <div class="population">
-        <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Population/Population.html" marginwidth="0" marginheight="0" style="height:525px;" scrolling="no"> </iframe>
+      <div style="float:left; width:50%">
+        <h2>Population</h2> 
+        <div class="population">
+          <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Population/Population.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"> </iframe>
+        </div>
+        
+        <h2>Unemployment</h2>
+        <div class="unemployment">
+          <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/County Unemployment/unemploymentrate.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+        </div>
+        
+        <h2>Educational Attainment</h2>
+        <div class="educationalAttainment">
+          <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Educational Attainment/educationalAttainment.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"> </iframe>
+        </div>
       </div>
       
-      <h2>Demographics</h2>
-      <div class="demographics">
-        <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Demographics/countyDemographics.html" marginwidth="0" marginheight="0" style="height:600px;" scrolling="no"></iframe>
-      </div>
-      
-      <h2>Unemployment</h2>
-      <div class="unemployment">
-        <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/County Unemployment/unemploymentrate.html" marginwidth="0" marginheight="0" style="height:525px; width:960px" scrolling="no"></iframe>
-      </div>
-      
-      <h2>Employment Sectors</h2>
-      <div class="employmentSectors">
-        <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" style="height:525px;" scrolling="no"></iframe>
-      </div>
-      
-      <h2>Educational Attainment</h2>
-      <div class="educationalAttainment">
-        <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Educational Attainment/educationalAttainment.html" marginwidth="0" marginheight="0" style="height:525px;" scrolling="no"></iframe>
+      <div style="float:right; width:50%">
+        <h2>Demographics</h2>
+        <div class="demographics">
+        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Demographics/countyDemographics2.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+        </div>
+        
+        <h2>Top 5 Employment Sectors</h2>
+        <div class="employmentSectors">
+        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+        </div>
       </div>
       
     </div>
   </body>
+  
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script>
+  
+    var counties = ["Adair County","Alfalfa County","Atoka County","Beaver County","Beckham County","Blaine County","Bryan County","Caddo County","Canadian County","Carter County","Cherokee County","Choctaw County","Cimarron County","Cleveland County","Coal County","Comanche County","Cotton County","Craig County","Creek County","Custer County","Delaware County","Dewey County","Ellis County","Garfield County","Garvin County","Grady County","Grant County","Greer County","Harmon County","Harper County","Haskell County","Hughes County","Jackson County","Jefferson County","Johnston County","Kay County","Kingfisher County","Kiowa County","Latimer County","Le Flore County","Lincoln County","Logan County","Love County","Major County","Marshall County","Mayes County","McClain County","McCurtain County","McIntosh County","Murray County","Muskogee County","Noble County","Nowata County","Okfuskee County","Oklahoma County","Okmulgee County","Osage County","Ottawa County","Pawnee County","Payne County","Pittsburg County","Pontotoc County","Pottawatomie County","Pushmataha County","Roger Mills County","Rogers County","Seminole County","Sequoyah County","Stephens County","Texas County","Tillman County","Tulsa County","Wagoner County","Washington County","Washita County","Woods County","Woodward County"]
+    
+    var selector = d3.select('#drop')
+            .append("select")
+            .attr("id", "dropdown");
+    
+    selector.selectAll("option")
+          .data(counties)
+          .enter().append("option")
+          .attr("value", function(d){
+            return d;
+          })
+          .text(function(d){
+            return d;
+          });
+    
+  </script>
 </html>

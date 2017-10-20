@@ -34,8 +34,8 @@
  
 <body>
   
-  <svg width="960" height="500"></svg>
-  <div id="drop" align="center"></div>
+  <svg width="480" height="260"></svg>
+  <!--<div id="drop" align="center"></div>-->
   
   <!-- load the d3.js library -->
   <script src="http://d3js.org/d3.v4.min.js"></script>
@@ -46,7 +46,7 @@
     
     //set the dimensions of the canvas / graph
     var svg = d3.select("svg"),
-        margin = {top: 20, bottom: 30, left: 40, right: 20},
+        margin = {top: 20, bottom: 20, left: 40, right: 20},
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom;
     
@@ -75,7 +75,7 @@
 
       //define the axes
       var xAxis = d3.axisBottom(x)
-          .ticks(20)
+          .ticks(10)
           .tickFormat(d3.timeFormat("%Y"));
 
       var yAxis = d3.axisLeft(y)
@@ -153,11 +153,13 @@
           .attr("class", "y axis")
           .call(yAxis)
         .append("text")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 6)
-          .attr("dy", "0.71em")
-          .attr("fill", "#000")
-          .text("Percentage");   
+            .attr("x", 2)
+            .attr("y", y(y.ticks().pop()) + 0.5)
+            .attr("dy", "0.32em")
+            .attr("fill", "#000")
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "start")
+            .text("Percentage");   
       
       var place = graph.selectAll(".place")
           .data(currentPlaces)
@@ -170,9 +172,8 @@
           .style("stroke", function(d) { return z(d.id); });
 
       //Use the drop-down menu to control graph transitions
-      var selector = d3.select("#drop")
-          .append("select")
-          .attr("id","dropdown")
+      var selector = window.parent.document.getElementById('dropdown');
+      selector = d3.select(selector)
           .on("change", function(d){
 
             //update data
@@ -205,7 +206,7 @@
             });
       
       //Input all the drop-down options
-      selector.selectAll("option")
+      /*selector.selectAll("option")
           .data(data.columns.slice(3))
           .enter().append("option")
           .attr("value", function(d){
@@ -213,7 +214,7 @@
           })
           .text(function(d){
             return d;
-          });
+          });*/
       
       //Create the legend
       var legend = graph.append("g")

@@ -45,14 +45,14 @@ h1 {
 
 <title>County Demographics</title>
 
-<svg width="960" height="500"></svg>
-<div id="drop" align="center"></div>
+<svg width="480" height="260"></svg>
+<!--<div id="drop" align="center"></div>-->
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="d3-tip.js"></script>
 <script>
 
 var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 30, left: 40},
+    margin = {top: 20, right: 20, bottom: 10, left: 40},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom -20,
     graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -144,34 +144,33 @@ d3.csv("data.csv", function(d, i, columns) {
 
   graph.append("g")
         .attr("class", "xaxis")
+        .style("font", "9px Arial")
         .attr("transform", "translate(0," + (height) + ")")
         .call(xAxis)
-      .append("text")
+      /*.append("text")
         .attr("x", width/2)
         .attr("y", 30)
         .attr("dy", "0.32em")
         .attr("fill", "#000")
         .attr("font-weight", "bold")
         .attr("text-anchor", "middle")
-        .attr("font-size", "15px")
-        .text("Top 5 Employment Ethnicitys")
+        .attr("font-size", "10px")
+        .text("Ethnicities")*/
 
   var yaxis = graph.append("g")
         .attr("class", "yaxis")
         .call(d3.axisLeft(y).ticks(null, "s"))
       .append("text")
-        .attr("x", 2)
-        .attr("y", y(y.ticks().pop()) + 0.5)
-        .attr("dy", "0.32em")
-        .attr("fill", "#000")
-        .attr("font-weight", "bold")
-        .attr("text-anchor", "start")
-        .attr("font-size", "15px")
-        .text("Percentage");
+            .attr("x", 2)
+            .attr("y", y(y.ticks().pop()) + 0.5)
+            .attr("dy", "0.32em")
+            .attr("fill", "#000")
+            .attr("font-weight", "bold")
+            .attr("text-anchor", "start")
+            .text("Percentage");
   
-  var selector = d3.select("#drop")
-        .append("select")
-        .attr("id","dropdown")
+  var selector = window.parent.document.getElementById('dropdown');
+        selector = d3.select(selector)
         .on("change", function(d){
 
           //update data
@@ -206,7 +205,7 @@ d3.csv("data.csv", function(d, i, columns) {
                 .text(function(d) {return d;})
             });
   
-  selector.selectAll("option")
+  /*selector.selectAll("option")
       .data(keys.slice(1))
       .enter().append("option")
       .attr("value", function(d){
@@ -214,7 +213,7 @@ d3.csv("data.csv", function(d, i, columns) {
       })
       .text(function(d){
         return d;
-      });
+      });*/
 
   var legend = graph.append("g")
       .attr("font-family", "sans-serif")

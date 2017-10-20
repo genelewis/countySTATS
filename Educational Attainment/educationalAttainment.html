@@ -41,7 +41,7 @@
 
 <body>
   
-  <svg width="960" height="500"></svg>
+  <svg width="480" height="260"></svg>
   <div id="drop" align="center"></div>
 
   <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -98,7 +98,7 @@
         var currentKeys = [keys[0], keys[1], selection];
 
         x0.domain(data.map(function(d) { return d.Level; }));
-        x1.domain(keys).rangeRound([0, 3815]);
+        x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
         y.domain([0, 50]).nice();
 
       //Set up tooltips
@@ -114,6 +114,7 @@
       //X axis never transitions, so we can generate all in one call
         var xAxis = graph.append("g")
             .attr("class", "xaxis")
+            .style("font", "9px Arial")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x0));
 
@@ -159,9 +160,8 @@
             });
 
       //Enable transitions upon making a different selection
-        var selector = d3.select("#drop")
-            .append("select")
-            .attr("id","dropdown")
+        var selector = window.parent.document.getElementById('dropdown');
+        selector = d3.select(selector)
             .on("change", function(d){
 
               //update data
@@ -197,7 +197,7 @@
                 t1.selectAll(".yaxis").call(yAxis);
             });*/
 
-        selector.selectAll("option")
+        /*selector.selectAll("option")
           .data(keys.slice(2))
           .enter().append("option")
           .attr("value", function(d){
@@ -205,7 +205,7 @@
           })
           .text(function(d){
             return d;
-          });
+          });*/
 
         var legend = graph.append("g")
             .attr("font-family", "sans-serif")
