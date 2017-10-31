@@ -79,7 +79,7 @@
           .tickFormat(d3.timeFormat("%Y"));
 
       var yAxis = d3.axisLeft(y)
-          .ticks(20)
+          .ticks(15)
           //.tickFormat(d3.format("%"));
 
       //define the lines
@@ -97,9 +97,7 @@
           })
         };
       });
-      
-      console.log(places);
-      
+            
       var selection = places[2];
       var currentPlaces = [places[0], places[1], selection];
       
@@ -126,7 +124,7 @@
         }
       
       // add the X gridlines
-        graph.append("g")			
+        /*graph.append("g")			
             .attr("class", "grid")
             .attr("transform", "translate(0," + height + ")")
             .call(make_x_gridlines()
@@ -140,7 +138,7 @@
             .call(make_y_gridlines()
                 .tickSize(-width)
                 .tickFormat("")
-            )
+            )*/
       
       
       //Build the graph axes and lines
@@ -174,9 +172,8 @@
       //Use the drop-down menu to control graph transitions
       var selector = window.parent.document.getElementById('dropdown');
       selector = d3.select(selector)
-          .on("change", function(d){
-
-            //update data
+        .on("change.unemp", function(d) {
+            
             selection = this.options[this.selectedIndex].value;
             currentPlaces[2] = places[places.findIndex(x => x.id == selection)]
             
@@ -191,7 +188,6 @@
             //Transition the lines:
             lines.transition()
                 .attr("d", function(d) {
-                  console.log(d);
                   return line(d.values); 
                 });
             
@@ -204,17 +200,6 @@
             legendText.transition()
                 .text(function(d) {return d.id;})
             });
-      
-      //Input all the drop-down options
-      /*selector.selectAll("option")
-          .data(data.columns.slice(3))
-          .enter().append("option")
-          .attr("value", function(d){
-            return d;
-          })
-          .text(function(d){
-            return d;
-          });*/
       
       //Create the legend
       var legend = graph.append("g")

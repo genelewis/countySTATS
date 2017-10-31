@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+  <head> 
+    <meta charset="utf-8">
+    <title>countySTATs - Master</title>
+    <style>
+      body {
+        font-family: "Helvetica Neue", Helvetica, sans-serif;
+        margin: 2em auto 4em auto;
+        tab-size: 2;
+        -webkit-text-size-adjust: none;
+      }
+      .column {
+        max-width: 960px;
+        position: relative;
+        display: block;
+        margin: 0 auto;
+        padding: 0 10px;
+      }
+      h1 {
+        font-size: 46px;
+        font-weight: 500;
+        letter-spacing: -1px;
+        margin: 0.1em 0;
+      }
+      h1, p {
+        margin-left: 40px;
+      }
+      pre {
+        border-left: solid 2px #ccc;
+        padding-left: 18px;
+        margin: 2em 0 2em -20px;
+        max-width: 960px;
+        overflow-x: auto;
+      }
+      .line {
+          stroke: #ccc;
+          stroke-width: 2;
+          fill: none;
+      }
+
+      path{
+          stroke: #ccc;
+          stroke-width: 1;
+      }
+
+      .grid line {
+          stroke: lightgrey;
+          stroke-opacity: 0.7;
+          stroke-width: 1
+          shape-rendering: crispEdges;
+      }
+
+      .axis path,
+      .axis line {
+          fill: none;
+          stroke: grey;
+          stroke-width: 1;
+          shape-rendering: crispEdges;
+      }
+
+
+    </style>
+  </head>
+  
+  <body>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="d3-tip.js"></script>
+    <h1>CountySTATs - Master Mockup</h1>
+    <p>Updated October 25, 2017</p>
+    
+    <!--Set up the parent drop down menu and populate it w/ county names-->
+    <div id="drop" align =center></div>
+    <script>
+      var mcounties = ["Adair County","Alfalfa County","Atoka County","Beaver County","Beckham County","Blaine County","Bryan County","Caddo County","Canadian County","Carter County","Cherokee County","Choctaw County","Cimarron County","Cleveland County","Coal County","Comanche County","Cotton County","Craig County","Creek County","Custer County","Delaware County","Dewey County","Ellis County","Garfield County","Garvin County","Grady County","Grant County","Greer County","Harmon County","Harper County","Haskell County","Hughes County","Jackson County","Jefferson County","Johnston County","Kay County","Kingfisher County","Kiowa County","Latimer County","Le Flore County","Lincoln County","Logan County","Love County","Major County","Marshall County","Mayes County","McClain County","McCurtain County","McIntosh County","Murray County","Muskogee County","Noble County","Nowata County","Okfuskee County","Oklahoma County","Okmulgee County","Osage County","Ottawa County","Pawnee County","Payne County","Pittsburg County","Pontotoc County","Pottawatomie County","Pushmataha County","Roger Mills County","Rogers County","Seminole County","Sequoyah County","Stephens County","Texas County","Tillman County","Tulsa County","Wagoner County","Washington County","Washita County","Woods County","Woodward County"]
+      
+      var mselector = d3.select('#drop')
+              .append("select")
+              .attr("id", "dropdown")
+
+      mselector.selectAll("option")
+            .data(mcounties)
+            .enter().append("option")
+            .attr("value", function(d){
+              return d;
+            })
+            .text(function(d){
+              return d;
+            });
+    </script>
+    
+    
+    <div class="column" align="center">
+      <div style="float:left; width:50%">
+        
+        <h2>Population</h2> 
+        <div class="population">
+          <svg id="populationgraph" style="height:260px; width:480px"></svg>
+        </div>
+        
+        
+        <h2>Unemployment</h2>
+        <div class="unemployment">
+          <svg id="unemploymentgraph" height="260" width="480"></svg>
+          <script>
+            function unemp() {
+            //set the dimensions of the canvas / graph
+            var svg = d3.select("#unemploymentgraph"),
+                margin = {top: 20, bottom: 20, left: 40, right: 20},
+                width = +svg.attr("width") - margin.left - margin.right,
+                height = +svg.attr("height") - margin.top - margin.bottom;
+
+            //add the svg canvas
+            var graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            //enter the data and begin working with it inside the main function
+            d3.csv("unemp_data.csv", function(d, i, columns) {
+              for (var i = 1, n = columns.length; i < n; ++i)
+                d[columns[i]] = +d[columns[i]];
+                return d;},
+
+            //Main function:   
+            function(error, data) {
+              if (error) throw error;
+
+              var parseDate = d3.timeParse('%Y');
+              data.forEach(function(d) {
+                  d.year = parseDate(d.year);
+                })
+
+              //set the relevant ranges
+              var x = d3.scaleTime().range([0, width]),
+                  y = d3.scaleLinear().range([height, 0]),
+                  z = d3.scaleOrdinal().range(["#febd60","#972421","#2f507f"]);
+
+              //define the axes
+              var xAxis = d3.axisBottom(x)
+                  .ticks(10)
+                  .tickFormat(d3.timeFormat("%Y"));
+
+              var yAxis = d3.axisLeft(y)
+                  .ticks(20)
+                  //.tickFormat(d3.format("%"));
+
+              //define the lines
+              var line = d3.line()
+                  .curve(d3.curveBasis)
+                  .x(function(d) {return x(d.year);})
+                  .y(function(d) {return y(d.unemp);});
+
+              //constructs dictionary of "places" (national, state, counties...)
+              var places = data.columns.slice(1).map(function(id) {
+                return{
+                  id: id,
+                  values: data.map(function(d) {
+                    return {year: d.year, unemp: d[id]};
+                  })
+                };
+              });
+
+              console.log(places);
+
+              var selection = places[2];
+              var currentPlaces = [places[0], places[1], selection];
+
+              //scale the range of the data
+              x.domain(d3.extent(data, function(d) {return d.year}));
+
+              y.domain([
+                d3.min(currentPlaces, function(c) { return d3.min(c.values, function(d) { return d.unemp; }); }) - 0.1,
+                d3.max(currentPlaces, function(c) { return d3.max(c.values, function(d) { return d.unemp; }); }) + 0.2
+              ]);
+
+              z.domain(places.map(function(c) { return c.id; }));
+
+              // gridlines in x axis function
+                function make_x_gridlines() {		
+                    return d3.axisBottom(x)
+                        .ticks(10)
+                }
+
+              // gridlines in y axis function
+                function make_y_gridlines() {		
+                    return d3.axisLeft(y)
+                        .ticks(10)
+                }
+
+              // add the X gridlines
+                graph.append("g")			
+                    .attr("class", "grid")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(make_x_gridlines()
+                        .tickSize(-height)
+                        .tickFormat("")
+                    )
+
+              // add the Y gridlines
+                graph.append("g")			
+                    .attr("class", "grid")
+                    .call(make_y_gridlines()
+                        .tickSize(-width)
+                        .tickFormat("")
+                    )
+
+
+              //Build the graph axes and lines
+              graph.append("g")
+                  .attr("class", "x axis")
+                  .attr("transform", "translate(0," + height + ")")
+                  .call(xAxis);
+
+              graph.append("g")
+                  .attr("class", "y axis")
+                  .call(yAxis)
+                .append("text")
+                    .attr("x", 2)
+                    .attr("y", y(y.ticks().pop()) + 0.5)
+                    .attr("dy", "0.32em")
+                    .attr("fill", "#000")
+                    .attr("font-weight", "bold")
+                    .attr("text-anchor", "start")
+                    .text("Percentage");   
+
+              var place = graph.selectAll(".place")
+                  .data(currentPlaces)
+                  .enter().append("g")
+                    .attr("class", "place");
+
+              var lines = place.append("path")
+                  .attr("class", "line")
+                  .attr("d", function(d) { return line(d.values); })
+                  .style("stroke", function(d) { return z(d.id); });
+
+              //Use the drop-down menu to control graph transitions
+              var selector = d3.select('#dropdown')
+                .on("change.unemp", function(d) {
+
+                    //update data
+                    selection = this.options[this.selectedIndex].value;
+                    currentPlaces[2] = places[places.findIndex(x => x.id == selection)]
+
+                    y.domain([
+                      d3.min(currentPlaces, function(c) { return d3.min(c.values, function(d) { return d.unemp; }); }) - 0.1,
+                      d3.max(currentPlaces, function(c) { return d3.max(c.values, function(d) { return d.unemp; }); }) + 0.2
+                    ]);
+
+                    lines.data(currentPlaces);
+                    legendText.data(currentPlaces);
+
+                    //Transition the lines:
+                    lines.transition()
+                        .attr("d", function(d) {
+                          console.log(d);
+                          return line(d.values); 
+                        });
+
+                    //Rescale the Y axis
+                    var t0 = svg.transition().duration(150);
+                    var t1 = t0.transition();
+                    t1.selectAll(".y.axis").call(yAxis);
+
+                    //Update the legend
+                    legendText.transition()
+                        .text(function(d) {return d.id;})
+                });
+
+              //Create the legend
+              var legend = graph.append("g")
+                  .attr("font-family", "sans-serif")
+                  .attr("font-size", 10)
+                  .attr("text-anchor", "end")
+                .selectAll("g")
+                  .data(currentPlaces, function(d) {return d.id;})
+                .enter().append("g")
+                  .attr("transform", function(d, i) { return "translate(-5," + ((i * 20)+5) + ")"; });
+
+              var legendBox = legend.append("rect")
+                  .attr("width", 19)
+                  .attr("height", 19)
+                  .attr("x", width-19)
+                  .attr("fill", function(d) {return z(d.id);})
+
+              var legendText = legend.append("text")
+                  .attr("x", width - 24)
+                  .attr("y", 9.5)
+                  .attr("dy", "0.32em")
+                  .attr("class", "legend")
+                  .text(function(d) {return d.id;});
+            }); 
+            };
+            unemp();
+          </script>
+        </div>
+        
+        
+        <h2>Educational Attainment</h2>
+        <div class="educationalAttainment">
+          <svg id="educationgraph" height="260" width="480"></svg>
+          <script>
+            var svg = d3.select("#educationgraph"),
+                margin = {top: 20, right: 20, bottom: 30, left: 40},
+                width = +svg.attr("width") - margin.left - margin.right,
+                height = +svg.attr("height") - margin.top - margin.bottom;
+
+            var graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            //Begin by inserting the data
+            d3.csv("edu_data.csv", function(d, i, columns) {
+
+              //Convert data string values into integers
+              for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
+              console.log(d);
+              return d;}, 
+
+              //MAIN FUNCTION     
+              function(error, data) {
+                if (error) throw error;
+
+              //Levels of education
+                var x0 = d3.scaleBand()
+                  .rangeRound([0, width])
+                  .paddingInner(0.1);
+
+              //County, state, or national
+                var x1 = d3.scaleBand()
+                    .padding(0.05);
+
+              //Percent educated
+                var y = d3.scaleLinear()
+                    .rangeRound([height, 0]);
+
+              //Scale for bar coloring
+                var z = function(d) {
+                    if (d == "National") {
+                      return "#febd60";
+                    } else if (d == "State") {
+                      return "#972421";
+                    } else {
+                      return "#2f507f";
+                    }
+                }
+                //'#d6f5d6', '#85e085', '#29a329'
+
+              //Full list of places (national, state, adair, atoka...)
+                var keys = data.columns.slice(1);
+                var selection = keys[2] //Hard coded to begin with first county
+                var currentKeys = [keys[0], keys[1], selection];
+
+                x0.domain(data.map(function(d) { return d.Level; }));
+                x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
+                y.domain([0, 50]).nice();
+
+              //Set up tooltips
+                var tip = d3.tip()
+                  .attr('class', 'd3-tip')
+                  .offset([-10, 0])
+                  .html(function(d) {
+                    return "<span style='color:grey'>" + d.value + "%</span>";
+                })
+                svg.call(tip);
+
+              //Create the axes
+              //X axis never transitions, so we can generate all in one call
+                var xAxis = graph.append("g")
+                    .attr("class", "xaxis")
+                    .style("font", "9px Arial")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x0));
+
+              //Y axis has transitions in the domain, so we create this variable and then append it to the main SVG
+                var yAxis = d3.axisLeft(y)
+                    .ticks(10, "s")
+                    .scale(y)
+
+                graph.append("g")
+                    .attr("class", "yaxis")
+                    .call(yAxis)
+                  .append("text")
+                    .attr("x", 2)
+                    .attr("y", y(y.ticks().pop()) + 0.5)
+                    .attr("dy", "0.32em")
+                    .attr("fill", "#000")
+                    .attr("font-weight", "bold")
+                    .attr("text-anchor", "start")
+                    .text("Percentage");
+
+              //Create the bars
+                var bars = graph.append("g")
+                  .selectAll("g")
+                  .data(data)
+                  .enter().append("g")
+                    .attr("transform", function(d) { return "translate(" + x0(d.Level) + ",0)"; })
+                  .selectAll("rect")
+                  .data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
+                  .enter().append("rect")
+                    .attr("class", "bar")
+                    .attr("x", function(d) { return x1(d.key); })
+                    .attr("y", function(d) { return y(d.value); })
+                    .attr("width", x1.bandwidth())
+                    .attr("height", function(d) { return height - y(d.value); })
+                    .attr("fill", function(d) { return z(d.key); })
+                    .on('mouseover', function(d) {
+                      d3.select(this).attr("fill", d3.rgb(z(d.key)).brighter(0.5));
+                      tip.show(d);
+                    })
+                    .on('mouseout', function(d) {
+                      d3.select(this).attr("fill", d3.rgb(z(d.key)).darker(0.1));
+                      tip.hide(d);
+                    });
+
+              //Enable transitions upon making a different selection
+                var selector = d3.select('#dropdown')
+                    .on("change.edu", function(d){
+
+                      //update data
+                        selection = this.options[this.selectedIndex].value;
+                        currentKeys[2] = selection;
+                        bars.data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
+                        legendText.data(currentKeys.slice());
+
+                      //update the county bars
+                        var t0 = svg.transition().duration(450).ease(d3.easeBounce);
+                        t0.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
+                          .attr("y", function(d){return y(d.value);})
+                          .ease(d3.easeBounce);
+
+                      //Update the legend
+                        legendText.transition()
+                            .text(function(d) {return d;})
+                        });
+
+                var legend = graph.append("g")
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", 10)
+                    .attr("text-anchor", "end")
+                  .selectAll("g")
+                  .data(currentKeys.slice())
+                  .enter().append("g")
+                    .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+                var legendBox = legend.append("rect")
+                    .attr("x", width - 19)
+                    .attr("width", 19)
+                    .attr("height", 19)
+                    .attr("fill", z);
+
+                var legendText = legend.append("text")
+                    .attr("x", width - 24)
+                    .attr("y", 9.5)
+                    .attr("dy", "0.32em")
+                    .text(function(d) { 
+                        return d;
+                    });
+            });
+          </script>
+        </div>
+      </div>
+      
+      
+      <div style="float:right; width:50%">
+        <h2>Demographics</h2>
+        <div class="demographics">
+          <svg id="demographicgraph" style="height:260px; width:480px"></svg>
+        </div>
+        
+        
+        <h2>Top 5 Employment Sectors</h2>
+        <div class="employmentSectors">
+          <svg id="employmentgraph" style="height:260px; width:480px"></svg>
+        </div>
+      </div>
+      
+    </div>
+  </body>
+</html>

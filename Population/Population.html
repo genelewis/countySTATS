@@ -49,7 +49,7 @@ path {
 <body>
   
   <svg width="480" height="250"></svg>
-  <!--<div id="drop" align =center></div>-->
+  <div id="drop" align =center></div>
   
   <script src="http://d3js.org/d3.v4.min.js"></script>
   <script>
@@ -66,11 +66,10 @@ path {
             
       //Convert data string values into integers
       for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
-      console.log(d);
       return d;}, 
     
       //MAIN FUNCTION
-      function(error, data) {
+      function (error, data) {
         if (error) throw error;
             
         var x = d3.scaleTime()
@@ -107,7 +106,7 @@ path {
         }
       
       // add the X gridlines
-        graph.append("g")			
+        /*graph.append("g")			
             .attr("class", "grid")
             .attr("transform", "translate(0," + height + ")")
             .call(make_x_gridlines()
@@ -121,7 +120,7 @@ path {
             .call(make_y_gridlines()
                 .tickSize(-width)
                 .tickFormat("")
-            )
+            )*/
       
         var xAxis = d3.axisBottom(x)
             .ticks(10)
@@ -186,29 +185,27 @@ path {
         }
       
       //Enable transitions
-        var selector = window.parent.document.getElementById('dropdown');
-        selector = d3.select(selector)
-            /*.append("select")
-            .attr("id", "dropdown")*/
-            .on("change", function(d) {
-              
-            //update data
-              selection = this.options[this.selectedIndex].value;
-              y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }) + 10000, 50000)]);
-              legendText.data([selection]);
-              
-            //make the transitions
-              path.transition()
-                  .attr("d", line);
-              
-              d3.select('.y.axis').transition()
-                  .call(yAxis);
-            //Update the legend
-              legendText.transition()
-                  .text(function(d) {return d;})
-            });
+      var selector = window.parent.document.getElementById('dropdown');
+      selector = d3.select(selector)
+                .on("change.pop", function(d) {
 
-        /*selector.selectAll("option")
+              //update data
+                selection = this.options[this.selectedIndex].value;
+                y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }) + 10000, 50000)]);
+                legendText.data([selection]);
+
+              //make the transitions
+                path.transition()
+                    .attr("d", line);
+
+                d3.select('.y.axis').transition()
+                    .call(yAxis);
+              //Update the legend
+                legendText.transition()
+                    .text(function(d) {return d;})
+              });
+
+        selector.selectAll("option")
           .data(keys)
           .enter().append("option")
           .attr("value", function(d){
@@ -216,7 +213,7 @@ path {
           })
           .text(function(d){
             return d;
-          });*/
+          });
       
       //Create the legend
         var legend = graph.append("g")
@@ -242,6 +239,7 @@ path {
             .text(function(d) {return d;});
 
     });
+    
 
   </script>
 </body>

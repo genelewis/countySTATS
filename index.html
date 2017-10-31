@@ -28,8 +28,11 @@
         letter-spacing: -1px;
         margin: 0.1em 0;
       }
-      h1, p {
+      h1, h3, .fact, .sheet {
         margin-left: 40px;
+      }
+      h2 {
+        margin-left: 20px;
       }
       pre {
         border-left: solid 2px #ccc;
@@ -38,6 +41,9 @@
         max-width: 960px;
         overflow-x: auto;
       }
+      p {
+        font-size: 14px;
+      }
 
 
     </style>
@@ -45,7 +51,18 @@
   
   <body>
     <h1>CountySTATs - Master Mockup</h1>
-    <p>Updated October 19, 2017</p>
+    <h3>Updated October 26, 2017</h3>
+    
+    <div class="column">
+      <div style="float:left; width:50%; height:260px">
+        <br><br><br><br><br>
+        <h4><b>County Stats:</b></h4>
+        <p>Use the <b>drop-down menu below</b> to dynamically switch between counties, or click on a county to the right to be taken to a <b>printable fact sheet</b> for that county.</p>
+      </div>
+      <div style="float:right; width:50%, height:260px">
+        <img src="county-map.png" style="height:257px; width:480px">
+      </div>
+    </div>
     
     <div id="drop" align =center></div>
     
@@ -53,18 +70,18 @@
       <div style="float:left; width:50%">
         <h2>Population</h2> 
         <div class="population">
-          <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Population/Population.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"> </iframe>
+          <iframe id="population" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Population/Population.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"> </iframe>
         </div>
         
         <h2>Unemployment</h2>
         <div class="unemployment">
-          <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/County Unemployment/unemploymentrate.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+          <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/County Unemployment/Unemployment.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
         </div>
         
-        <h2>Educational Attainment</h2>
-        <div class="educationalAttainment">
-          <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Educational Attainment/educationalAttainment.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"> </iframe>
-        </div>
+        <h2>Top 5 Employment Sectors</h2>
+        <div class="employmentSectors">
+        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+        </div>   
       </div>
       
       <div style="float:right; width:50%">
@@ -73,10 +90,17 @@
         <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Demographics/countyDemographics2.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
         </div>
         
-        <h2>Top 5 Employment Sectors</h2>
-        <div class="employmentSectors">
-        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+        <h2>Educational Attainment</h2>
+        <div class="educationalAttainment">
+          <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Educational Attainment/educationalAttainment.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"> </iframe>
         </div>
+        
+        <h2>More Stats</h2>
+        <br>
+        <p class="fact" id="medHouseInc"><b>Median Household Income: </b></p>
+        <p class="fact"><b>Children in Poverty: </b></p>
+        <p class="fact"><b>Working-age Civilians in Labor Force: </b></p>
+        <div class="sheet"></div>
       </div>
       
     </div>
@@ -87,10 +111,37 @@
   
     var counties = ["Adair County","Alfalfa County","Atoka County","Beaver County","Beckham County","Blaine County","Bryan County","Caddo County","Canadian County","Carter County","Cherokee County","Choctaw County","Cimarron County","Cleveland County","Coal County","Comanche County","Cotton County","Craig County","Creek County","Custer County","Delaware County","Dewey County","Ellis County","Garfield County","Garvin County","Grady County","Grant County","Greer County","Harmon County","Harper County","Haskell County","Hughes County","Jackson County","Jefferson County","Johnston County","Kay County","Kingfisher County","Kiowa County","Latimer County","Le Flore County","Lincoln County","Logan County","Love County","Major County","Marshall County","Mayes County","McClain County","McCurtain County","McIntosh County","Murray County","Muskogee County","Noble County","Nowata County","Okfuskee County","Oklahoma County","Okmulgee County","Osage County","Ottawa County","Pawnee County","Payne County","Pittsburg County","Pontotoc County","Pottawatomie County","Pushmataha County","Roger Mills County","Rogers County","Seminole County","Sequoyah County","Stephens County","Texas County","Tillman County","Tulsa County","Wagoner County","Washington County","Washita County","Woods County","Woodward County"]
     
+    var stat = d3.selectAll(".fact")
+      .append("text")
+      .attr("x", 10)
+      .attr("y", 0)
+      .text(function() {return String(Math.floor(Math.random() * 31)) + "%";});
+    
+    var link = d3.selectAll(".sheet")
+      .append("a")
+      .attr("href", "https://okpolicy.org/wp-content/uploads/Adair-2015.pdf?x43134")
+      .attr("target", "_blank")
+      .attr("style", "font-size:12px")
+      .html("See more (print full factsheet for this county)...");
+    
     var selector = d3.select('#drop')
             .append("select")
-            .attr("id", "dropdown");
+            .attr("id", "dropdown")
+            .on("change.master", function(d){
+              
+              var selection = this.options[this.selectedIndex].value,
+                  linkedSheet = "https://okpolicy.org/wp-content/uploads/" + selection.slice(0, -7) + "-2015.pdf?x43134";
+              
+              console.log(selection)
+              console.log(linkedSheet)
+              
+              stat.transition()
+                  .text(function() {return String(Math.floor(Math.random() * 31)) + "%";});
     
+              link.transition()
+                  .attr("href", linkedSheet);
+              });
+
     selector.selectAll("option")
           .data(counties)
           .enter().append("option")
@@ -100,6 +151,11 @@
           .text(function(d){
             return d;
           });
+
+function Hello() {
+  console.log("hello")
+}    
+ 
     
   </script>
 </html>

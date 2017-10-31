@@ -79,16 +79,10 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
   var selection = 'Adair County', //Initial value
       keys = data.columns.slice(1),
       currentKeys = ['State', selection];
-  
-  console.log(data);
-  
+    
   var dataset = formatData(data, selection);
-  
-  console.log("DEBUG");
-  console.log(dataset[0]);
 
   x0.domain(dataset.map(function(d) { 
-    console.log(d.Sector);
     return d.Sector; }));
   x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
   y.domain([0, 40]).nice();
@@ -110,7 +104,6 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
       .selectAll("rect")
       /*.data(function(d, i) { 
         var dt = currentKeys.map(function(key) { return {key: key, value: data[i][key]}; });
-        console.log(dt);
         return dt;  })*/
       .data(dataset)
 
@@ -118,9 +111,9 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
         .attr("class", "bar")
         .attr("transform", function(d,i) { 
             if (i%2 == 0){
-              var offset = 6;
+              var offset = 3;
             } else {
-              var offset = x1.bandwidth()+7;
+              var offset = x1.bandwidth()+4;
             }
             return "translate(" + (x0(d.Sector) + offset) + ",0)"; })
         .attr("x", function(d) { return x1(d.Sector); })
@@ -144,7 +137,7 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
 
   graph.append("g")
         .attr("class", "xaxis")
-        .style("font", "8px Arial")
+        .style("font", "7px Arial")
         .attr("transform", "translate(0," + (height) + ")")
         .call(xAxis)
       /*.append("text")
@@ -195,7 +188,6 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
             var t0 = svg.transition().duration(450).ease(d3.easeBounce);
             t0.selectAll(".bar")
               .attr("height", function(d) { 
-                console.log(d.Value);
                 return height - y(d.Value); })
               .attr("y", function(d, i) { return y(d.Value); })
               .ease(d3.easeBounce);
@@ -204,16 +196,6 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
             legendText.transition()
                 .text(function(d) {return d;})
             });
-  
-  /*selector.selectAll("option")
-      .data(keys.slice(1))
-      .enter().append("option")
-      .attr("value", function(d){
-        return d;
-      })
-      .text(function(d){
-        return d;
-      });*/
 
   var legend = graph.append("g")
       .attr("font-family", "sans-serif")
@@ -262,12 +244,10 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
     });
     
     filteredData = sortData(filteredData, 0)
-    console.log(filteredData);
     return filteredData;
   }
   
   function sortData(filteredData, i) {
-    console.log(i)
     var max = filteredData[i].Value;
     for (var j = i; j < filteredData.length; j = j+2) {
       if (filteredData[j].Value > max) {
@@ -279,7 +259,6 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
         filteredData[j+1] = temp[1];
       }
     }
-    console.log(filteredData);
     
     if (i == filteredData.length - 2) {
       return filteredData;

@@ -60,7 +60,6 @@
             
       //Convert data string values into integers
       for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
-      console.log(d);
       return d;}, 
 
       //MAIN FUNCTION     
@@ -162,7 +161,7 @@
       //Enable transitions upon making a different selection
         var selector = window.parent.document.getElementById('dropdown');
         selector = d3.select(selector)
-            .on("change", function(d){
+            .on("change.edu", function(d){
 
               //update data
                 selection = this.options[this.selectedIndex].value;
@@ -180,32 +179,6 @@
                 legendText.transition()
                     .text(function(d) {return d;})
                 });
-
-              //Transition for the y-axis (left in for posterity, but decided to make constant):
-      
-                /*y.domain([0, d3.max(data, function(d) { return d3.max(currentKeys, function(key) { return d[key]; }); })+ 10]).nice();
-                var t0 = svg.transition().duration(250).ease(d3.easeExp);
-                t0.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
-                  .attr("y", function(d){return y(d.value);})
-                  .ease(d3.easeExp);
-
-
-                y.domain([0, d3.max(data, function(d) { return d3.max(currentKeys, function(key) { return d[key]; }); }) + 5]).nice();
-                var t1 = t0.transition();
-                t1.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
-                  .attr("y", function(d){return y(d.value);})
-                t1.selectAll(".yaxis").call(yAxis);
-            });*/
-
-        /*selector.selectAll("option")
-          .data(keys.slice(2))
-          .enter().append("option")
-          .attr("value", function(d){
-            return d;
-          })
-          .text(function(d){
-            return d;
-          });*/
 
         var legend = graph.append("g")
             .attr("font-family", "sans-serif")
