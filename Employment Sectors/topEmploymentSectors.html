@@ -52,7 +52,7 @@ h1 {
 <script>
 
 var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 0, left: 40},
+    margin = {top: 20, right: 20, bottom: 25, left: 40},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom -20,
     graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -96,15 +96,7 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
   svg.call(tip);
                     
   var bars = graph.append("g")
-      /*.selectAll("g")
-      .data(dataset)
-      .enter().append("g")
-        .attr("class", "bargroup")
-        .attr("transform", function(d) { return "translate(" + x0(d.Sector) + ",0)"; }) */
       .selectAll("rect")
-      /*.data(function(d, i) { 
-        var dt = currentKeys.map(function(key) { return {key: key, value: data[i][key]}; });
-        return dt;  })*/
       .data(dataset)
 
   bars.enter().append("rect")
@@ -135,20 +127,15 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
   
   var xAxis = d3.axisBottom(x0)
 
-  graph.append("g")
+  var myvariable = graph.append("g")
         .attr("class", "xaxis")
         .style("font", "7px Arial")
         .attr("transform", "translate(0," + (height) + ")")
         .call(xAxis)
-      /*.append("text")
-        .attr("x", width/2)
-        .attr("y", 30)
-        .attr("dy", "0.32em")
-        .attr("fill", "#000")
-        .attr("font-weight", "bold")
-        .attr("text-anchor", "middle")
-        .attr("font-size", "15px")
-        .text("Top 5 Employment Sectors")*/
+  
+  console.log(myvariable.selectAll('.tick text'))
+    myvariable.selectAll(".tick text")
+      .call(wrap, x0.bandwidth());
 
   var yaxis = graph.append("g")
         .attr("class", "yaxis")
@@ -162,9 +149,37 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
             .attr("text-anchor", "start")
             .text("Percentage");
   
+  function wrap(text, width) {
+    console.log("I AM HERE")
+    text.each(function() {
+      var text = d3.select(this),
+          words = text.text().split(/\s+/).reverse(),
+          word,
+          line = [],
+          lineNumber = 0,
+          lineHeight = 1.1, // ems
+          y = text.attr("y"),
+          dy = parseFloat(text.attr("dy")),
+          tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+      while (word = words.pop()) {
+        line.push(word);
+        tspan.text(line.join(" "));
+        if (tspan.node().getComputedTextLength() > width) {
+          line.pop();
+          tspan.text(line.join(" "));
+          line = [word];
+          tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+        }
+      }
+      console.log(text.text())
+    });
+  }
+  
   var selector = window.parent.document.getElementById('dropdown');
       selector = d3.select(selector)
         .on("change", function(d){
+        
+          console.log(myvariable.selectAll('.tick text'))
 
           //update data
             selection = this.options[this.selectedIndex].value;
@@ -175,7 +190,7 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
             x0.domain(dataset.map(function(d) { 
                   return d.Sector; 
               }));
-                    
+        
             d3.selectAll(".bar")
               .data(dataset);
             
@@ -183,7 +198,10 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
           
             var t = svg.transition().duration(750);
             t.select(".xaxis").call(xAxis);
-
+        
+            console.log(myvariable.selectAll('.tick text'));    
+            myvariable.selectAll('.tick text').call(wrap, x0.bandwidth());
+          
           //update the county bars
             var t0 = svg.transition().duration(450).ease(d3.easeBounce);
             t0.selectAll(".bar")
@@ -195,7 +213,8 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
           //Update the legend
             legendText.transition()
                 .text(function(d) {return d;})
-            });
+        
+        });
 
   var legend = graph.append("g")
       .attr("font-family", "sans-serif")
