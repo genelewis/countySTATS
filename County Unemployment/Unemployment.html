@@ -28,13 +28,22 @@
         stroke-width: 1;
         shape-rendering: crispEdges;
     }
+    .overlay {
+      fill: none;
+      pointer-events: all;
+    }
+
+    .focus circle {
+      fill: none;
+      stroke: grey;
+    }
 </style>
   <meta charset="utf-8">
 </head>
  
 <body>
   
-  <svg width="480" height="260"></svg>
+  <svg class="Unemployment" width="480" height="260"><title>Unemployment</title></svg>
   <!--<div id="drop" align="center"></div>-->
   
   <!-- load the d3.js library -->
@@ -169,6 +178,18 @@
           .attr("d", function(d) { return line(d.values); })
           .style("stroke", function(d) { return z(d.id); });
 
+      var focus = graph.append("g")
+            .attr("class", "focus")
+            .style("display", "none");
+
+        focus.append("circle")
+            .attr("r", 4.5);
+
+        focus.append("text")
+            .attr("x", 9)
+            .attr("dy", ".35em");
+      
+      
       //Use the drop-down menu to control graph transitions
       var selector = window.parent.document.getElementById('dropdown');
       selector = d3.select(selector)
@@ -222,7 +243,92 @@
           .attr("y", 9.5)
           .attr("dy", "0.32em")
           .attr("class", "legend")
-          .text(function(d) {return d.id;});
-    }); 
+          .text(function(d) {return d.id;}); 
+    
+    var mouseG = graph.append("g")
+      .attr("class", "mouse-over-effects");
+      
+    var tracelines = document.getElementsByClassName('line');
+      
+    var mousePerLine = mouseG.selectAll('.mouse-per-line')
+      .data(currentPlaces)
+      .enter()
+      .append("g")
+      .attr("class", "mouse-per-line");
+      
+    mousePerLine.append("circle")
+      .attr("r", 7)
+      .style("stroke", function(d) {
+        return z(d.id);
+      })
+      .style("fill", "none")
+      .style("stroke-width", "1px")
+      .style("opacity", "0");
+
+    mousePerLine.append("text")
+      .attr("transform", "translate(10,3)");
+
+    mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
+      .attr('width', width) // can't catch mouse events on a g element
+      .attr('height', height)
+      .attr('fill', 'none')
+      .attr('pointer-events', 'all')
+      .on('mouseout', function() { // on mouse out hide line, circles and text
+        d3.select(".mouse-line")
+          .style("opacity", "0");
+        d3.selectAll(".mouse-per-line circle")
+          .style("opacity", "0");
+        d3.selectAll(".mouse-per-line text")
+          .style("opacity", "0");
+      })
+      .on('mouseover', function() { // on mouse in show line, circles and text
+        d3.select(".mouse-line")
+          .style("opacity", "1");
+        d3.selectAll(".mouse-per-line circle")
+          .style("opacity", "1");
+        d3.selectAll(".mouse-per-line text")
+          .style("opacity", "1");
+      })
+      .on('mousemove', function() { // mouse moving over canvas
+        var mouse = d3.mouse(this);
+        d3.select(".mouse-line")
+          .attr("d", function() {
+            var d = "M" + mouse[0] + "," + height;
+            d += " " + mouse[0] + "," + 0;
+            return d;
+          });
+
+        d3.selectAll(".mouse-per-line")
+          .attr("transform", function(d, i) {
+            console.log(width/mouse[0])
+            var xDate = x.invert(mouse[0]),
+                bisect = d3.bisector(function(d) { console.log(d);return d.year; }).right;
+                idx = bisect(d.values, xDate);
+
+          console.log(i);
+          console.log(tracelines[i]);
+          
+            var beginning = 0,
+                end = tracelines[i].getTotalLength(),
+                target = null;
+
+            while (true){
+              target = Math.floor((beginning + end) / 2);
+              pos = tracelines[i].getPointAtLength(target);
+              if ((target === end || target === beginning) && pos.x !== mouse[0]) {
+                  break;
+              }
+              if (pos.x > mouse[0])      end = target;
+              else if (pos.x < mouse[0]) beginning = target;
+              else break; //position found
+            }
+            
+            d3.select(this).select('text')
+              .text(y.invert(pos.y).toFixed(2));
+              
+            return "translate(" + mouse[0] + "," + pos.y +")";
+          });
+      });
+    });
   </script>
 </body>
