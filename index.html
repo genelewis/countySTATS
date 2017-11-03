@@ -28,7 +28,7 @@
         letter-spacing: -1px;
         margin: 0.1em 0;
       }
-      h1, h3, .fact, .sheet {
+      h1, h3, .fact, .desc{
         margin-left: 40px;
       }
       h2 {
@@ -41,7 +41,7 @@
         max-width: 960px;
         overflow-x: auto;
       }
-      p {
+      p, ul {
         font-size: 14px;
       }
 
@@ -51,7 +51,7 @@
   
   <body>
     <h1>CountySTATs - Master Mockup</h1>
-    <h3>Updated October 26, 2017</h3>
+    <h3>Updated November 1, 2017</h3>
     
     <div class="column">
       <div style="float:left; width:50%; height:260px">
@@ -64,7 +64,7 @@
       </div>
     </div>
     
-    <div id="drop" align =center></div>
+    <div id="drop" align="center"></div>
     
     <div class="column">
       <div style="float:left; width:50%">
@@ -81,7 +81,11 @@
         <h2>Top 5 Employment Sectors</h2>
         <div class="employmentSectors">
         <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
-        </div>   
+        </div>
+        
+        <br>
+        <h4 align="center">All data is the most recent available at time of publication, ranging from 2013 to 2015.</h4>
+        <p style="text-align:center"><img align="center" src="okpolicyLogo.png"></p>
       </div>
       
       <div style="float:right; width:50%">
@@ -96,11 +100,29 @@
         </div>
         
         <h2>More Stats</h2>
-        <br>
-        <p class="fact" id="medHouseInc"><b>Median Household Income: </b></p>
-        <p class="fact"><b>Children in Poverty: </b></p>
-        <p class="fact"><b>Working-age Civilians in Labor Force: </b></p>
-        <div class="sheet"></div>
+        <p class="desc">For all measures, a rank of 1st indicates highest and 77th indicates lowest (not best or worst).</p>
+        <ul>
+          <p>Demographics</p>
+          <li class="fact"><b>Number of voting-Age citizens: </b></li>
+          <li class="fact"><b>Percent aged under 18: </b></li>
+          <li class="fact"><b>Percent aged 65 and up: </b></li>
+          <p>Economy</p>
+          <li class="fact"><b>Median household income: </b></li>
+          <li class="fact"><b>Residents receiving food stamps: </b></li>
+          <li class="fact"><b>Children living in poverty: </b></li>
+          <li class="fact"><b>Median value of owner-occupied homes: </b></li>
+          <p>Education</p>
+          <li class="fact"><b>Average A-F school grade: </b></li>
+          <li class="fact"><b>Students eligible for free/reduced lunch price: </b></li>
+          <li class="fact"><b>Students enrolled in public school: </b></li>
+          <p>Health</p>
+          <li class="fact"><b>Overall health rank: </b></li>
+          <li class="fact"><b>Residents with a disability: </b></li>
+          <li class="fact"><b>Adults with obesity: </b></li>
+          <li class="fact"><b>Percentage of uninsured residents: </b></li>
+          <br>
+          <div class="sheet"></div>
+        </ul>
       </div>
       
     </div>
@@ -122,7 +144,7 @@
       .attr("href", "https://okpolicy.org/wp-content/uploads/Adair-2015.pdf?x43134")
       .attr("target", "_blank")
       .attr("style", "font-size:12px")
-      .html("See more (print full factsheet for this county)...");
+      .html("Get a printable version of this county's charts & stats...");
     
     var selector = d3.select('#drop')
             .append("select")
