@@ -126,16 +126,18 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
   
   
   var xAxis = d3.axisBottom(x0)
+  
+  var labelwrapper = function() {
+    d3.select('.xaxis').selectAll('.tick text')
+        .call(wrap, x0.bandwidth());
+  }
 
-  var myvariable = graph.append("g")
+  graph.append("g")
         .attr("class", "xaxis")
         .style("font", "7px Arial")
         .attr("transform", "translate(0," + (height) + ")")
         .call(xAxis)
-  
-  console.log(myvariable.selectAll('.tick text'))
-    myvariable.selectAll(".tick text")
-      .call(wrap, x0.bandwidth());
+        //.call (labelwrapper);
 
   var yaxis = graph.append("g")
         .attr("class", "yaxis")
@@ -150,16 +152,13 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
             .text("Percentage");
   
   function wrap(text, width) {
-    console.log("I AM HERE")
-    text.each(function() {
-      var text = d3.select(this),
-          words = text.text().split(/\s+/).reverse(),
+      var words = text.split(/\s+/).reverse(),
           word,
           line = [],
           lineNumber = 0,
           lineHeight = 1.1, // ems
-          y = text.attr("y"),
-          dy = parseFloat(text.attr("dy")),
+          y = d3.select('.tick text').attr("y"),
+          dy = parseFloat(d3.select('.tick text').attr("dy")),
           tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
       while (word = words.pop()) {
         line.push(word);
@@ -172,15 +171,12 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
         }
       }
       console.log(text.text())
-    });
-  }
+    };
   
   var selector = window.parent.document.getElementById('dropdown');
       selector = d3.select(selector)
         .on("change", function(d){
         
-          console.log(myvariable.selectAll('.tick text'))
-
           //update data
             selection = this.options[this.selectedIndex].value;
             currentKeys[1] = selection;
@@ -198,9 +194,6 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
           
             var t = svg.transition().duration(750);
             t.select(".xaxis").call(xAxis);
-        
-            console.log(myvariable.selectAll('.tick text'));    
-            myvariable.selectAll('.tick text').call(wrap, x0.bandwidth());
           
           //update the county bars
             var t0 = svg.transition().duration(450).ease(d3.easeBounce);
@@ -213,6 +206,11 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
           //Update the legend
             legendText.transition()
                 .text(function(d) {return d;})
+        
+            console.log(d3.select('.xaxis').selectAll('.tick'))
+        
+            d3.select('.xaxis').selectAll('.tick').transition()
+                .text(function(d) {console.log(d); return wrap(d, x0.bandwidth())})
         
         });
 
