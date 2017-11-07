@@ -300,13 +300,9 @@
 
         d3.selectAll(".mouse-per-line")
           .attr("transform", function(d, i) {
-            console.log(width/mouse[0])
             var xDate = x.invert(mouse[0]),
-                bisect = d3.bisector(function(d) { console.log(d);return d.year; }).right;
+                bisect = d3.bisector(function(d) { return d.year; }).right;
                 idx = bisect(d.values, xDate);
-
-          console.log(i);
-          console.log(tracelines[i]);
           
             var beginning = 0,
                 end = tracelines[i].getTotalLength(),
