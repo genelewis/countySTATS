@@ -100,10 +100,11 @@
         </div>
         
         <h2>More Stats</h2>
-        <p class="desc">For all measures, a rank of 1st indicates highest and 77th indicates lowest (not best or worst).</p>
+        <p class="desc">For all measures, a rank of 1st indicates the highest statistic and 77th indicates the lowest statistic among the 77 counties of Oklahoma (not best or worst).</p>
+        <p style="text-align:center; font-weight:bold" class="countyname"></p>
         <ul>
           <p>Demographics</p>
-          <li class="fact"><b>Number of voting-Age citizens: </b></li>
+          <li class="fact"><b>Number of voting-age citizens: </b></li>
           <li class="fact"><b>Percent aged under 18: </b></li>
           <li class="fact"><b>Percent aged 65 and up: </b></li>
           <p>Economy</p>
@@ -133,12 +134,64 @@
   
     var counties = ["Adair County","Alfalfa County","Atoka County","Beaver County","Beckham County","Blaine County","Bryan County","Caddo County","Canadian County","Carter County","Cherokee County","Choctaw County","Cimarron County","Cleveland County","Coal County","Comanche County","Cotton County","Craig County","Creek County","Custer County","Delaware County","Dewey County","Ellis County","Garfield County","Garvin County","Grady County","Grant County","Greer County","Harmon County","Harper County","Haskell County","Hughes County","Jackson County","Jefferson County","Johnston County","Kay County","Kingfisher County","Kiowa County","Latimer County","Le Flore County","Lincoln County","Logan County","Love County","Major County","Marshall County","Mayes County","McClain County","McCurtain County","McIntosh County","Murray County","Muskogee County","Noble County","Nowata County","Okfuskee County","Oklahoma County","Okmulgee County","Osage County","Ottawa County","Pawnee County","Payne County","Pittsburg County","Pontotoc County","Pottawatomie County","Pushmataha County","Roger Mills County","Rogers County","Seminole County","Sequoyah County","Stephens County","Texas County","Tillman County","Tulsa County","Wagoner County","Washington County","Washita County","Woods County","Woodward County"]
     
-    var stat = d3.selectAll(".fact")
-      .append("text")
-      .attr("x", 10)
-      .attr("y", 0)
-      .text(function() {return String(Math.floor(Math.random() * 31)) + "%";});
     
+    d3.csv("CountyMetrics_Master.csv", function(error, data) {
+      if (error) throw error;
+      
+      console.log(data[0])
+      
+      var selection = "Adair County",
+          mappedData = mapData(selection, data);
+      
+      d3.select(".countyname")
+        .text(selection)
+          
+      console.log(mappedData)
+      
+      var stat = d3.selectAll(".fact")
+        .append("text")
+        .attr("x", 10)
+        .attr("y", 0)
+        .text(function(d, i) {
+          var valueAndRank = mappedData[i]["MetricValue"];
+          if (i != 0 && i != 10) 
+            valueAndRank += " (" + mappedData[i]["Rank"] + ")";
+          return valueAndRank;
+        });
+      
+      function mapData(selection, data) {
+        var mapping = [];
+        for (var i = 0; i < data.length; i++) {
+          var metric = data[i].Metric;
+          var metricvalue = data[i][selection];
+          var rank = applySuffix(data[i+1][selection]);
+          if (i == 19)
+            metricvalue = applySuffix(metricvalue);
+          
+          var setup = {}
+          setup["Metric"] = metric;
+          setup["MetricValue"] = metricvalue;
+          setup["Rank"] = rank;
+          
+          mapping.push(setup);
+          
+          if (i != 0 && i != 19)
+            i++;
+        }
+        return mapping;
+      }
+      
+      function applySuffix(str) {
+        if (str[str.length - 1] == "1") {
+            str += "st";
+          } else if (str[str.length - 1] == "2") {
+            str += "nd";
+          } else if (str[str.length - 1] == "3") {
+            str += "rd";
+          } else str += "th";
+        return str;
+      }
+      
     var link = d3.selectAll(".sheet")
       .append("a")
       .attr("href", "https://okpolicy.org/wp-content/uploads/Adair-2015.pdf?x43134")
@@ -157,12 +210,23 @@
               console.log(selection)
               console.log(linkedSheet)
               
+              stat.data(mapData(selection, data));
+              
               stat.transition()
-                  .text(function() {return String(Math.floor(Math.random() * 31)) + "%";});
+                  .text(function(d, i) {
+                    var valueAndRank = d.MetricValue
+                    if (i !=0 && i != 10) 
+                      valueAndRank += " (" + d.Rank + ")";
+                    return valueAndRank;
+                  });
     
               link.transition()
                   .attr("href", linkedSheet);
-              });
+              
+              d3.select(".countyname")
+                .text(selection);
+              
+            });
 
     selector.selectAll("option")
           .data(counties)
@@ -173,11 +237,6 @@
           .text(function(d){
             return d;
           });
-
-function Hello() {
-  console.log("hello")
-}    
- 
-    
+    })
   </script>
 </html>
