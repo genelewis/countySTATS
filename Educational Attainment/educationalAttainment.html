@@ -49,7 +49,7 @@
   <script>
 
     var svg = d3.select("svg"),
-        margin = {top: 20, right: 20, bottom: 30, left: 40},
+        margin = {top: 20, right: 20, bottom: 35, left: 40},
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom;
 
@@ -113,7 +113,7 @@
       //X axis never transitions, so we can generate all in one call
         var xAxis = graph.append("g")
             .attr("class", "xaxis")
-            .style("font", "9px Arial")
+            .style("font", "11px Arial")
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x0));
 
@@ -157,6 +157,21 @@
               d3.select(this).attr("fill", d3.rgb(z(d.key)).darker(0.1));
               tip.hide(d);
             });
+      
+      var insertLinebreaks = function (d) {
+          console.log('affirm')
+          var el = d3.select(this);
+          var words = d.split(' ');
+          el.text('');
+
+          for (var i = 0; i < words.length; i++) {
+              var tspan = el.append('tspan').text(words[i]);
+              if (i > 0)
+                  tspan.attr('x', 0).attr('dy', '12');
+          }
+      };
+
+d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
 
       //Enable transitions upon making a different selection
         var selector = window.parent.document.getElementById('dropdown');
