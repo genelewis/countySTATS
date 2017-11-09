@@ -52,7 +52,7 @@ h1 {
 <script>
 
 var svg = d3.select("svg"),
-    margin = {top: 20, right: 20, bottom: 10, left: 40},
+    margin = {top: 20, right: 20, bottom: 15, left: 40},
     width = +svg.attr("width") - margin.left - margin.right,
     height = +svg.attr("height") - margin.top - margin.bottom -20,
     graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -138,7 +138,7 @@ d3.csv("data.csv", function(d, i, columns) {
 
   graph.append("g")
         .attr("class", "xaxis")
-        .style("font", "9px Arial")
+        .style("font", "11px Arial")
         .attr("transform", "translate(0," + (height) + ")")
         .call(xAxis)
       /*.append("text")
@@ -162,6 +162,21 @@ d3.csv("data.csv", function(d, i, columns) {
             .attr("font-weight", "bold")
             .attr("text-anchor", "start")
             .text("Percentage");
+  
+  var insertLinebreaks = function (d) {
+    console.log('affirm')
+    var el = d3.select(this);
+    var words = d.split(' ');
+    el.text('');
+
+    for (var i = 0; i < words.length; i++) {
+        var tspan = el.append('tspan').text(words[i]);
+        if (i > 0)
+            tspan.attr('x', 0).attr('dy', '12');
+    }
+  };
+
+d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
   
   var selector = window.parent.document.getElementById('dropdown');
   selector = d3.select(selector)
@@ -195,7 +210,9 @@ d3.csv("data.csv", function(d, i, columns) {
           //Update the legend
             legendText.transition()
                 .text(function(d) {return d;})
-            });
+    
+            d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
+      });
 
   var legend = graph.append("g")
       .attr("font-family", "sans-serif")
