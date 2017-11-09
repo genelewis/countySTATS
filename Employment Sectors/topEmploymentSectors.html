@@ -125,16 +125,11 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
     bars.exit().remove();
   
   
-  var xAxis = d3.axisBottom(x0)
-  
-  var labelwrapper = function() {
-    d3.select('.xaxis').selectAll('.tick text')
-        .call(wrap, x0.bandwidth());
-  }
+  var xAxis = d3.axisBottom(x0);
 
   graph.append("g")
         .attr("class", "xaxis")
-        .style("font", "7px Arial")
+        .style("font", "11px Arial")
         .attr("transform", "translate(0," + (height) + ")")
         .call(xAxis)
         //.call (labelwrapper);
@@ -151,27 +146,20 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
             .attr("text-anchor", "start")
             .text("Percentage");
   
-  function wrap(text, width) {
-      var words = text.split(/\s+/).reverse(),
-          word,
-          line = [],
-          lineNumber = 0,
-          lineHeight = 1.1, // ems
-          y = d3.select('.tick text').attr("y"),
-          dy = parseFloat(d3.select('.tick text').attr("dy")),
-          tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-      while (word = words.pop()) {
-        line.push(word);
-        tspan.text(line.join(" "));
-        if (tspan.node().getComputedTextLength() > width) {
-          line.pop();
-          tspan.text(line.join(" "));
-          line = [word];
-          tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-        }
-      }
-      console.log(text.text())
-    };
+var insertLinebreaks = function (d) {
+    console.log('affirm')
+    var el = d3.select(this);
+    var words = d.split(' ');
+    el.text('');
+
+    for (var i = 0; i < words.length; i++) {
+        var tspan = el.append('tspan').text(words[i]);
+        if (i > 0)
+            tspan.attr('x', 0).attr('dy', '12');
+    }
+};
+
+d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
   
   var selector = window.parent.document.getElementById('dropdown');
       selector = d3.select(selector)
@@ -192,8 +180,8 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
             
             legendText.data(currentKeys.slice().reverse());
           
-            var t = svg.transition().duration(750);
-            t.select(".xaxis").call(xAxis);
+            /*var t = svg.transition().duration(750);
+            t.select(".xaxis").call(xAxis);*/
           
           //update the county bars
             var t0 = svg.transition().duration(450).ease(d3.easeBounce);
@@ -207,10 +195,9 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
             legendText.transition()
                 .text(function(d) {return d;})
         
-            console.log(d3.select('.xaxis').selectAll('.tick'))
+            console.log(d3.select('.xaxis').selectAll(".tick text"))
         
-            d3.select('.xaxis').selectAll('.tick').transition()
-                .text(function(d) {console.log(d); return wrap(d, x0.bandwidth())})
+            d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
         
         });
 
