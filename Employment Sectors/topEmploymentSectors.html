@@ -132,7 +132,11 @@ d3.csv("employmentSectors.csv", function(d, i, columns) {
         .style("font", "11px Arial")
         .attr("transform", "translate(0," + (height) + ")")
         .call(xAxis)
-        //.call (labelwrapper);
+        .selectAll("text")	
+        /*.style("text-anchor", "end")
+          .attr("dx", "-.8em")
+          .attr("dy", ".15em")
+          .attr("transform", "rotate(-45)");*/
 
   var yaxis = graph.append("g")
         .attr("class", "yaxis")
@@ -180,11 +184,11 @@ d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
             
             legendText.data(currentKeys.slice().reverse());
           
-            /*var t = svg.transition().duration(750);
-            t.select(".xaxis").call(xAxis);*/
+            var t = graph.transition().duration(450);
+            t.select(".xaxis").call(xAxis);
           
           //update the county bars
-            var t0 = svg.transition().duration(450).ease(d3.easeBounce);
+            var t0 = graph.transition().duration(450).ease(d3.easeBounce);
             t0.selectAll(".bar")
               .attr("height", function(d) { 
                 return height - y(d.Value); })
@@ -194,10 +198,16 @@ d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
           //Update the legend
             legendText.transition()
                 .text(function(d) {return d;})
-        
-            console.log(d3.select('.xaxis').selectAll(".tick text"))
-        
-            d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
+                
+            setTimeout(function(){
+                d3.select('.xaxis').selectAll(".tick text").transition()
+                  .each(insertLinebreaks)
+                  /*.style("text-anchor", "end")
+                    .attr("dx", "-.8em")
+                    .attr("dy", ".15em")
+                    .attr("transform", "rotate(-45)");*/
+            }, 450);
+            
         
         });
 

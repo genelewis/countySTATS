@@ -210,8 +210,6 @@ d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
           //Update the legend
             legendText.transition()
                 .text(function(d) {return d;})
-    
-            d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
       });
 
   var legend = graph.append("g")
