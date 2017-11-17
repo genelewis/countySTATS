@@ -51,13 +51,13 @@
   
   <body>
     <h1>CountySTATs - Master Mockup</h1>
-    <h3>Updated November 9, 2017</h3>
+    <h3>Updated November 16, 2017</h3>
     
     <div class="column">
       <div style="float:left; width:50%; height:260px">
         <br><br><br><br><br>
-        <h4><b>County Stats:</b></h4>
-        <p>Use the <b>drop-down menu below</b> to dynamically switch between counties, or click on a county to the right to be taken to a <b>printable fact sheet</b> for that county.</p>
+        <h4 style="font-size: 20px"><b><u>County Stats:</u></b></h4>
+        <p style="font-size: 14px">Use the <b>drop-down menu below</b> to dynamically switch between counties, or click on a county to the right to be taken to a <b>printable fact sheet</b> for that county.</p>
       </div>
       <div style="float:right; width:50%, height:260px">
         <img src="county-map.png" style="height:257px; width:480px">
@@ -91,7 +91,7 @@
       <div style="float:right; width:50%">
         <h2>Demographics</h2>
         <div class="demographics">
-        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Demographics/countyDemographics2.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Demographics/countyDemographics.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
         </div>
         
         <h2>Educational Attainment</h2>
@@ -138,17 +138,13 @@
     
     d3.csv("CountyMetrics_Master.csv", function(error, data) {
       if (error) throw error;
-      
-      console.log(data[0])
-      
+            
       var selection = "Adair County",
           mappedData = mapData(selection, data);
       
       d3.select(".countyname")
         .text(selection)
-          
-      console.log(mappedData)
-      
+                
       var stat = d3.selectAll(".fact")
         .append("text")
         .attr("x", 10)
@@ -207,9 +203,6 @@
               
               var selection = this.options[this.selectedIndex].value,
                   linkedSheet = "https://okpolicy.org/wp-content/uploads/" + selection.slice(0, -7) + "-2015.pdf?x43134";
-              
-              console.log(selection)
-              console.log(linkedSheet)
               
               stat.data(mapData(selection, data));
               
