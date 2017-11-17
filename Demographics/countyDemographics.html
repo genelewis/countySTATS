@@ -1,390 +1,283 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<style type="text/css">
-    body {
-        font-size: 100%;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        width: 960px;
-    }
+<style>
+ 
+.axis .domain {
+  display: none;
+}
+  
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  font: 10px Arial;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+  
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+  
+h1 {
+  text-anchor: middle;
+  font-family: sans-serif;
+  text-align: justify
+}
+
 </style>
+
 <title>County Demographics</title>
-<body>
-    
-    <div id="donut-charts"></div>
-    <div id="drop" align="center"></div>
-    
-    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    
-    <script>
-        
-        /*  The setup of this chart is different and trickier than the other one's I've
-            done, so I thought I would comment briefly on it here for future reference if
-            anyone needs it. Rather than following the sort of "standard" form for d3, 
-            this code takes a modular approach. Virtually all the magic happens in the 
-            updateDonut method.
-            
-            The original source code for this chart design can be found here:
-            http://bl.ocks.org/erichoco/6694616
-            
-            I switched things over to use CSV rather than JSON, so that all of these charts
-            will be easier to update in the future. Originally I wanted to read data more or
-            less straight from the CSV file (see the other charts I've done for examples) but
-            wasn't able to get it down in this instance - I ended up leaving the helper method 
-            at the bottom in to format all the data to something more similar to what the 
-            source code originally used. It's clunkier, but effective.
-            
-            I also tried to update this chart to d3.v4, but that resulted in even more
-            errors (from what I've gathered, .on transitions and a few other things work
-            fundamentally different in v4).  So, this is the only one that I've left in
-            d3.v3.  Might try to rebuild from the ground up in v4 later, but for now, this
-            is totally workable. 
-            
-            Aaron                                                                           */
-        
-        
-    $(function() {        
-        var filteredData,
-            sect,
-            selection;
-        
-        d3.csv("data.csv", function(error, data) {
-            
-            //generate initial graph
-            selection = 'Adair County';
-            filteredData = filterDATA(data, selection);
-            
-            var columnheaders = d3.keys(data[0]),
-                keys = columnheaders.slice(3);
-           
-            var donutData = genData(filteredData, selection);
-            var donuts = new DonutCharts();
-            donuts.create(donutData, selection); 
 
-        var rawjson;
-        var sect;
-        var section;
-        d3.csv("data.csv", function(error, data) {
-            
-            var selector = d3.select('#drop')
-                .append("select")
-                .attr("id", "dropdown")
-                .on('change', function() {
-                    
-                    selection = this.options[this.selectedIndex].value;
-                    
-                    filteredData = filterDATA(data, selection);
-                    console.log("DEBUG:");
-                    console.log(filteredData); //debug
-                    console.log(selection);
-                    
-                    //donuts.update(genData(filteredData, selection));
-                    var dataset = genData(filteredData, selection)
-                    donuts.update(dataset, selection);
-                    console.log("The graph has been updated");
-                    console.log(dataset);
-                    console.log(selection);
-                });
-            
-            selector.selectAll("option")
-              .data(keys)
-              .enter().append("option")
-              .attr("value", function(d){
-                return d;
-              })
-              .text(function(d){
-                return d;
-            });     
-        });
-    });
+<svg class="Demograpics" width="480" height="260"><title>Demographics</title></svg>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="d3-tip.js"></script>
+
+<script>
+  
+  //Define the container SVG with margin conventions
+  var svg = d3.select("svg"),
+      margin = {top: 20, right: 20, bottom: 15, left: 40},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom -20,
+      graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  //Define the scales of the x- and y-axes
+  var x0 = d3.scaleBand()
+      .rangeRound([0, width])
+      .paddingInner(0.1);
+
+  var x1 = d3.scaleBand()
+      .padding(0.05);
+
+  var y = d3.scaleLinear()
+      .rangeRound([height, 0]);
+
+  //Define a coloring scale
+  var z = d3.scaleOrdinal()
+      .range(["#972421", "#febd60"]);
+
+  //Import the raw data from CSV
+  d3.csv("data.csv", numericize, function(error, data) {
+    if (error) throw error;
+
+    var selection = 'Adair County',         //(default selection value)
+        keys = data.columns.slice(1),
+        currentKeys = ['State', selection];
+
+    //Siphon out only the data relevant to the selected county
+    var dataset = formatData(data, selection);
+
+    //Set the domains of the axes
+    x0.domain(dataset.map(function(d) {return d.Ethnicity; }));
+    x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
+    y.domain([0, 100]).nice();
+
+    //Set up tooltip displays
+    var tip = d3.tip()
+      .attr('class', 'd3-tip')
+      .offset([-10, 0])
+      .html(function(d) {
+        return "<span style='color:grey'>" + d.Value + "%</span>";
+      })
+    graph.call(tip);
+
     
-        
-    function filterDATA(data, key) {
-       var county = {},
-            state = {};
-        data.forEach(function(val, idx, arr){
-            var ethn = String(data[idx].Ethnicity);
-            var countyval = +val[selection];
-            var stateval = +val['State'];
-            
-            county[ethn] = countyval;
-            state[ethn] = stateval;
-            
-        });
-        
-        return [county, state];  
+    //Begin appending bars to the graph
+    var bars = graph.append("g")
+        .selectAll("rect")
+        .data(dataset)
+
+    bars.enter().append("rect")
+          .attr("class", "bar")
+          .attr("transform", function(d,i) { 
+              if (i%2 == 0){
+                var offset = 3;
+              } else {
+                var offset = x1.bandwidth()+4;
+              }
+              return "translate(" + (x0(d.Ethnicity) + offset) + ",0)"; })
+          .attr("x", function(d) { return x1(d.Ethnicity); })
+          .attr("y", function(d, i) { return y(d.Value); })
+          .attr("width", x1.bandwidth())
+          .attr("height", function(d) { return height - y(d.Value); })
+          .attr("fill", function(d) { return z(d.Type); })
+          .on('mouseover', function(d) {
+            d3.select(this).attr("fill", d3.rgb(z(d.Type)).brighter(0.5));
+            tip.show(d);
+          })
+          .on('mouseout', function(d) {
+            d3.select(this).attr("fill", d3.rgb(z(d.Type)).darker(0.1));
+            tip.hide(d);
+          });
+
+    //Create the axes
+    var xAxis = d3.axisBottom(x0)
+    
+    graph.append("g")
+          .attr("class", "xaxis")
+          .style("font", "11px Arial")
+          .attr("transform", "translate(0," + (height) + ")")
+          .call(xAxis)
+          .selectAll(".tick text")
+
+    var yaxis = graph.append("g")
+          .attr("class", "yaxis")
+          .style("font", "11px Arial")
+          .call(d3.axisLeft(y).ticks(null, "s"))
+        .append("text")
+              .attr("x", 2)
+              .attr("y", y(y.ticks().pop()) + 0.5)
+              .attr("dy", "0.32em")
+              .attr("fill", "#000")
+              .attr("font-weight", "bold")
+              .attr("text-anchor", "start")
+              .text("Percentage");
+
+    //Helper function to streamline wrapping long label text
+    var insertLinebreaks = function (d) {
+      console.log('affirm')
+      var el = d3.select(this);
+      var words = d.split(' ');
+      el.text('');
+
+      for (var i = 0; i < words.length; i++) {
+          var tspan = el.append('tspan').text(words[i]);
+          if (i > 0)
+              tspan.attr('x', 0).attr('dy', '12');
+      }
     };
-    
-    function DonutCharts() {
-        var charts = d3.select('#donut-charts');
-        var chart_m,
-            chart_r,
-            color = d3.scale.ordinal()
-              .range([d3.rgb(102, 166, 30), "#febd60", d3.rgb(102, 102, 102), "#972421", "#2f507f"])
-        var getCatNames = function(dataset) {
-            var catNames = new Array();
-            for (var i = 0; i < dataset[0].data.length; i++) {
-                catNames.push(dataset[0].data[i].cat);
-            }
-            return catNames;
+    d3.select('.xaxis').selectAll(".tick text").transition().each(insertLinebreaks)
+
+    //Find the dropdown menu from the parent document and listen for a change in selection
+    var selector = window.parent.document.getElementById('dropdown');
+    selector = d3.select(selector)
+      .on("change.demo", function(d) {
+      
+            //Update the data:
+              selection = this.options[this.selectedIndex].value;
+              currentKeys[1] = selection;
+              dataset = formatData(data, selection);
+              legendText.data(currentKeys.slice().reverse());
+
+            //Rearrange the order of ethnicities (from greatest > least)
+              x0.domain(dataset.map(function(d) { return d.Ethnicity; }));
+
+            //Associate the new selection of data with the bars
+              d3.selectAll(".bar")
+                .data(dataset);
+
+            //Switch the x-axis labels to the new ethnicities
+              d3.select(".xaxis").call(xAxis).selectAll(".tick text").each(insertLinebreaks);
+
+            //Transition to the new values for the bars
+              var t0 = graph.transition().duration(450).ease(d3.easeBounce);
+              t0.selectAll(".bar")
+                .attr("height", function(d) { 
+                  return height - y(d.Value); })
+                .attr("y", function(d, i) { return y(d.Value); })
+                .ease(d3.easeBounce);
+
+            //Transition the legend
+              legendText.transition()
+                  .text(function(d) {return d;})
+        });
+
+    //Append the legend to the main graph
+    var legend = graph.append("g")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 10)
+        .attr("text-anchor", "end")
+      .selectAll("g")
+      .data(currentKeys.slice().reverse())
+      .enter().append("g")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+    var legendBox = legend.append("rect")
+        .attr("x", width - 19)
+        .attr("width", 19)
+        .attr("height", 19)
+        .attr("fill", z);
+
+    var legendText = legend.append("text")
+        .attr("x", width - 24)
+        .attr("y", 9.5)
+        .attr("dy", "0.32em")
+        .text(function(d) { 
+        return d; });
+    });
+
+    //Helper function to siphon out one county's-worth of data at a time
+    function formatData(data, selection){
+      var filteredData = [];
+
+      data.forEach(function(val, idx, arr){
+        var sect = String(data[idx].Ethnicity);
+        var countyval = +val[selection];
+        var stateval = +val['State'];
+
+        if (countyval != 0) {
+          var county = {},
+              state = {};
+          county["Ethnicity"] = sect;
+          county["Value"] = countyval;
+          county["Type"] = "county";
+          state["Ethnicity"] = sect;
+          state["Value"] = stateval;
+          state["Type"] = "state";
+
+          filteredData.push(county);
+          filteredData.push(state);
         }
-        
-        var createLegend = function(catNames) {
-            var legends = charts.select('.legend')
-                .attr("font-family", "sans-serif")
-                .attr("font-size", 10)
-                .attr("text-anchor", "end")
-                .selectAll('g')
-                    .data(catNames)
-                .enter().append('g')
-                    .attr('transform', function(d, i) {
-                        return 'translate(0, ' + (i * 15) + ')';
-                    });
-                
-            legends.append('rect')
-                .attr("x", 960 - 19)
-                .attr("width", 15)
-                .attr("height", 15)
-                .style('fill', function(d, i) {
-                    return color(i);
-                });
-    
-            legends.append('text')
-                .attr("x", 960 - 24)
-                .attr("y", 9.5)
-                .attr("dy", "0.32em")
-                .text(function(d) {
-                    return d;
-                });
-        }
-        
-        var createCenter = function(pie) {
-            //Animates the slices of the pie
-            var eventObj = {
-                'mouseover': function(d, i) {
-                    d3.select(this)
-                        .transition()
-                        .attr("r", chart_r * 0.65);
-                },
-                'mouseout': function(d, i) {
-                    d3.select(this)
-                        .transition()
-                        .duration(500)
-                        .ease('bounce')
-                        .attr("r", chart_r * 0.6);
-                },
-                'click': function(d, i) {
-                    var paths = charts.selectAll('.clicked');
-                    pathAnim(paths, 0);
-                    paths.classed('clicked', false);
-                    resetAllCenterText();
-                }
-            }
-            var donuts = d3.selectAll('.donut');
-            // The circle displaying total data.
-            donuts.append("svg:circle")
-                .attr("r", chart_r * 0.6)
-                .style("fill", "#E7E7E7")
-                .on(eventObj);
-    
-            donuts.append('text')
-                    .attr('class', 'center-txt type')
-                    .attr('y', chart_r * -0.16)
-                    .attr('text-anchor', 'middle')
-                    .style('font-weight', 'bold')
-                    .text(function(d, i) {
-                        return d.type;
-                    });
-            donuts.append('text')
-                    .attr('class', 'center-txt value')
-                    .attr('text-anchor', 'middle');
-            donuts.append('text')
-                    .attr('class', 'center-txt percentage')
-                    .attr('y', chart_r * 0.16)
-                    .attr('text-anchor', 'middle')
-                    .style('fill', '#A2A2A2');
-        }
-        
-        var setCenterText = function(thisDonut) {
-            var sum = d3.sum(thisDonut.selectAll('.clicked').data(), function(d) {
-                return d.data.val;
-            });
-            thisDonut.select('.percentage')
-                .text(function(d) {
-                    return (sum)? (sum/d.total*100).toFixed(2) + '%'
-                                : '';
-                });
-        }
-        
-        var resetAllCenterText = function() {
-            charts.selectAll('.percentage')
-                .text('');
-        }
-        
-        var pathAnim = function(path, dir) {
-            switch(dir) {
-                case 0:
-                    path.transition()
-                        .duration(500)
-                        .ease('bounce')
-                        .attr('d', d3.svg.arc()
-                            .innerRadius(chart_r * 0.7)
-                            .outerRadius(chart_r)
-                        );
-                    break;
-                case 1:
-                    path.transition()
-                        .attr('d', d3.svg.arc()
-                            .innerRadius(chart_r * 0.7)
-                            .outerRadius(chart_r * 1.08)
-                        );
-                    break;
-            }
-        }
-        
-        var updateDonut = function(selection) {
-            
-            var title = d3.select('.type');
-            title.text(function(d) {
-                return selection;
-            });
-            
-            var eventObj = {
-                'mouseover': function(d, i, j) {
-                    pathAnim(d3.select(this), 1);
-                    var thisDonut = charts.select('.type' + j);
-                    thisDonut.select('.value').text(function(donut_d) {
-                        return d.data.cat;
-                    });
-                    thisDonut.select('.percentage').text(function(donut_d) {
-                        return (d.data.val/donut_d.total*100).toFixed(2) + '%';
-                    });
-                },
-                
-                'mouseout': function(d, i, j) {
-                    var thisPath = d3.select(this);
-                    if (!thisPath.classed('clicked')) {
-                        pathAnim(thisPath, 0);
-                    }
-                    var thisDonut = charts.select('.type' + j);
-                    thisDonut.select('.value').text('');
-                    setCenterText(thisDonut);
-                },
-                'click': function(d, i, j) {
-                    var thisDonut = charts.select('.type' + j);
-                    if (0 === thisDonut.selectAll('.clicked')[0].length) {
-                        thisDonut.select('circle').on('click')();
-                    }
-                    var thisPath = d3.select(this);
-                    var clicked = thisPath.classed('clicked');
-                    pathAnim(thisPath, ~~(!clicked));
-                    thisPath.classed('clicked', !clicked);
-                    setCenterText(thisDonut);
-                }
-            };
-            var pie = d3.layout.pie()
-                            //.sort(null)
-                            .value(function(d) {
-                                return d.val;
-                            });
-            var arc = d3.svg.arc()
-                            .innerRadius(chart_r * 0.7)
-                            .outerRadius(function() {
-                                return (d3.select(this).classed('clicked'))? chart_r * 1.08 : chart_r;
-                            });
-            // Start joining data with paths
-            var paths = charts.selectAll('.donut')
-                            .selectAll('path')
-                            .data(function(d, i) {
-                                console.log(d)
-                                return pie(d.data);
-                            });
-            paths
-                .transition()
-                .duration(1000)
-                .attr('d', arc);
-            paths.enter()
-                .append('svg:path')
-                    .attr('d', arc)
-                    .style('fill', function(d, i) {
-                        return color(i);
-                    })
-                    .style('stroke', '#FFFFFF')
-                    .on(eventObj)
-            paths.exit().remove();
-            resetAllCenterText();
-        }
-        
-        this.create = function(dataset, section) {
-            var $charts = $('#donut-charts');
-            chart_m = $charts.innerWidth() / dataset.length / 2 * 0.14;
-            chart_r = $charts.innerWidth() / dataset.length / 2 * 0.85;
-          
-            console.log(dataset.length);
-            console.log(chart_m);
-          
-            charts.append('svg')
-                .attr('class', 'legend')
-                .attr('width', '100%')
-                .attr('height', 80)
-               /* .attr('transform', 'translate(0, 100)')*/;
-            var donut = charts.selectAll('.donut')
-                            .data(dataset)
-                        .enter().append('svg:svg')
-                            .attr('width', (chart_r + chart_m) * 2)
-                            .attr('height', (chart_r + chart_m) * 2)
-                        .append('svg:g')
-                            .attr('class', function(d, i) {
-                                return 'donut type' + i;
-                            })
-                            .attr('transform', 'translate(' + (chart_r+chart_m) + ',' + (chart_r+chart_m) + ')');
-            createLegend(getCatNames(dataset));
-            createCenter();
-            updateDonut(selection);
-        }
-    
-        this.update = function(dataset,selection) {
-            // Assume no new categ of data enter
-            var donut = charts.select(".donut")
-                        .data(dataset);
-            updateDonut(selection);
-        }
+      });
+
+      filteredData = sortData(filteredData, 0)
+      return filteredData;
     }
 
-    function genData(data, selection) {
-      
-        console.log(data);
-        
-        var cat = ['Hispanic', 'Black', 'Native American', 'Other & More than one', 'White (Non-Hispanic)'];
-        var type = [selection, 'Oklahoma'];
-        var countyData = data[0];
-        var stateData = data[1];
-        
-        var dataset = new Array();
-        for (var i = 0; i < type.length; i++) {
-            var region = new Array();
-            var total = 0;
-            for (var j = 0; j < cat.length; j++) {
-                var value;
-                if (i == 0) {
-                    value = countyData[cat[j]];
-                } else {
-                    value = stateData[cat[j]];
-                }
-                total += value;
-                region.push({
-                    "cat": cat[j],
-                    "val": value
-                });
-            }
-            dataset.push({
-                "type": type[i],
-                "data": region,
-                "total": total
-            });
+    //Helper function to sort the data from greatest > least by county value
+    function sortData(filteredData, i) {
+      var max = filteredData[i].Value;
+      for (var j = i; j < filteredData.length; j = j+2) {
+        if (filteredData[j].Value > max) {
+          max = filteredData[j].Value;
+          var temp = [filteredData[i], filteredData[i+1]];
+          filteredData[i] = filteredData[j];
+          filteredData[i+1] = filteredData[j+1];
+          filteredData[j] = temp[0];
+          filteredData[j+1] = temp[1];
         }
-        return dataset;
+      }
+
+      if (i == filteredData.length - 2) {
+        return filteredData;
+      } else {
+        return sortData(filteredData, i+2);
+      }
     }
-    });
-    </script>
-</body>
+
+    //Helper function to convert data from string to numeric form
+    function numericize(d, i, columns) {
+      for (var i = 1, n = columns.length; i < n; ++i) 
+        d[columns[i]] = +d[columns[i]];
+      return d;
+    }
+  
+</script>

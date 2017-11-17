@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <head>
-  <title>Educational Attainment</title>
   <style>
     .axis .domain {
       display: none;
@@ -37,49 +36,42 @@
     }
   </style>
   <meta charset="utf-8">
+
+  <title>Educational Attainment</title>
 </head>
 
 <body>
   
   <svg class="EducationalAttainment" width="480" height="260"><title>Educational Attainment</title></svg>
-  <div id="drop" align="center"></div>
 
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="d3-tip.js"></script>
+  
   <script>
 
+    //Define the container SVG with margin conventions
     var svg = d3.select("svg"),
         margin = {top: 20, right: 20, bottom: 35, left: 40},
         width = +svg.attr("width") - margin.left - margin.right,
-        height = +svg.attr("height") - margin.top - margin.bottom;
+        height = +svg.attr("height") - margin.top - margin.bottom,
+        graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    //Begin by inserting the data
-    d3.csv("data.csv", function(d, i, columns) {
-            
-      //Convert data string values into integers
-      for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
-      return d;}, 
-
-      //MAIN FUNCTION     
-      function(error, data) {
+    //Import the raw data from CSV
+    d3.csv("data.csv", numericize, function(error, data) {
         if (error) throw error;
 
-      //Levels of education
+      //Define the scales of the x- and y-axes
         var x0 = d3.scaleBand()
           .rangeRound([0, width])
           .paddingInner(0.1);
 
-      //County, state, or national
         var x1 = d3.scaleBand()
             .padding(0.05);
 
-      //Percent educated
         var y = d3.scaleLinear()
             .rangeRound([height, 0]);
 
-      //Scale for bar coloring
+      //Define a coloring scale
         var z = function(d) {
             if (d == "National") {
               return "#febd60";
@@ -89,13 +81,12 @@
               return "#2f507f";
             }
         }
-        //'#d6f5d6', '#85e085', '#29a329'
 
-      //Full list of places (national, state, adair, atoka...)
+        var selection = 'Adair County' //(default selection value)
         var keys = data.columns.slice(1);
-        var selection = keys[2] //Hard coded to begin with first county
         var currentKeys = [keys[0], keys[1], selection];
 
+      //Set the domains of the axes
         x0.domain(data.map(function(d) { return d.Level; }));
         x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
         y.domain([0, 50]).nice();
@@ -124,6 +115,7 @@
         
         graph.append("g")
             .attr("class", "yaxis")
+            .style("font", "11px Arial")
             .call(yAxis)
           .append("text")
             .attr("x", 2)
@@ -158,6 +150,7 @@
               tip.hide(d);
             });
       
+      //Helper function to streamline wrapping long label text
       var insertLinebreaks = function (d) {
           console.log('affirm')
           var el = d3.select(this);
@@ -170,21 +163,20 @@
                   tspan.attr('x', 0).attr('dy', '12');
           }
       };
+      d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
 
-d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
-
-      //Enable transitions upon making a different selection
+      //Find the dropdown menu from the parent document and listen for a change in selection
         var selector = window.parent.document.getElementById('dropdown');
         selector = d3.select(selector)
             .on("change.edu", function(d){
 
-              //update data
+              //Update data:
                 selection = this.options[this.selectedIndex].value;
                 currentKeys[2] = selection;
                 bars.data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
                 legendText.data(currentKeys.slice());
 
-              //update the county bars
+              //Transition the bars
                 var t0 = svg.transition().duration(450).ease(d3.easeBounce);
                 t0.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
                   .attr("y", function(d){return y(d.value);})
@@ -193,8 +185,9 @@ d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
               //Update the legend
                 legendText.transition()
                     .text(function(d) {return d;})
-                });
-
+            });
+      
+      //Create and append the legend
         var legend = graph.append("g")
             .attr("font-family", "sans-serif")
             .attr("font-size", 10)
@@ -218,5 +211,13 @@ d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
                 return d;
             });
     });
+    
+    //Helper function to convert data from string to numeric form
+    function numericize(d, i, columns) {
+      //Convert data string values into integers
+      for (var i = 1, n = columns.length; i < n; ++i) 
+        d[columns[i]] = +d[columns[i]];
+      return d;
+    }
   </script>
 </body>

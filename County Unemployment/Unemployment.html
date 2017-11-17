@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <head>
-  <title>County Unemployment</title>
   <style>
     body {font: 12px Helvetica;}
     .line {
@@ -39,65 +38,57 @@
     }
 </style>
   <meta charset="utf-8">
+
+  <title>County Unemployment</title>
 </head>
  
 <body>
   
   <svg class="Unemployment" width="480" height="260"><title>Unemployment</title></svg>
-  <!--<div id="drop" align="center"></div>-->
   
   <!-- load the d3.js library -->
   <script src="http://d3js.org/d3.v4.min.js"></script>
-  <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
-  </script>
     
   <script>
     
-    //set the dimensions of the canvas / graph
+    //Define the container SVG with margin conventions
     var svg = d3.select("svg"),
         margin = {top: 20, bottom: 20, left: 40, right: 30},
         width = +svg.attr("width") - margin.left - margin.right,
-        height = +svg.attr("height") - margin.top - margin.bottom;
-    
-    //add the svg canvas
-    var graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        height = +svg.attr("height") - margin.top - margin.bottom,
+        graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    //enter the data and begin working with it inside the main function
-    d3.csv("data.csv", function(d, i, columns) {
-      for (var i = 1, n = columns.length; i < n; ++i)
-        d[columns[i]] = +d[columns[i]];
-        return d;},
-          
-    //Main function:   
-    function(error, data) {
+    //Import the raw data from CSV
+    d3.csv("data.csv", numericize, function(error, data) {
       if (error) throw error;
       
+      //Helper variable for formatting dates      
       var parseDate = d3.timeParse('%Y');
       data.forEach(function(d) {
           d.year = parseDate(d.year);
-        })
+      })
       
-      //set the relevant ranges
+      //Define the scales of the x- and y-axes
       var x = d3.scaleTime().range([0, width]),
           y = d3.scaleLinear().range([height, 0]),
           z = d3.scaleOrdinal().range(["#febd60","#972421","#2f507f"]);
 
-      //define the axes
+      //Define the axes
       var xAxis = d3.axisBottom(x)
           .ticks(10)
           .tickFormat(d3.timeFormat("%Y"));
 
       var yAxis = d3.axisLeft(y)
-          .ticks(15)
-          //.tickFormat(d3.format("%"));
+          .ticks(10)
 
-      //define the lines
+      //Define the lines
       var line = d3.line()
           .curve(d3.curveBasis)
           .x(function(d) {return x(d.year);})
           .y(function(d) {return y(d.unemp);});
       
-      //constructs dictionary of "places" (national, state, counties...)
+      //Constructs dictionary of "places" (national, state, counties...)
+      //(Makes dealing with multiple lines of data much easier)
       var places = data.columns.slice(1).map(function(id) {
         return{
           id: id,
@@ -106,58 +97,46 @@
           })
         };
       });
-            
-      var selection = places[2];
+      
+      
+      var selection = 'Adair County'; //(default selection value)
       var currentPlaces = [places[0], places[1], selection];
       
-      //scale the range of the data
+      //Set the domains of the axes
       x.domain(d3.extent(data, function(d) {return d.year}));
-      
       y.domain([
         d3.min(currentPlaces, function(c) { return d3.min(c.values, function(d) { return d.unemp; }); }) - 0.1,
-        d3.max(currentPlaces, function(c) { return d3.max(c.values, function(d) { return d.unemp; }); }) + 0.2
+        d3.max(currentPlaces, function(c) { return d3.max(c.values, function(d) { return d.unemp; }); }) + 2.5
       ]);
-      
       z.domain(places.map(function(c) { return c.id; }));
       
-      // gridlines in x axis function
-        function make_x_gridlines() {		
-            return d3.axisBottom(x)
-                .ticks(10)
-        }
-
-      // gridlines in y axis function
-        function make_y_gridlines() {		
-            return d3.axisLeft(y)
-                .ticks(10)
-        }
+     /* These functions add gridlines across the graph (DISABLED by default):
+        function make_x_gridlines() { return d3.axisBottom(x).ticks(10)}
+        function make_y_gridlines() { return d3.axisLeft(y).ticks(10)}
       
-      // add the X gridlines
-        /*graph.append("g")			
+        graph.append("g")			
             .attr("class", "grid")
             .attr("transform", "translate(0," + height + ")")
             .call(make_x_gridlines()
                 .tickSize(-height)
-                .tickFormat("")
-            )
+                .tickFormat(""))
 
-      // add the Y gridlines
         graph.append("g")			
             .attr("class", "grid")
             .call(make_y_gridlines()
                 .tickSize(-width)
-                .tickFormat("")
-            )*/
+                .tickFormat("")) */
       
-      
-      //Build the graph axes and lines
+      //Apend the axes and lines of data
       graph.append("g")
           .attr("class", "x axis")
+          .style("font", "11px Arial")
           .attr("transform", "translate(0," + height + ")")
           .call(xAxis);
 
       graph.append("g")
           .attr("class", "y axis")
+          .style("font", "11px Arial")
           .call(yAxis)
         .append("text")
             .attr("x", 2)
@@ -178,6 +157,7 @@
           .attr("d", function(d) { return line(d.values); })
           .style("stroke", function(d) { return z(d.id); });
 
+      //Append circles that show the exact data value on mouseover
       var focus = graph.append("g")
             .attr("class", "focus")
             .style("display", "none");
@@ -190,21 +170,22 @@
             .attr("dy", ".35em");
       
       
-      //Use the drop-down menu to control graph transitions
+      //Find the dropdown menu from the parent document and listen for a change in selection
       var selector = window.parent.document.getElementById('dropdown');
       selector = d3.select(selector)
         .on("change.unemp", function(d) {
             
+          //Update the data:
             selection = this.options[this.selectedIndex].value;
             currentPlaces[2] = places[places.findIndex(x => x.id == selection)]
-            
+            legendText.data(currentPlaces);
+        
             y.domain([
               d3.min(currentPlaces, function(c) { return d3.min(c.values, function(d) { return d.unemp; }); }) - 0.1,
               d3.max(currentPlaces, function(c) { return d3.max(c.values, function(d) { return d.unemp; }); }) + 0.2
             ]);
             
             lines.data(currentPlaces);
-            legendText.data(currentPlaces);
               
             //Transition the lines:
             lines.transition()
@@ -220,7 +201,7 @@
             //Update the legend
             legendText.transition()
                 .text(function(d) {return d.id;})
-            });
+        });
       
       //Create the legend
       var legend = graph.append("g")
@@ -245,6 +226,8 @@
           .attr("class", "legend")
           .text(function(d) {return d.id;}); 
     
+    //The following section controls how data is shown on all three lines on mouseover
+    //(Directly incorporated from larsenmtl's block "D3 mouseover multi-line chart" on blocks.org)
     var mouseG = graph.append("g")
       .attr("class", "mouse-over-effects");
       
@@ -326,5 +309,13 @@
           });
       });
     });
+    
+    //Helper function to convert data from string to numeric form
+    function numericize(d, i, columns) {
+      for (var i = 1, n = columns.length; i < n; ++i)
+        d[columns[i]] = +d[columns[i]];
+      return d;
+    }
+    
   </script>
 </body>
