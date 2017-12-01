@@ -88,7 +88,7 @@ h1 {
     //Set the domains of the axes
     x0.domain(dataset.map(function(d) { return d.Sector; }));
     x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
-    y.domain([0, d3.max(dataset.map(function(d) {return d.Value;})) + 10]).nice();
+    y.domain([0, d3.max(dataset.map(function(d) {console.log(d.Value); return d.Value;})) + 10])// + 10]).nice();
 
     //Set up tooltip displays
     var tip = d3.tip()
@@ -104,7 +104,7 @@ h1 {
         .selectAll("rect")
         .data(dataset)
 
-    bars.enter().append("rect")
+    var rects = bars.enter().append("rect")
           .attr("class", "bar")
           .attr("transform", function(d,i) { 
               if (i%2 == 0){
@@ -118,9 +118,11 @@ h1 {
           .attr("width", x1.bandwidth())
           .attr("height", function(d) { return height - y(d.Value); })
           .attr("fill", function(d) { return z(d.Type); })
+          //.on('mouseover', function(d) {console.log(this);})
     
     if (!parent.ENABLE_PRINTABLE_CHARTS) {
-      bars.on('mouseover', function(d) {
+      rects.on('mouseover', function(d) {
+            console.log('affirm');
             d3.select(this).attr("fill", d3.rgb(z(d.Type)).brighter(0.5));
             tip.show(d);
           })
@@ -198,7 +200,7 @@ h1 {
           
             //Rescale the x-axis to the new sectors, rescale the y-axis to fit the new data
               x0.domain(dataset.map(function(d) { return d.Sector; }));
-              y.domain([0, d3.max(dataset.map(function(d) {return d.Value;})) + 10]).nice();
+              y.domain([0, d3.max(dataset.map(function(d) {console.log(d.Value); return d.Value;})) + 10])// + 10]).nice();
 
             //Associate the new selection of data with the bars
               d3.selectAll(".bar")
@@ -206,6 +208,7 @@ h1 {
 
             //Switch the x-axis labels to the new sectors
               d3.select(".xaxis").call(xAxis).selectAll(".tick text").each(insertLinebreaks);
+              d3.select(".yaxis").call(yAxis)
 
             //Transition to the new values for the bars
               var t0 = graph.transition().duration(450).ease(d3.easeBounce);

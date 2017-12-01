@@ -145,11 +145,11 @@
             
         if (!parent.ENABLE_PRINTABLE_CHARTS) {
           bars.on('mouseover', function(d) {
-                  d3.select(this).attr("fill", d3.rgb(z(d.Type)).brighter(0.5));
+                  d3.select(this).attr("fill", d3.rgb(z(d.key)).brighter(0.5));
                   tip.show(d);
                 })
                 .on('mouseout', function(d) {
-                  d3.select(this).attr("fill", d3.rgb(z(d.Type)).darker(0.1));
+                  d3.select(this).attr("fill", d3.rgb(z(d.key)).darker(0.1));
                   tip.hide(d);
                 });
           } else {
