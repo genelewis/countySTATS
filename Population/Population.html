@@ -52,6 +52,11 @@
   
   <script src="http://d3js.org/d3.v4.min.js"></script>
   <script>
+    
+    if (parent.ENABLE_PRINTABLE_CHARTS)
+      console.log('Setting charts to static downloadable / printable version.');
+    else
+      console.log('Setting charts to interactive web version.');
 
     //Define the container SVG with margin conventions
     var svg = d3.select('svg'),
@@ -89,22 +94,24 @@
       x.domain(d3.extent(data, function(d) {return d.year}));
       y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }) + 10000, 50000)]);
 
-   /* These functions add gridlines across the graph (DISABLED by default):
-      function make_x_gridlines() {	return d3.axisBottom(x).ticks(10) }
-      function make_y_gridlines() {	return d3.axisLeft(y).ticks(10) }
+   // These functions add gridlines across the graph (DISABLED by default):
+      if (parent.ENABLE_PRINTABLE_CHARTS) {
+        function make_x_gridlines() {	return d3.axisBottom(x).ticks(10) }
+        function make_y_gridlines() {	return d3.axisLeft(y).ticks(10) }
 
-      graph.append("g")			
-          .attr("class", "grid")
-          .attr("transform", "translate(0," + height + ")")
-          .call(make_x_gridlines()
-              .tickSize(-height)
-              .tickFormat(""))
+        var xlines = graph.append("g")			
+            .attr("class", "grid")
+            .attr("transform", "translate(0," + height + ")")
+            .call(make_x_gridlines()
+                .tickSize(-height)
+                .tickFormat(""))
 
-      graph.append("g")			
-          .attr("class", "grid")
-          .call(make_y_gridlines()
-              .tickSize(-width)
-              .tickFormat("")) */
+        var ylines = graph.append("g")			
+            .attr("class", "grid")
+            .call(make_y_gridlines()
+                .tickSize(-width)
+                .tickFormat(""))
+      }
 
       //Create and append the axes
       var xAxis = d3.axisBottom(x)
@@ -144,34 +151,36 @@
           .attr("d", line);
 
       //Create and append a circle to highlight the nearest data point on mouseover
-      var focus = graph.append("g")
-          .attr("class", "focus")
-          .style("display", "none");
+      if (!parent.ENABLE_PRINTABLE_CHARTS) {
+        var focus = graph.append("g")
+            .attr("class", "focus")
+            .style("display", "none");
 
-      focus.append("circle")
-          .attr("r", 4.5);
+        focus.append("circle")
+            .attr("r", 4.5);
 
-      //Add text that shows the exact value at that point
-      focus.append("text")
-          .attr("x", 9)
-          .attr("dy", ".35em");
+        //Add text that shows the exact value at that point
+        focus.append("text")
+            .attr("x", 9)
+            .attr("dy", ".35em");
 
-      graph.append("rect")
-          .attr("class", "overlay")
-          .attr("width", width)
-          .attr("height", height)
-          .on("mouseover", function() { focus.style("display", null); })
-          .on("mouseout", function() { focus.style("display", "none"); })
-          .on("mousemove", mousemove);
+        graph.append("rect")
+            .attr("class", "overlay")
+            .attr("width", width)
+            .attr("height", height)
+            .on("mouseover", function() { focus.style("display", null); })
+            .on("mouseout", function() { focus.style("display", "none"); })
+            .on("mousemove", mousemove);
 
-      function mousemove() {
-        var x0 = x.invert(d3.mouse(this)[0]),
-            i = bisectDate(data, x0, 1),
-            d0 = data[i - 1],
-            d1 = data[i],
-            d = x0 - d0.year > d1.year - x0 ? d1 : d0;
-        focus.attr("transform", "translate(" + x(d.year) + "," + y(d[selection]) + ")");
-        focus.select("text").text(d[selection]);
+        function mousemove() {
+          var x0 = x.invert(d3.mouse(this)[0]),
+              i = bisectDate(data, x0, 1),
+              d0 = data[i - 1],
+              d1 = data[i],
+              d = x0 - d0.year > d1.year - x0 ? d1 : d0;
+          focus.attr("transform", "translate(" + x(d.year) + "," + y(d[selection]) + ")");
+          focus.select("text").text(d[selection]);
+        }
       }
 
     //Find the dropdown menu from the parent document and listen for a change in selection
@@ -195,6 +204,14 @@
         //Update the legend
           legendText.transition()
               .text(function(d) {return d;})
+      
+        //Shift the gridlines, if necessary
+          if (parent.ENABLE_PRINTABLE_CHARTS) {
+            ylines.transition()
+              .call(make_y_gridlines()
+                .tickSize(-width)
+                .tickFormat(""))
+          }
         });
 
     //Create the legend
