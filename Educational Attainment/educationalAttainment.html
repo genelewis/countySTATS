@@ -132,6 +132,7 @@
           .data(data)
           .enter().append("g")
             .attr("transform", function(d) { return "translate(" + x0(d.Level) + ",0)"; })
+            .attr("class", "gcontainer")
           .selectAll("rect")
           .data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
           .enter().append("rect")
@@ -141,14 +142,28 @@
             .attr("width", x1.bandwidth())
             .attr("height", function(d) { return height - y(d.value); })
             .attr("fill", function(d) { return z(d.key); })
-            .on('mouseover', function(d) {
-              d3.select(this).attr("fill", d3.rgb(z(d.key)).brighter(0.5));
-              tip.show(d);
-            })
-            .on('mouseout', function(d) {
-              d3.select(this).attr("fill", d3.rgb(z(d.key)).darker(0.1));
-              tip.hide(d);
-            });
+            
+        if (!parent.ENABLE_PRINTABLE_CHARTS) {
+          bars.on('mouseover', function(d) {
+                  d3.select(this).attr("fill", d3.rgb(z(d.Type)).brighter(0.5));
+                  tip.show(d);
+                })
+                .on('mouseout', function(d) {
+                  d3.select(this).attr("fill", d3.rgb(z(d.Type)).darker(0.1));
+                  tip.hide(d);
+                });
+          } else {
+            graph.selectAll(".gcontainer").selectAll(".bartext")
+              .data(function(data) { return currentKeys.map(function(key) { return {key: key, value: data[key]}; }); })
+            .enter().append("text")
+              .attr("class", "bartext")
+              .attr("transform", function(d) { return "translate(" + x1.bandwidth()/2 + ",0)"; })
+              .attr("text-anchor", "middle")
+              .attr("x", function(d) { return x1(d.key); })
+              .attr("y", function(d) { console.log(d.value); return y(d.value) - 2; })
+              .style("font", "11px Arial")
+              .text(function(d) { return d.value + "%"; });
+          }
       
       //Helper function to streamline wrapping long label text
       var insertLinebreaks = function (d) {
@@ -185,6 +200,13 @@
               //Update the legend
                 legendText.transition()
                     .text(function(d) {return d;})
+          
+              //Update the static labels, if necessary
+                graph.selectAll(".gcontainer").selectAll(".bartext")
+                  .data(function(data) { return currentKeys.map(function(key) { return {key: key, value: data[key]}; }); })
+                  .attr("y", function(d) { console.log(d.value); return y(d.value) - 2; })
+                  .text(function(d) { return d.value + "%"; });
+                  
             });
       
       //Create and append the legend
