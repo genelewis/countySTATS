@@ -44,12 +44,18 @@
  
 <body>
   
-  <svg class="Unemployment" width="480" height="260"><title>Unemployment</title></svg>
+  <svg class="Unemployment-Adair" width="480" height="260"><title>Unemployment</title></svg>
   
   <!-- load the d3.js library -->
   <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script src="/../svg-crowbar.js"></script>
     
   <script>
+    
+    if (parent.ENABLE_PRINTABLE_CHARTS)
+      console.log('Setting charts to static downloadable / printable version.');
+    else
+      console.log('Setting charts to interactive web version.');
     
     //Define the container SVG with margin conventions
     var svg = d3.select("svg"),
@@ -100,7 +106,7 @@
       
       
       var selection = 'Adair County'; //(default selection value)
-      var currentPlaces = [places[0], places[1], selection];
+      var currentPlaces = [places[0], places[1], places[2]];
       
       //Set the domains of the axes
       x.domain(d3.extent(data, function(d) {return d.year}));
@@ -110,22 +116,24 @@
       ]);
       z.domain(places.map(function(c) { return c.id; }));
       
-     /* These functions add gridlines across the graph (DISABLED by default):
+     // These functions add gridlines across the graph (DISABLED by default):
+      if (parent.ENABLE_PRINTABLE_CHARTS) {
         function make_x_gridlines() { return d3.axisBottom(x).ticks(10)}
         function make_y_gridlines() { return d3.axisLeft(y).ticks(10)}
       
-        graph.append("g")			
+        var xlines = graph.append("g")			
             .attr("class", "grid")
             .attr("transform", "translate(0," + height + ")")
             .call(make_x_gridlines()
                 .tickSize(-height)
                 .tickFormat(""))
 
-        graph.append("g")			
+        var ylines = graph.append("g")			
             .attr("class", "grid")
             .call(make_y_gridlines()
                 .tickSize(-width)
-                .tickFormat("")) */
+                .tickFormat("")) 
+      }
       
       //Apend the axes and lines of data
       graph.append("g")
@@ -179,6 +187,11 @@
             selection = this.options[this.selectedIndex].value;
             currentPlaces[2] = places[places.findIndex(x => x.id == selection)]
             legendText.data(currentPlaces);
+            var s = document.getElementById('#svg');
+            var cname = 'Unemployment-' + selection.slice(0, -7);
+            svg.className = 'Unemployment-' + selection.slice(0, -7);
+            console.log(svg.className);
+            console.log('Unemployment-' + selection.slice(0, -7));
         
             y.domain([
               d3.min(currentPlaces, function(c) { return d3.min(c.values, function(d) { return d.unemp; }); }) - 0.1,
@@ -200,7 +213,16 @@
             
             //Update the legend
             legendText.transition()
-                .text(function(d) {return d.id;})
+                .text(function(d) {return d.id;});
+        
+            //Shift the gridlines, if necessary
+              if (parent.ENABLE_PRINTABLE_CHARTS) {
+                ylines.transition()
+                  .call(make_y_gridlines()
+                    .tickSize(-width)
+                    .tickFormat(""))
+              }
+        
         });
       
       //Create the legend
@@ -228,86 +250,88 @@
     
     //The following section controls how data is shown on all three lines on mouseover
     //(Directly incorporated from larsenmtl's block "D3 mouseover multi-line chart" on blocks.org)
-    var mouseG = graph.append("g")
-      .attr("class", "mouse-over-effects");
-      
-    var tracelines = document.getElementsByClassName('line');
-      
-    var mousePerLine = mouseG.selectAll('.mouse-per-line')
-      .data(currentPlaces)
-      .enter()
-      .append("g")
-      .attr("class", "mouse-per-line");
-      
-    mousePerLine.append("circle")
-      .attr("r", 7)
-      .style("stroke", function(d) {
-        return z(d.id);
-      })
-      .style("fill", "none")
-      .style("stroke-width", "1px")
-      .style("opacity", "0");
+    if (!parent.ENABLE_PRINTABLE_CHARTS) {
+        var mouseG = graph.append("g")
+          .attr("class", "mouse-over-effects");
 
-    mousePerLine.append("text")
-      .attr("transform", "translate(10,3)");
+        var tracelines = document.getElementsByClassName('line');
 
-    mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
-      .attr('width', width) // can't catch mouse events on a g element
-      .attr('height', height)
-      .attr('fill', 'none')
-      .attr('pointer-events', 'all')
-      .on('mouseout', function() { // on mouse out hide line, circles and text
-        d3.select(".mouse-line")
+        var mousePerLine = mouseG.selectAll('.mouse-per-line')
+          .data(currentPlaces)
+          .enter()
+          .append("g")
+          .attr("class", "mouse-per-line");
+
+        mousePerLine.append("circle")
+          .attr("r", 7)
+          .style("stroke", function(d) {
+            return z(d.id);
+          })
+          .style("fill", "none")
+          .style("stroke-width", "1px")
           .style("opacity", "0");
-        d3.selectAll(".mouse-per-line circle")
-          .style("opacity", "0");
-        d3.selectAll(".mouse-per-line text")
-          .style("opacity", "0");
-      })
-      .on('mouseover', function() { // on mouse in show line, circles and text
-        d3.select(".mouse-line")
-          .style("opacity", "1");
-        d3.selectAll(".mouse-per-line circle")
-          .style("opacity", "1");
-        d3.selectAll(".mouse-per-line text")
-          .style("opacity", "1");
-      })
-      .on('mousemove', function() { // mouse moving over canvas
-        var mouse = d3.mouse(this);
-        d3.select(".mouse-line")
-          .attr("d", function() {
-            var d = "M" + mouse[0] + "," + height;
-            d += " " + mouse[0] + "," + 0;
-            return d;
+
+        mousePerLine.append("text")
+          .attr("transform", "translate(10,3)");
+
+        mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
+          .attr('width', width) // can't catch mouse events on a g element
+          .attr('height', height)
+          .attr('fill', 'none')
+          .attr('pointer-events', 'all')
+          .on('mouseout', function() { // on mouse out hide line, circles and text
+            d3.select(".mouse-line")
+              .style("opacity", "0");
+            d3.selectAll(".mouse-per-line circle")
+              .style("opacity", "0");
+            d3.selectAll(".mouse-per-line text")
+              .style("opacity", "0");
+          })
+          .on('mouseover', function() { // on mouse in show line, circles and text
+            d3.select(".mouse-line")
+              .style("opacity", "1");
+            d3.selectAll(".mouse-per-line circle")
+              .style("opacity", "1");
+            d3.selectAll(".mouse-per-line text")
+              .style("opacity", "1");
+          })
+          .on('mousemove', function() { // mouse moving over canvas
+            var mouse = d3.mouse(this);
+            d3.select(".mouse-line")
+              .attr("d", function() {
+                var d = "M" + mouse[0] + "," + height;
+                d += " " + mouse[0] + "," + 0;
+                return d;
+              });
+
+            d3.selectAll(".mouse-per-line")
+              .attr("transform", function(d, i) {
+                var xDate = x.invert(mouse[0]),
+                    bisect = d3.bisector(function(d) { return d.year; }).right;
+                    idx = bisect(d.values, xDate);
+
+                var beginning = 0,
+                    end = tracelines[i].getTotalLength(),
+                    target = null;
+
+                while (true){
+                  target = Math.floor((beginning + end) / 2);
+                  pos = tracelines[i].getPointAtLength(target);
+                  if ((target === end || target === beginning) && pos.x !== mouse[0]) {
+                      break;
+                  }
+                  if (pos.x > mouse[0])      end = target;
+                  else if (pos.x < mouse[0]) beginning = target;
+                  else break; //position found
+                }
+
+                d3.select(this).select('text')
+                  .text(y.invert(pos.y).toFixed(2));
+
+                return "translate(" + mouse[0] + "," + pos.y +")";
+              });
           });
-
-        d3.selectAll(".mouse-per-line")
-          .attr("transform", function(d, i) {
-            var xDate = x.invert(mouse[0]),
-                bisect = d3.bisector(function(d) { return d.year; }).right;
-                idx = bisect(d.values, xDate);
-          
-            var beginning = 0,
-                end = tracelines[i].getTotalLength(),
-                target = null;
-
-            while (true){
-              target = Math.floor((beginning + end) / 2);
-              pos = tracelines[i].getPointAtLength(target);
-              if ((target === end || target === beginning) && pos.x !== mouse[0]) {
-                  break;
-              }
-              if (pos.x > mouse[0])      end = target;
-              else if (pos.x < mouse[0]) beginning = target;
-              else break; //position found
-            }
-            
-            d3.select(this).select('text')
-              .text(y.invert(pos.y).toFixed(2));
-              
-            return "translate(" + mouse[0] + "," + pos.y +")";
-          });
-      });
+        };
     });
     
     //Helper function to convert data from string to numeric form
@@ -316,6 +340,9 @@
         d[columns[i]] = +d[columns[i]];
       return d;
     }
+
+
+
     
   </script>
 </body>
