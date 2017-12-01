@@ -1,4 +1,24 @@
 <!DOCTYPE html>
+
+<script>
+  
+  /* CONFIGURATION VARIABLES: */
+  
+  /* Printable Charts (false by default):
+   * 
+   * Setting this variable to "true" will enable a "static mode" for
+   * all charts. Rather than being interactive, the line charts will
+   * display static gridlines and the bar charts will display their actual
+   * values above each bar. The graphs will still update if the drop-
+   * down menu is changed to a different county.
+   * 
+   * You should enable this setting when saving the charts as SVG images
+   * to be used in a printable county fact sheet. */
+  var ENABLE_PRINTABLE_CHARTS = false;
+  
+</script>
+
+
 <html>
   <head> 
     <meta charset="utf-8">
@@ -51,7 +71,7 @@
   
   <body>
     <h1>CountySTATs - Master Mockup</h1>
-    <h3>Updated November 16, 2017</h3>
+    <h3>Updated December 1, 2017</h3>
     
     <div class="column">
       <div style="float:left; width:50%; height:260px">
@@ -91,7 +111,7 @@
       <div style="float:right; width:50%">
         <h2>Demographics</h2>
         <div class="demographics">
-        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Demographics/countyDemographics.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Demographics/Demographics.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
         </div>
         
         <h2>Educational Attainment</h2>
@@ -233,4 +253,5 @@
           });
     })
   </script>
+  
 </html>
