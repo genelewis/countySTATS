@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<style>
+ 
+.axis .domain {
+  display: none;
+}
+  
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  font: 10px Arial;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+  
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+  
+h1 {
+  text-anchor: middle;
+  font-family: sans-serif;
+  text-align: justify
+}
+
+</style>
+
+<title>County Demographics</title>
+
+<svg class="Demograpics" width="480" height="260"><title>Demographics</title></svg>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="d3-tip.js"></script>
+
+<script>
+  
+  if (parent.ENABLE_PRINTABLE_CHARTS)
+    console.log('Setting charts to static downloadable / printable version.');
+  else
+    console.log('Setting charts to interactive web version.');
+  
+  //Define the container SVG with margin conventions
+  var svg = d3.select("svg"),
+      margin = {top: 20, right: 20, bottom: 15, left: 40},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom -20,
+      graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  //Define the scales of the x- and y-axes
+  var x0 = d3.scaleBand()
+      .rangeRound([0, width])
+      .paddingInner(0.1);
+
+  var x1 = d3.scaleBand()
+      .padding(0.05);
+
+  var y = d3.scaleLinear()
+      .rangeRound([height, 0]);
+
+  //Define a coloring scale
+  var z = d3.scaleOrdinal()
+      .range(["#2f507f", "#972421"]);
+
+  //Import the raw data from CSV
+  d3.csv("data.csv", numericize, function(error, data) {
+    if (error) throw error;
+
+    var selection = 'Adair County',         //(default selection value)
+        keys = data.columns.slice(1),
+        currentKeys = ['State', selection];
+
+    //Siphon out only the data relevant to the selected county
+    var dataset = formatData(data, selection);
+
+    //Set the domains of the axes
+    x0.domain(dataset.map(function(d) {return d.Ethnicity; }));
+    x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
+    y.domain([0, 100]).nice();
+
+    //Set up tooltip displays
+    var tip = d3.tip()
+      .attr('class', 'd3-tip')
+      .offset([-10, 0])
+      .html(function(d) {
+        return "<span style='color:grey'>" + d.Value + "%</span>";
+      })
+    graph.call(tip);
+
+    
+    //Begin appending bars to the graph
+    var bars = graph.append("g")
+        .selectAll("rect")
+        .data(dataset)
+        .enter().append("rect")
+          .attr("class", "bar")
+          .attr("transform", function(d,i) { 
+              if (i%2 == 0){
+                var offset = 3;
+              } else {
+                var offset = x1.bandwidth()+4;
+              }
+              return "translate(" + (x0(d.Ethnicity) + offset) + ",0)"; })
+          .attr("x", function(d) { return x1(d.Ethnicity); })
+          .attr("y", function(d, i) { return y(d.Value); })
+          .attr("width", x1.bandwidth())
+          .attr("height", function(d) { return height - y(d.Value); })
+          .attr("fill", function(d) { return z(d.Type); })
+    
+    if (!parent.ENABLE_PRINTABLE_CHARTS) {
+      bars.on('mouseover', function(d) {
+            d3.select(this).attr("fill", d3.rgb(z(d.Type)).brighter(0.5));
+            tip.show(d);
+          })
+          .on('mouseout', function(d) {
+            d3.select(this).attr("fill", d3.rgb(z(d.Type)).darker(0.1));
+            tip.hide(d);
+          });
+    } else {
+      graph.selectAll(".bartext")
+        .data(dataset)
+      .enter().append("text")
+        .attr("class", "bartext")
+        .attr("transform", function(d,i) { 
+                if (i%2 == 0){
+                  var offset = 4 + x1.bandwidth()/2;
+                } else {
+                  var offset = x1.bandwidth() + 5 + x1.bandwidth()/2;
+                }
+                return "translate(" + (x0(d.Ethnicity) + offset) + ",0)"; })
+        .attr("text-anchor", "middle")
+        .attr("x", function(d) { return x1(d.Ethnicity); })
+        .attr("y", function(d) { return y(d.Value) - 2; })
+        .style("font", "11px Arial")
+        .text(function(d) { return d.Value + "%"; });
+    }
+
+    //Create the axes
+    var xAxis = d3.axisBottom(x0)
+    
+    graph.append("g")
+          .attr("class", "xaxis")
+          .style("font", "11px Arial")
+          .attr("transform", "translate(0," + (height) + ")")
+          .call(xAxis)
+          .selectAll(".tick text")
+
+    var yaxis = graph.append("g")
+          .attr("class", "yaxis")
+          .style("font", "11px Arial")
+          .call(d3.axisLeft(y).ticks(null, "s"))
+        .append("text")
+              .attr("x", 2)
+              .attr("y", y(y.ticks().pop()) + 0.5)
+              .attr("dy", "0.32em")
+              .attr("fill", "#000")
+              .attr("font-weight", "bold")
+              .attr("text-anchor", "start")
+              .text("Percentage");
+
+    //Helper function to streamline wrapping long label text
+    var insertLinebreaks = function (d) {
+      console.log('affirm')
+      var el = d3.select(this);
+      var words = d.split(' ');
+      el.text('');
+
+      for (var i = 0; i < words.length; i++) {
+          var tspan = el.append('tspan').text(words[i]);
+          if (i > 0)
+              tspan.attr('x', 0).attr('dy', '12');
+      }
+    };
+    d3.select('.xaxis').selectAll(".tick text").transition().each(insertLinebreaks)
+
+    //Find the dropdown menu from the parent document and listen for a change in selection
+    var selector = window.parent.document.getElementById('dropdown');
+    selector = d3.select(selector)
+      .on("change.demo", function(d) {
+      
+            //Update the data:
+              selection = this.options[this.selectedIndex].value;
+              currentKeys[1] = selection;
+              dataset = formatData(data, selection);
+              legendText.data(currentKeys.slice().reverse());
+
+            //Rearrange the order of ethnicities (from greatest > least)
+              x0.domain(dataset.map(function(d) { return d.Ethnicity; }));
+
+            //Associate the new selection of data with the bars
+              d3.selectAll(".bar")
+                .data(dataset);
+
+            //Switch the x-axis labels to the new ethnicities
+              d3.select(".xaxis").call(xAxis).selectAll(".tick text").each(insertLinebreaks);
+
+            //Transition to the new values for the bars
+              var t0 = graph.transition().duration(450).ease(d3.easeBounce);
+              t0.selectAll(".bar")
+                .attr("height", function(d) { 
+                  return height - y(d.Value); })
+                .attr("y", function(d, i) { return y(d.Value); })
+                .ease(d3.easeBounce);
+
+            //Transition the legend
+              legendText.transition()
+                  .text(function(d) {return d;})
+      
+            //Update static labels if necessary:
+              if (parent.ENABLE_PRINTABLE_CHARTS) {
+                graph.selectAll('.bartext')
+                  .data(dataset)
+                  .attr("transform", function(d,i) { 
+                          if (i%2 == 0){
+                            var offset = 4 + x1.bandwidth()/2;
+                          } else {
+                            var offset = x1.bandwidth() + 5 + x1.bandwidth()/2;
+                          }
+                          return "translate(" + (x0(d.Ethnicity) + offset) + ",0)"; })
+                  .attr("x", function(d) { return x1(d.Ethnicity); })
+                  .attr("y", function(d) { return y(d.Value) - 2; })
+                  .text(function(d) { return d.Value + "%"; });
+              }
+        });
+
+    //Append the legend to the main graph
+    var legend = graph.append("g")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 10)
+        .attr("text-anchor", "end")
+      .selectAll("g")
+      .data(currentKeys.slice().reverse())
+      .enter().append("g")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+    var legendBox = legend.append("rect")
+        .attr("x", width - 19)
+        .attr("width", 19)
+        .attr("height", 19)
+        .attr("fill", z);
+
+    var legendText = legend.append("text")
+        .attr("x", width - 24)
+        .attr("y", 9.5)
+        .attr("dy", "0.32em")
+        .text(function(d) { 
+        return d; });
+    });
+
+    //Helper function to siphon out one county's-worth of data at a time
+    function formatData(data, selection){
+      var filteredData = [];
+
+      data.forEach(function(val, idx, arr){
+        var sect = String(data[idx].Ethnicity);
+        var countyval = +val[selection];
+        var stateval = +val['State'];
+
+        if (countyval != 0) {
+          var county = {},
+              state = {};
+          county["Ethnicity"] = sect;
+          county["Value"] = countyval;
+          county["Type"] = "county";
+          state["Ethnicity"] = sect;
+          state["Value"] = stateval;
+          state["Type"] = "state";
+
+          filteredData.push(county);
+          filteredData.push(state);
+        }
+      });
+
+      filteredData = sortData(filteredData, 0)
+      return filteredData;
+    }
+
+    //Helper function to sort the data from greatest > least by county value
+    function sortData(filteredData, i) {
+      var max = filteredData[i].Value;
+      for (var j = i; j < filteredData.length; j = j+2) {
+        if (filteredData[j].Value > max) {
+          max = filteredData[j].Value;
+          var temp = [filteredData[i], filteredData[i+1]];
+          filteredData[i] = filteredData[j];
+          filteredData[i+1] = filteredData[j+1];
+          filteredData[j] = temp[0];
+          filteredData[j+1] = temp[1];
+        }
+      }
+
+      if (i == filteredData.length - 2) {
+        return filteredData;
+      } else {
+        return sortData(filteredData, i+2);
+      }
+    }
+
+    //Helper function to convert data from string to numeric form
+    function numericize(d, i, columns) {
+      for (var i = 1, n = columns.length; i < n; ++i) 
+        d[columns[i]] = +d[columns[i]];
+      return d;
+    }
+  
+</script>
