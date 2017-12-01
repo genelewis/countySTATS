@@ -72,7 +72,7 @@ h1 {
 
   //Define a coloring scale
   var z = d3.scaleOrdinal()
-      .range(["#972421", "#febd60"]);
+      .range(["#2f507f", "#972421"]);
 
   //Import the raw data from CSV
   d3.csv("employmentSectors.csv", numericize, function(error, data) {
@@ -118,7 +118,9 @@ h1 {
           .attr("width", x1.bandwidth())
           .attr("height", function(d) { return height - y(d.Value); })
           .attr("fill", function(d) { return z(d.Type); })
-          .on('mouseover', function(d) {
+    
+    if (!parent.ENABLE_PRINTABLE_CHARTS) {
+      bars.on('mouseover', function(d) {
             d3.select(this).attr("fill", d3.rgb(z(d.Type)).brighter(0.5));
             tip.show(d);
           })
@@ -126,6 +128,24 @@ h1 {
             d3.select(this).attr("fill", d3.rgb(z(d.Type)).darker(0.1));
             tip.hide(d);
           });
+    } else {
+      graph.selectAll(".bartext")
+        .data(dataset)
+      .enter().append("text")
+        .attr("class", "bartext")
+        .attr("transform", function(d,i) { 
+                if (i%2 == 0){
+                  var offset = 4 + x1.bandwidth()/2;
+                } else {
+                  var offset = x1.bandwidth() + 5 + x1.bandwidth()/2;
+                }
+                return "translate(" + (x0(d.Sector) + offset) + ",0)"; })
+        .attr("text-anchor", "middle")
+        .attr("x", function(d) { return x1(d.Sector); })
+        .attr("y", function(d) { return y(d.Value) - 2; })
+        .style("font", "11px Arial")
+        .text(function(d) { return d.Value + "%"; });
+    }
 
     //Create the axes 
     var xAxis = d3.axisBottom(x0),
@@ -199,6 +219,13 @@ h1 {
             //Update the legend
               legendText.transition()
                   .text(function(d) {return d;})
+          
+            //Update the static labels, if enabled
+              graph.selectAll(".bartext")
+                  .data(dataset)
+                  .attr("y", function(d) { return y(d.Value) - 2; })
+                  .text(function(d) { return d.Value + "%"; });
+          
           });
 
     //Append the legend to the main graph
