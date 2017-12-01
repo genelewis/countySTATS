@@ -99,7 +99,7 @@ The only other major component of the `index` prototype is the inclusion of ~15 
 
 All said in done, the finished prototype looks like this:
 
-![](Oklahoma%20Policy%20Institute:%20CountySTATS/Oklahoma%20Policy%20Institute:%20CountySTATS/E48D9DD3-4A23-4C75-8204-2589E66C3B3C.png)
+![Example Image](https://github.com/genelewis/countySTATS/blob/master/example_image.png)
 
 And you can keep using this prototype page on your local machine to view any updates or tweaks before they’re published to the official OKPolicy website, and/or to save static SVG “images” with the NYT Crowbar bookmarklet if need be.
 
