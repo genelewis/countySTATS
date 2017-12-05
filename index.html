@@ -2,6 +2,9 @@
 
 <script>
   
+  var link = document.getElementById("link");
+  console.log(link);
+  
   /* CONFIGURATION VARIABLES: */
   
   /* Printable Charts (false by default):
@@ -34,6 +37,19 @@
         margin: 2em auto 4em auto;
         tab-size: 2;
         -webkit-text-size-adjust: none;
+      }
+      .wrapper {
+        display: grid;
+        grid-auto-rows: minmax(125px, auto);
+        grid-gap: 10px;
+      }
+    @media (min-width 500px) {
+      .wrapper {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+      .morestats {
+        grid-row: 3 / 4;
       }
       .column {
         max-width: 960px;
@@ -73,6 +89,7 @@
     <h1>CountySTATs - Master Mockup</h1>
     <h3>Updated December 1, 2017</h3>
     
+    
     <div class="column">
       <div style="float:left; width:50%; height:260px">
         <br><br><br><br><br>
@@ -86,67 +103,79 @@
     
     <div id="drop" align="center"></div>
     
+    
     <div class="column">
-      <div style="float:left; width:50%">
-        <h2>Population</h2> 
+      <div class="wrapper">
+      <!--<div style="float:left; width:50%">-->
+        
         <div class="population">
+          <h2>Population</h2> 
           <iframe id="population" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Population/Population.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"> </iframe>
         </div>
         
-        <h2>Unemployment</h2>
+        
+        <div class="demographics">
+          <h2>Demographics</h2>
+          <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Demographics/Demographics.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+        </div>
+        
+        
         <div class="unemployment">
+          <h2>Unemployment</h2>
           <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/County Unemployment/Unemployment.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
         </div>
         
-        <h2>Top 5 Employment Sectors</h2>
-        <div class="employmentSectors">
-        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
-        </div>
         
-        <br>
-        <h4 align="center">All data is the most recent available at time of publication, ranging from 2013 to 2015.</h4>
-        <p style="text-align:center"><img align="center" src="okpolicyLogo.png"></p>
-      </div>
-      
-      <div style="float:right; width:50%">
-        <h2>Demographics</h2>
-        <div class="demographics">
-        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Demographics/Demographics.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
-        </div>
-        
-        <h2>Educational Attainment</h2>
         <div class="educationalAttainment">
+          <h2>Educational Attainment</h2>
           <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Educational Attainment/educationalAttainment.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"> </iframe>
         </div>
         
-        <h2>More Stats</h2>
-        <p class="desc">For all measures, a rank of 1st indicates the highest statistic and 77th indicates the lowest statistic among the 77 counties of Oklahoma (not best or worst).</p>
-        <p style="text-align:center; font-weight:bold" class="countyname"></p>
-        <ul>
-          <!--style="color:#972421; font-size:18px"-->
-          <p>Demographics</p>
-          <li class="fact"><b>Number of voting-age citizens: </b></li>
-          <li class="fact"><b>Percent aged under 18: </b></li>
-          <li class="fact"><b>Percent aged 65 and up: </b></li>
-          <p>Economy</p>
-          <li class="fact"><b>Median household income: </b></li>
-          <li class="fact"><b>Residents receiving food stamps: </b></li>
-          <li class="fact"><b>Children living in poverty: </b></li>
-          <li class="fact"><b>Median value of owner-occupied homes: </b></li>
-          <p>Education</p>
-          <li class="fact"><b>Average A-F school grade: </b></li>
-          <li class="fact"><b>Students eligible for free/reduced lunch price: </b></li>
-          <li class="fact"><b>Students enrolled in public school: </b></li>
-          <p>Health</p>
-          <li class="fact"><b>Overall health rank: </b></li>
-          <li class="fact"><b>Residents with a disability: </b></li>
-          <li class="fact"><b>Adults with obesity: </b></li>
-          <li class="fact"><b>Percentage of uninsured residents: </b></li>
-          <br>
-          <div class="sheet"></div>
-        </ul>
-      </div>
+        
+        <div class="employmentSectors">
+        <h2>Top 5 Employment Sectors</h2>
+        <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+        </div>
       
+      <!--<div style="float:right; width:50%">-->
+        
+        <div class="moreStats">
+          <h2>More Stats</h2>
+          <p class="desc">For all measures, a rank of 1st indicates the highest statistic and 77th indicates the lowest statistic among the 77 counties of Oklahoma (not best or worst).</p>
+          <p style="text-align:center; font-weight:bold" class="countyname"></p>
+          <ul>
+            <!--style="color:#972421; font-size:18px"-->
+            <p>Demographics</p>
+            <li class="fact"><b>Number of voting-age citizens: </b></li>
+            <li class="fact"><b>Percent aged under 18: </b></li>
+            <li class="fact"><b>Percent aged 65 and up: </b></li>
+            <p>Economy</p>
+            <li class="fact"><b>Median household income: </b></li>
+            <li class="fact"><b>Residents receiving food stamps: </b></li>
+            <li class="fact"><b>Children living in poverty: </b></li>
+            <li class="fact"><b>Median value of owner-occupied homes: </b></li>
+            <p>Education</p>
+            <li class="fact"><b>Average A-F school grade: </b></li>
+            <li class="fact"><b>Students eligible for free/reduced lunch price: </b></li>
+            <li class="fact"><b>Students enrolled in public school: </b></li>
+            <p>Health</p>
+            <li class="fact"><b>Overall health rank: </b></li>
+            <li class="fact"><b>Residents with a disability: </b></li>
+            <li class="fact"><b>Adults with obesity: </b></li>
+            <li class="fact"><b>Percentage of uninsured residents: </b></li>
+            <br>
+            <div class="sheet"></div>
+          </ul>
+        </div>
+        
+        <div class="flavor">
+          <br>
+          <h4 align="center">All data is the most recent available at time of publication, ranging from 2013 to 2015.</h4>
+          <p style="text-align:center"><img align="center" src="okpolicyLogo.png"></p>
+        </div>
+        
+        
+      </div>
     </div>
   </body>
   
