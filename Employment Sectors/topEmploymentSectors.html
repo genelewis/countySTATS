@@ -122,7 +122,6 @@ h1 {
     
     if (!parent.ENABLE_PRINTABLE_CHARTS) {
       rects.on('mouseover', function(d) {
-            console.log('affirm');
             d3.select(this).attr("fill", d3.rgb(z(d.Type)).brighter(0.5));
             tip.show(d);
           })
