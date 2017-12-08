@@ -44,13 +44,27 @@
  
 <body>
   
-  <svg class="Unemployment-Adair" width="480" height="260"><title>Unemployment</title></svg>
+  <svg class="Unemployment-Adair" id="chart" width="480" height="260" viewBox="0 0 480 260"
+    preserveAspectRatio="xMidYMid meet"><title>Unemployment</title></svg>
   
   <!-- load the d3.js library -->
   <script src="http://d3js.org/d3.v4.min.js"></script>
   <script src="/../svg-crowbar.js"></script>
-    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script>
+    
+    var mychart = $("#chart"),
+        aspect = mychart.width() / mychart.height(),
+        container = mychart.parent();
+    
+    console.log(container);
+    
+    $(window).on("resize", function() {
+        var targetWidth = container.width();
+        console.log(aspect);
+        mychart.attr("width", targetWidth);
+        mychart.attr("height", Math.round(targetWidth / aspect));
+    })
     
     //Define the container SVG with margin conventions
     var svg = d3.select("svg"),

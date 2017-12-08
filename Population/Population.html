@@ -48,17 +48,42 @@
 
 <body>
   
-  <svg class="Population" width="480" height="250"></svg>
+    <svg class="Population" id="chart" width="480" height="260" viewBox="0 0 480 260"
+    preserveAspectRatio="xMidYMid meet"></svg>
   
   <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script>
-
+    
+    var mychart = $("#chart"),
+        aspect = mychart.width() / mychart.height(),
+        container = mychart.parent();
+    
+    console.log(container);
+    
+    $(window).on("resize", function() {
+        var targetWidth = container.width();
+        console.log(aspect);
+        mychart.attr("width", targetWidth);
+        mychart.attr("height", Math.round(targetWidth / aspect));
+    })
+    
+    
     //Define the container SVG with margin conventions
     var svg = d3.select('svg'),
         margin = {top: 20, right: 50, bottom: 20, left: 40},
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom,
         graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    
+    var aspect = +svg.attr(width) / +svg.attr(height);
+
+    d3.select(window)
+      .on("resize", function() {
+        var targetWidth = chart.node().getBoundingClientRect().width;
+        svg.attr("width", targetWidth);
+        svg.attr("height", targetWidth / aspect);
+      });
         
     //Import the raw data from CSV
     d3.csv("data.csv", numericize, function (error, data) {
