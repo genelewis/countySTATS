@@ -16,15 +16,26 @@ The code will take care of formatting the numbers; if editing the data points in
 - - - -
 After county data has been updated, the printable, 2-page factsheets will also need to have their images of each chart updated to reflect the changes.  
 
-Each of the 5 charts here is built as an SVG, and this format can be saved and used to build the printable factsheets for each county.  In my estimation, the best way of doing this is by downloading the New York Times’ Chrome tool [SVG Crowbar](http://nytimes.github.io/svg-crowbar/).  The Crowbar bookmarklet can be used to save each chart individually, if albeit somewhat tediously.  The charts should all have unique, dynamic class names to help with providing a clean file tree/nomenclature.
+Each of the 5 charts here is built as an SVG, and this format can be saved and used to build the printable factsheets for each county.  In my estimation, the best way of doing this is by downloading the New York Times’ Chrome tool [SVG Crowbar](http://nytimes.github.io/svg-crowbar/).  The Crowbar bookmarklet can be used to save each chart individually, if albeit somewhat tediously.  Unfortunately, even after much research & experimentation I really wasn't able to smooth this process— really the only way to do save these SVGs is to download each one from your broswer individually.
 
-Since the printable charts aren’t interactive, you may wish for some of the charts to automatically display their values during this process (instead of having to hover over a bar to see its value, say).  This can be done by locating the following line of code at the top of `index.html` :
+Since the printable charts aren’t interactive, you may wish for some of the charts to automatically display their values during this process (instead of having to hover over a bar to see its value, say).  There's a feature for that!  This can be done by locating the following line of code at the top of `index.html` :
 
 ```
-var INTERACTIVITY = True
+/* Printable Charts (false by default):
+   * 
+   * Setting this variable to "true" will enable a "static mode" for
+   * all charts. Rather than being interactive, the line charts will
+   * display static gridlines and the bar charts will display their actual
+   * values above each bar. The graphs will still update if the drop-
+   * down menu is changed to a different county.
+   * 
+   * You should enable this setting when saving the charts as SVG images
+   * to be used in a printable county fact sheet. */
+   
+  var INTERACTIVITY = True       // <----THIS IS THE LINE TO FIND
 ```
 
-and changing the value from **True** to **False**.
+and then changing the value from **True** to **False**.
 
 ### General Code Outline
 - - - -
@@ -34,20 +45,34 @@ I’ll start by going through the code for the charts, and then briefly talk abo
 
 ##### Creating the Charts:
 
-Each chart has a basic HTML header that defines any of its necessary style elements, source scripts, and the overarching SVG container element, which looks something like this:
+Each chart has a basic HTML header that defines any of its necessary style elements, source scripts, and the overarching SVG container element.  Then, the top of every body defines an SVG element, imports any necessary scripts, and then includes a nifty little JQuery function that's responsible for resizing the chart according to the width of the browser (in tandem with some CSS).  Here's what it looks like:
 
 ```js
 <!DOCTYPE html>
-<style>
-  //CSS style goes here
-</style>
+<head>
+  <style> /* CSS style goes here */ </style>
+  <meta charset="utf-8">
+  <title>Population</title>
+</head>
 
-<title>County Demographics</title>
-
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="d3-tip.js"></script> //Responsible for showing bar tooltips on mouseover
-
-<svg class="Demograpics" width="480" height="260"><title>Demographics</title></svg>
+<body>
+  <svg class="Population" id="chart" width="480" height="260" viewBox="0 0 480 260"
+  preserveAspectRatio="xMidYMid meet"></svg>
+  
+  <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script>
+    
+    var mychart = $("#chart"),
+        aspect = mychart.width() / mychart.height(),
+        container = mychart.parent();
+    
+    $(window).on("resize", function() {
+        var targetWidth = container.width();
+        console.log(aspect);
+        mychart.attr("width", targetWidth);
+        mychart.attr("height", Math.round(targetWidth / aspect));
+    })
 ```
 
 The rest is all Javascript code embedded in a `<script>` element.  For the most part, each chart’s code follows the same basic outline:
@@ -72,32 +97,32 @@ selector = d3.select(selector);
 
 One weird thing to watch out for is that each event listener must have its own **unique namespace**— otherwise, the listeners from each chart will overwrite each other when they get put together.  The code from the above example comes from the ‘Demographics’ chart, so I’ve given the event listener the unique namespace of `.demo`.  The other charts follow a similar convention.
 
-The lambda callback function here then defines what parts of the chart should shift to the new county.  This varies depending on the chart, and the charts use D3 transitions to help make sure that the shift is smooth and able to be followed by the user’s eye.  In most instances, this means recalculating which slice of data from the .CSV we’re working with, and then some combination of moving plot points/bar lines and rescaling the x- and y-axes to keep the new data to a good fit.  We also update the labels on the legend here.
+The callback function here then defines what parts of the chart should shift to the new county.  This varies depending on the chart, and the charts use D3 transitions to help make sure that the shift is smooth and able to be followed by the user’s eye.  In most instances, this means recalculating which slice of data from the .CSV we’re working with, and then some combination of moving plot points/bar lines and rescaling the x- and y-axes to keep the new data to a good fit.  We also update the labels on the legend here.
 
-One problem I encountered was that in several of the graphs, the x-axis labels were too long and had to be wrapped to multiple lines.  Unfortunately, I couldn’t get D3 transitions to play nice with the wrapped labels (they reset to one line of text every time a new county is selected).  The labels can be wrapped again, but it results in a bit of “jarring-ness” during transition.
+6. Finally, the code finishes out by appending the legend to each chart.
 
-6. Finally, the code finishes out by appending the legend to each chart.  (It may make more sense for this to happen with Step 4, but I found it useful/more readable to separate the legend from the chart itself.)
-
-In a few instances, there are also some helper functions at the bottom of the code that help us to get the exact slice of the CSV that we want and convert it to useable data with D3.  For example, I included a couple of helper methods in the chart for Top Employment Sectors that will break the CSV file down into manageable components, and then sort all of the sectors from largest to smallest by county value.
+In a few instances, there are also some helper functions at the bottom of the code that help us get the exact slice of the CSV that we want and convert it to useable data with D3.  For example, I included a couple of helper methods in the chart for Top Employment Sectors that will break the CSV file down into manageable components, and then sort all of the sectors from largest to smallest by county value.
 - - - -
 ##### Putting It All Together:
 
-After creating the charts, the next thing we’d like to do is put them together so all 5 are visible on one page.  We’d also like to have a dropdown menu where users can select one of Oklahoma’s counties, and then have all 5 charts transition to data for that particular county.  “One dropdown menu to rule them all,” so-to-speak.
+After creating the charts, the next thing we’d like to do is put them together so all 5 are visible on one page.  We’d also like to have a dropdown menu so users can select one of Oklahoma’s counties, and then have all 5 charts transition to data for that particular county.  “One dropdown menu to rule them all,” so-to-speak.
 
-I did this in the `index.html` file, which was primarily my prototype for how things might work and look on the actually OKPolicy website.  Essentially, all that is needed are some iFrames to hold each chart; the code for that looks like this (note that the source file is just relative to my own local machine):
+I did all this in the `index.html` file, which was basically just my prototype for how things might work and look on the actually OKPolicy website.  Essentially, all that is needed are some iFrames to hold each chart; the code for that looks like this (note that the source file is just relative to my own local machine):
 
 ```html
-  <h2>Population</h2> 
-  <div class="population">
-    <iframe id="population" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Population/Population.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"> </iframe>
+  <div class="chart population" align="center">
+    <h2>Population</h2> 
+    <div class="iwrapper">
+      <iframe id="population" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="/Population/Population.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no" align="center"> </iframe>
+    </div>
   </div>
 ```
 
-There’s some additional CSS styling to make the prototype page more compact and pleasing to the eye, but this is the main gist.
+There’s some additional CSS styling to make the prototype page more compact and pleasing to the eye, but it's just there to get the main gist across.  Note also that the iframe is wrapped in a `<div>` element, which helps us resize the frame to the browser window or on mobile devices.
 
 The only other major component of the `index` prototype is the inclusion of ~15 or so other statistics in list form.  Since we want these stats to change when the user selects a new county (just like the charts), we use a bit of D3-scripting in the index file as well.  It follows much the same pattern as the charts do, with data being read in from a CSV that contains the all the extraneous stats and rankings.  **Note that some values have been hard-coded in this section to make displaying these stats a bit easier.**  A dynamic link to the printable factsheet for the selected county is also incorporated.
 
-All said in done, the finished prototype looks like this:
+All said and done, the finished prototype should look something like this:
 
 ![Example Image](https://github.com/genelewis/countySTATS/blob/master/example_image.png)
 
@@ -118,6 +143,8 @@ Much of the code that went into these charts was directly adapted from previous 
 * [D3 mouseover multi-line chart - larsenmtl](https://bl.ocks.org/larsenmtl/e3b8b7c2ca4787f77d78f58d41c3da91)
 
 I also relied on the D3.tip library, which can be viewed on GitHub here: [GitHub - Caged/d3-tip: d3 tooltips](https://github.com/Caged/d3-tip)
+
+For responsivity, I relied on CSS Grid (Bootstrap would've also been a decent alternative, but for so few elements Grid works just fine).  You can read a bit more about how CSS Grid works here: [Creative Bloq - Creating a responsive layout with CSS Grid](http://www.creativebloq.com/how-to/create-a-responsive-layout-with-css-grid)
 
 And finally, here are a couple of other resources that I felt I should list.  I didn’t know anything about D3 or JavaScript coming into this project; these pages helped me tremendously, and I hope they help anyone who may update this project and the CountySTATS page in the future.
 
