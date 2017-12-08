@@ -12,7 +12,7 @@ All the data for these charts are held in .CSV files, which can be updated in a 
 
 The code will take care of formatting the numbers; if editing the data points in Excel, there’s no need to convert into a specific number format (e.g., “Percentage”).  There’s also no hard-coded limit to the number of data points one chart can interpret (if a 78th county was created in Oklahoma, it could be safely added to the .CSV files and the selector on `index.html` to be viewed.
 
-### Converting Charts to an Image Format (for static county factsheets)
+### Converting Charts to an Image Format (for static/printable county factsheets)
 - - - -
 After county data has been updated, the printable, 2-page factsheets will also need to have their images of each chart updated to reflect the changes.  
 
