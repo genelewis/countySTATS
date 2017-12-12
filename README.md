@@ -154,6 +154,8 @@ And finally, here are a couple of other resources that I felt I should list.  I 
 * [D3 Tutorial Table of Contents | DashingD3js.com](https://www.dashingd3js.com/table-of-contents)
 * And countless StackOverflow searches.
 
+There's also a folder in this repo called "Reference Examples," which has a couple of really quick examples of SVG and HTML to help get you started.
+
 I hope this helps you, and I hope that this project can give us a better visual understanding of what kinds of problems (and successes) people are facing right now on a local level— and subsequently, statewide and nationally. Three cheers for data—
 
 Aaron Krusniak, OKPolicy Intern, Fall 2017
