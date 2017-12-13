@@ -242,7 +242,7 @@
         .selectAll("g")
           .data(currentPlaces, function(d) {return d.id;})
         .enter().append("g")
-          .attr("transform", function(d, i) { return "translate(-5," + ((i * 20)+5) + ")"; });
+          .attr("transform", function(d, i) { return "translate(-20," + ((i * 20)+5) + ")"; });
         
       var legendBox = legend.append("rect")
           .attr("width", 19)
@@ -255,7 +255,14 @@
           .attr("y", 9.5)
           .attr("dy", "0.32em")
           .attr("class", "legend")
-          .text(function(d) {return d.id;}); 
+          .text(function(d) {return d.id;});
+      
+      /*var percentText = legend.append("text")
+          .attr("x", width + 33)
+          .attr("y", 9.5)
+          .attr("dy", "0.32em")
+          .attr("class", "legend-percent")
+          .text("--   --");*/
     
     //The following section controls how data is shown on all three lines on mouseover
     //(Directly incorporated from larsenmtl's block "D3 mouseover multi-line chart" on blocks.org)
@@ -281,7 +288,8 @@
           .style("opacity", "0");
 
         mousePerLine.append("text")
-          .attr("transform", "translate(10,3)");
+          .attr("transform", function(d, i) { return "translate(393," + ((i * 20) + 19) + ")"; })
+          .text("-- --")
 
         mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
           .attr('width', width) // can't catch mouse events on a g element
@@ -304,6 +312,12 @@
             d3.selectAll(".mouse-per-line text")
               .style("opacity", "1");
           })
+          .on('mouseout', function() {
+            d3.selectAll(".mouse-per-line text")
+              .text("-- --");
+            d3.selectAll(".mouse-per-line circle")
+              .style("opacity", "0");
+          })
           .on('mousemove', function() { // mouse moving over canvas
             var mouse = d3.mouse(this);
             d3.select(".mouse-line")
@@ -313,7 +327,7 @@
                 return d;
               });
 
-            d3.selectAll(".mouse-per-line")
+            d3.selectAll(".mouse-per-line").select("circle")
               .attr("transform", function(d, i) {
                 var xDate = x.invert(mouse[0]),
                     bisect = d3.bisector(function(d) { return d.year; }).right;
@@ -334,10 +348,31 @@
                   else break; //position found
                 }
 
-                d3.select(this).select('text')
-                  .text(y.invert(pos.y).toFixed(2));
-
                 return "translate(" + mouse[0] + "," + pos.y +")";
+              });
+          
+            d3.selectAll(".mouse-per-line").select("text")
+              .text(function(d, i) {
+                var xDate = x.invert(mouse[0]),
+                    bisect = d3.bisector(function(d) { return d.year; }).right;
+                    idx = bisect(d.values, xDate);
+              
+                var beginning = 0,
+                    end = tracelines[i].getTotalLength(),
+                    target = null;
+              
+                while (true){
+                  target = Math.floor((beginning + end) / 2);
+                  pos = tracelines[i].getPointAtLength(target);
+                  if ((target === end || target === beginning) && pos.x !== mouse[0]) {
+                      break;
+                  }
+                  if (pos.x > mouse[0])      end = target;
+                  else if (pos.x < mouse[0]) beginning = target;
+                  else break; //position found
+                }
+              
+                return y.invert(pos.y).toFixed(2) + " %";
               });
           });
         };
