@@ -21,7 +21,6 @@
   
 </script>
 
-
 <html>
   <head> 
     <meta charset="utf-8">
@@ -62,7 +61,7 @@
   
   <body>
     <h1>CountySTATs - Master Mockup</h1>
-    <h3>Updated December 1, 2017</h3>
+    <h3>Updated December 8, 2017</h3>
 
     <div class="wrapper">
       <div>
@@ -130,7 +129,8 @@
             <p>Economy</p>
             <li class="fact"><b>Median household income: </b></li>
             <li class="fact"><b>Residents receiving food stamps: </b></li>
-            <li class="fact"><b>Children living in poverty: </b></li>
+            <li class="fact"><b>Residents living under poverty line (all ages): </b></li>
+            <li class="fact"><b>Children living under poverty line: </b></li>
             <li class="fact"><b>Median value of owner-occupied homes: </b></li>
             <p>Education</p>
             <li class="fact"><b>Average A-F school grade: </b></li>
@@ -142,6 +142,7 @@
             <li class="fact"><b>Adults with obesity: </b></li>
             <li class="fact"><b>Percentage of uninsured residents: </b></li>
             <br>
+            <div class="sheet"></div>
           </ul>
         </div>
         </div>
@@ -176,20 +177,25 @@
         .attr("x", 10)
         .attr("y", 0)
         .text(function(d, i) {
+          //This i cycles through the different metrics
           var valueAndRank = mappedData[i]["MetricValue"];
-          if (i != 0 && i != 10) 
+          if (i != 0 && i != 11) 
             valueAndRank += " (" + mappedData[i]["Rank"] + ")";
+          console.log(valueAndRank);
           return valueAndRank;
         });
       
       function mapData(selection, data) {
         var mapping = [];
+        //This i cycles through rows in the CSV table
         for (var i = 0; i < data.length; i++) {
           var metric = data[i].Metric;
           var metricvalue = data[i][selection];
           var rank = applySuffix(data[i+1][selection]);
-          if (i == 19)
-            metricvalue = applySuffix(metricvalue);
+          if (i == 21) {
+            metricvalue = applySuffix(metricvalue); 
+            console.log(metricvalue);
+          }
           
           var setup = {}
           setup["Metric"] = metric;
@@ -198,8 +204,8 @@
           
           mapping.push(setup);
           
-          if (i != 0 && i != 19)
-            i++;
+          if (i != 0 && i != 21)
+            i++; //increment extra unless the metric doesn't have a rank associated with it
         }
         return mapping;
       }
@@ -235,7 +241,7 @@
               stat.transition()
                   .text(function(d, i) {
                     var valueAndRank = d.MetricValue
-                    if (i !=0 && i != 10) 
+                    if (i !=0 && i != 11) 
                       valueAndRank += " (" + d.Rank + ")";
                     return valueAndRank;
                   });
