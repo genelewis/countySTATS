@@ -186,9 +186,11 @@
 
         //Add text that shows the exact value at that point
         focus.append("text")
-            .attr("x", 9)
-            .attr("dy", ".35em")
-            .style("font", "13px Arial");
+            .attr("x", -15)
+            .attr("dy", -10)
+            .style("font", "13px Arial")
+		  	    .style("font-weight", "bold");
+
 
         graph.append("rect")
             .attr("class", "overlay")
