@@ -70,7 +70,7 @@ h1 {
   var svg = d3.select("svg"),
       margin = {top: 20, right: 20, bottom: 15, left: 40},
       width = +svg.attr("width") - margin.left - margin.right,
-      height = +svg.attr("height") - margin.top - margin.bottom -20,
+      height = +svg.attr("height") - margin.top - margin.bottom -30,
       graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   //Define the scales of the x- and y-axes
@@ -102,7 +102,7 @@ h1 {
     //Set the domains of the axes
     x0.domain(dataset.map(function(d) {return d.Income; }));
     x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
-    y.domain([0, 100]).nice();
+    y.domain([0, 50]).nice();
 
     //Set up tooltip displays
     var tip = d3.tip()
@@ -204,10 +204,10 @@ h1 {
             .on("change.inc", function(d){
 
               //Update data:
-                selection = this.options[this.selectedIndex].value;
-                currentKeys[2] = selection;
-                bars.data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
-                legendText.data(currentKeys.slice());
+				  selection = this.options[this.selectedIndex].value;
+				  currentKeys[1] = selection;
+				  dataset = formatData(data, selection);
+				  legendText.data(currentKeys.slice());
 
               //Transition the bars
                 var t0 = svg.transition().duration(450).ease(d3.easeBounce);
