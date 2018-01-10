@@ -85,8 +85,13 @@ h1 {
       .rangeRound([height, 0]);
 
   //Define a coloring scale
-  var z = d3.scaleOrdinal()
-      .range(["#2f507f", "#972421"]);
+  var z = function(d) {
+    if (d == "State") {
+      return "#972421";
+    } else {
+      return "#2f507f";
+    }
+  }
 
   //Import the raw data from CSV
   d3.csv("data.csv", numericize, function(error, data) {
@@ -94,7 +99,7 @@ h1 {
 
     var selection = 'Adair County',         //(default selection value)
         keys = data.columns.slice(1),
-        currentKeys = ['State', selection];
+        currentKeys = [selection, "State"];
 
     //Siphon out only the data relevant to the selected county
     var dataset = formatData(data, selection);
@@ -109,57 +114,49 @@ h1 {
       .attr('class', 'd3-tip')
       .offset([-10, 0])
       .html(function(d) {
-        return "<span style='color:#fff; font-weight: bold;'>" + d.Value + "%</span>";
+        return "<span style='color:#fff; font-weight: bold;'>" + d.value + "%</span>";
       })
     graph.call(tip);
 
     
     //Begin appending bars to the graph
     var bars = graph.append("g")
+        .selectAll("g")
+        .data(data)
+        .enter().append("g")
+          .attr("transform", function(d) { return "translate(" + x0(d.Income) + ",0)"; })
+          .attr("class", "gcontainer")
         .selectAll("rect")
-        .data(dataset)
+        .data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
         .enter().append("rect")
           .attr("class", "bar")
-          .attr("transform", function(d,i) { 
-              if (i%2 == 0){
-                var offset = 3;
-              } else {
-                var offset = x1.bandwidth()+4;
-              }
-              return "translate(" + (x0(d.Income) + offset) + ",0)"; })
-          .attr("x", function(d) { return x1(d.Income); })
-          .attr("y", function(d, i) { return y(d.Value); })
+          .attr("x", function(d) { return x1(d.key); })
+          .attr("y", function(d, i) { return y(d.value); })
           .attr("width", x1.bandwidth())
-          .attr("height", function(d) { return height - y(d.Value); })
-          .attr("fill", function(d) { return z(d.Type); })
+          .attr("height", function(d) { return height - y(d.value); })
+          .attr("fill", function(d) { return z(d.key); })
     
     if (!parent.ENABLE_PRINTABLE_CHARTS) {
-      bars.on('mouseover', function(d) {
-            d3.select(this).attr("fill", d3.rgb(z(d.Type)).brighter(0.5));
-            tip.show(d);
-          })
-          .on('mouseout', function(d) {
-            d3.select(this).attr("fill", d3.rgb(z(d.Type)).darker(0.1));
-            tip.hide(d);
-          });
-    } else {
-      graph.selectAll(".bartext")
-        .data(dataset)
-      .enter().append("text")
-        .attr("class", "bartext")
-        .attr("transform", function(d,i) { 
-                if (i%2 == 0){
-                  var offset = 4 + x1.bandwidth()/2;
-                } else {
-                  var offset = x1.bandwidth() + 5 + x1.bandwidth()/2;
-                }
-                return "translate(" + (x0(d.Income) + offset) + ",0)"; })
-        .attr("text-anchor", "middle")
-        .attr("x", function(d) { return x1(d.Income); })
-        .attr("y", function(d) { return y(d.Value) - 2; })
-        .style("font", "11px Arial")
-        .text(function(d) { return d.Value + "%"; });
-    }
+          bars.on('mouseover', function(d) {
+                  d3.select(this).attr("fill", d3.rgb(z(d.key)).brighter(0.5));
+                  tip.show(d);
+                })
+                .on('mouseout', function(d) {
+                  d3.select(this).attr("fill", d3.rgb(z(d.key)).darker(0.1));
+                  tip.hide(d);
+                });
+          } else {
+            graph.selectAll(".gcontainer").selectAll(".bartext")
+              .data(function(data) { return currentKeys.map(function(key) { return {key: key, value: data[key]}; }); })
+            .enter().append("text")
+              .attr("class", "bartext")
+              .attr("transform", function(d) { return "translate(" + x1.bandwidth()/2 + ",0)"; })
+              .attr("text-anchor", "middle")
+              .attr("x", function(d) { return x1(d.key); })
+              .attr("y", function(d) { console.log(d.value); return y(d.value) - 2; })
+              .style("font", "11px Arial")
+              .text(function(d) { return d.value + "%"; });
+          }
 
     //Create the axes
     var xAxis = d3.axisBottom(x0)
@@ -205,8 +202,8 @@ h1 {
 
               //Update data:
 				  selection = this.options[this.selectedIndex].value;
-				  currentKeys[1] = selection;
-				  dataset = formatData(data, selection);
+				  currentKeys[0] = selection;
+				  bars.data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
 				  legendText.data(currentKeys.slice());
 
               //Transition the bars
@@ -233,7 +230,7 @@ h1 {
         .attr("font-size", 10)
         .attr("text-anchor", "end")
       .selectAll("g")
-      .data(currentKeys.slice().reverse())
+      .data(currentKeys.slice())
       .enter().append("g")
         .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
