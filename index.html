@@ -48,23 +48,24 @@
     <style>
       .iwrapper {
         position: relative;
-        padding-bottom: 60%;
+        margin: 5px;
+        padding-bottom: 55%;
         height: 0;
-        overflow: hidden;
+        overflow: show;
       }
-    @media (min-width: 480px) {
+    /*@media (min-width: 480px) {
       .iwrapper {
         padding-bottom: 270px;
       }
-    }
+    }*/
       .wrapper {
         position: relative;
         margin: 0 auto;
-        padding: 0 auto;
+        padding: 0px 0px 0px 0px;
         max-width: 1023px;
         display: grid;
         grid-auto-rows: minmax(125px, auto);
-        grid-gap: 10px;
+        grid-row-gap: 10px;
       }
     @media (min-width: 1024px) {
       .wrapper {
@@ -86,7 +87,7 @@
         <h4 style="font-size: 20px"><b><u>County Stats:</u></b></h4>
         <p class="desc">Use the <b>drop-down menu below</b> to dynamically switch between counties, or click on a county to be taken to a <b>printable fact sheet</b> for that county.</p>
       </div>
-      <div style="text-align: center"><img src="county-map.png" style="height:257px; width:480px"></div>
+      <div style="text-align: center"><img src="county-map.png" style="height:10%; width:100%"></div>
     </div>
     <div id="drop" align="center"></div>
     
@@ -95,7 +96,7 @@
         <div class="chart population" align="center">
           <h2>Population</h2> 
           <div class="iwrapper">
-            <iframe id="population" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Population/Population.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no" align="center"> </iframe>
+            <iframe id="population" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Population/Population.html" marginwidth="0" marginheight="0" scrolling="no" align="center"> </iframe>
           </div>
         </div>
         
@@ -103,7 +104,7 @@
         <div class="chart demographics" align="center">
           <h2>Demographics</h2>
           <div class="iwrapper">
-            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Demographics/Demographics.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Demographics/Demographics.html" marginwidth="0" marginheight="0" scrolling="no"></iframe>
           </div>
         </div>
         
@@ -111,7 +112,7 @@
         <div class="chart unemployment" align="center">
           <h2>Unemployment</h2>
           <div class="iwrapper">
-            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="County Unemployment/Unemployment.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="County Unemployment/Unemployment.html" marginwidth="0" marginheight="0" scrolling="no"></iframe>
           </div>
         </div>
         
@@ -119,7 +120,7 @@
         <div class="chart educationalAttainment" align="center">
           <h2>Educational Attainment</h2>
           <div class="iwrapper">
-            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Educational Attainment/educationalAttainment.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"> </iframe>
+            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Educational Attainment/educationalAttainment.html" marginwidth="0" marginheight="0" scrolling="no"> </iframe>
           </div>
         </div>
         
@@ -127,14 +128,14 @@
         <div class="chart employmentSectors" align="center">
           <h2>Top 5 Employment Sectors</h2>
           <div class="iwrapper">
-            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" scrolling="no"></iframe>
           </div>     
         </div>
 		
 	   <div class="chart income" align="center">
           <h2>Household Adjusted Gross Income</h2>
           <div class="iwrapper">
-            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Income/Income.html" marginwidth="0" marginheight="0" style="height:260px; width:480px" scrolling="no"></iframe>
+            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Income/Income.html" marginwidth="0" marginheight="0" scrolling="no"></iframe>
           </div>
         </div>
       <!--<div style="float:right; width:50%">-->
