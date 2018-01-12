@@ -64,8 +64,9 @@
         padding: 0px 0px 0px 0px;
         max-width: 1023px;
         display: grid;
-        grid-auto-rows: minmax(125px, auto);
+        /*grid-auto-rows: minmax(125px, auto);*/
         grid-row-gap: 10px;
+        grid-template-columns: 1fr;
       }
     @media (min-width: 1024px) {
       .grid-wrapper {
@@ -87,8 +88,9 @@
         <h4 style="font-size: 20px"><b><u>County Stats:</u></b></h4>
         <p class="desc">Use the <b>drop-down menu below</b> to dynamically switch between counties, or click on a county to be taken to a <b>printable fact sheet</b> for that county.</p>
       </div>
-      <div style="text-align: center; max-width: 680px"><img src="county-map.png"></div>
+      <div style="text-align: center"><img src="county-map.png"></div>
     </div>
+    
     <div id="drop" align="center"></div>
     
     
