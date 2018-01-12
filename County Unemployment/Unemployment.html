@@ -56,15 +56,15 @@
     var mychart = $("#chart"),
         aspect = mychart.width() / mychart.height(),
         container = mychart.parent();
-    
-    console.log(container);
-    
-    $(window).on("resize", function() {
+        
+    $(window).on("resize", adjustSize);
+    $(window).on("load", adjustSize);
+                 
+    function adjustSize() {
         var targetWidth = container.width();
-        console.log(aspect);
         mychart.attr("width", targetWidth);
         mychart.attr("height", Math.round(targetWidth / aspect));
-    })
+    }
     
     //Define the container SVG with margin conventions
     var svg = d3.select("svg"),
