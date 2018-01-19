@@ -392,8 +392,16 @@
             .attr("id", "dropdown")
             .on("change.master", function(d){
               
-              var selection = this.options[this.selectedIndex].value,
-                  linkedSheet = "https://okpolicy.org/wp-content/uploads/" + selection.slice(0, -7) + "-2015.pdf?x43134";
+              var selection = this.options[this.selectedIndex].value;
+              linkedSheet = function() {
+                if (selection === 'Le Flore County') {
+                  return "https://okpolicy.org/wp-content/uploads/Leflore-2015.pdf?x43134";
+                } else if (selection === 'Roger Mills County') {
+                  return "https://okpolicy.org/wp-content/uploads/Roger-Mills-2015.pdf?x43134"
+                } else {
+                  return "https://okpolicy.org/wp-content/uploads/" + selection.slice(0, -7) + "-2015.pdf?x43134";
+                }
+              }
               
               mappedData = mapData(selection, data);
               setStatistic();
