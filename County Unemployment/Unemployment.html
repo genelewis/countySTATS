@@ -44,7 +44,7 @@
  
 <body>
   
-  <svg class="Unemployment-Adair" id="chart" width="480" height="260" viewBox="0 0 480 260"
+  <svg class="Unemployment" id="chart" width="480" height="260" viewBox="0 0 480 260"
     preserveAspectRatio="xMidYMid meet"><title>Unemployment</title></svg>
   
   <!-- load the d3.js library -->
@@ -53,6 +53,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script>
     
+    //Set up dynamically-sizing charts (they'll fit to their iframe container)
     var mychart = $("#chart"),
         aspect = mychart.width() / mychart.height(),
         container = mychart.parent();
@@ -114,7 +115,7 @@
       });
       
       
-      var selection = 'Adair County'; //(default selection value)
+      var selection = window.parent.selection; //(default selection value)
       var currentPlaces = [places[0], places[1], places[2]];
       
       //Set the domains of the axes

@@ -107,7 +107,7 @@
       //Helper variable for finding the nearest data point on mouseover
       var bisectDate = d3.bisector(function(d) { return d.year; }).left;
 
-      var selection = 'Adair County' //(default selection value)
+      var selection = window.parent.selection; //(default selection value)
       var keys = data.columns.slice(1);
 
       //Set the domains of the axes

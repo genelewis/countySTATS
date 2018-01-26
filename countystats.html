@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="google-site-verification" content="W1O93GjxVoZI877C2K6laZ_zosJCDplLfqZOwT-Bns0" />
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-8312064-1']);
+  _gaq.push(['_setDomainName', 'okpolicy.org']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+<script>
+  
+  var link = document.getElementById("link");
+  console.log(link);
+  
+  /* CONFIG VARIABLES: */
+  
+  /* Printable Charts (false by default):
+   * 
+   * Setting this variable to "true" will enable a "static mode" for
+   * all charts. Rather than being interactive, the line charts will
+   * display static gridlines and the bar charts will display their actual
+   * values above each bar. The graphs will still update if the drop-
+   * down menu is changed to a different county.
+   * 
+   * You should enable this setting when saving the charts as SVG images
+   * to be used in a printable county fact sheet. */
+  var ENABLE_PRINTABLE_CHARTS = false;
+  
+</script>
+
+<html>
+  <head> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css" />
+	<link rel="stylesheet" href="https://okpolicy.org/wp-content/themes/okpolicy/style.css" type="text/css">
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,400italic,600italic,700italic" rel="stylesheet" type="text/css">
+    <title>CountySTATS</title>
+    <style>
+      .iwrapper {
+        position: relative;
+        margin: 5px;
+        padding-bottom: 55%;
+        height: 0;
+        overflow: show;
+      }
+      .grid-wrapper {
+        position: relative;
+        margin: 0 auto;
+        padding: 0px 0px 0px 0px;
+        max-width: 1023px;
+        display: grid;
+        /*grid-auto-rows: minmax(125px, auto);*/
+        grid-row-gap: 10px;
+        grid-template-columns: 1fr;
+      }
+      .grid-wrapper-stats {
+        position: relative;
+        margin: 0 auto;
+        padding: 0px;
+        max-width: 1023px;
+        display: grid;
+        grid-row-gap: 10px;
+        grid-template-columns: 1fr;
+      }
+    @media (min-width: 500px) {
+      .grid-wrapper-stats {
+        padding-left: 20%;
+      }
+    }
+    @media (min-width: 850px) {
+      .grid-wrapper-stats {
+        grid-template-columns: 1fr 1fr;
+        padding-left: 20px;
+      }
+    }
+    @media (min-width: 1024px) {
+      .grid-wrapper {
+        grid-template-columns: 1fr 1fr;
+      }
+      .more-stats {
+        margin: 0px 200px 0px 200px;
+      }
+    }
+      
+    
+
+
+    </style>
+  </head>
+  
+  <body>
+    <h1>CountySTATs - Master Mockup</h1>
+    <h3>Updated December 8, 2017</h3>
+
+    <div class="grid-wrapper">
+      <div>
+        <h4 style="font-size: 20px"><b><u>County Stats:</u></b></h4>
+        <p class="desc">Use the <b>drop-down menu below</b> to dynamically switch between counties, or click on a county to be taken to a <b>printable fact sheet</b> for that county.</p>
+      </div>
+      <div style="text-align: center"><img src="county-map.png"></div>
+    </div>
+    
+    <div id="drop" align="center"></div>
+    
+    
+    <div class="grid-wrapper">
+        <div class="chart population" align="center">
+          <h2>Population</h2> 
+          <div class="iwrapper">
+            <iframe id="population" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Population/Population.html" marginwidth="0" marginheight="0" scrolling="no" align="center"> </iframe>
+          </div>
+        </div>
+        
+        
+        <div class="chart demographics" align="center">
+          <h2>Demographics</h2>
+          <div class="iwrapper">
+            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Demographics/Demographics.html" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+          </div>
+        </div>
+        
+        
+        <div class="chart unemployment" align="center">
+          <h2>Unemployment</h2>
+          <div class="iwrapper">
+            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="County Unemployment/Unemployment.html" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+          </div>
+        </div>
+        
+        
+        <div class="chart educationalAttainment" align="center">
+          <h2>Educational Attainment</h2>
+          <div class="iwrapper">
+            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Educational Attainment/EducationalAttainment.html" marginwidth="0" marginheight="0" scrolling="no"> </iframe>
+          </div>
+        </div>
+        
+        
+        <div class="chart employmentSectors" align="center">
+          <h2>Top 5 Employment Sectors</h2>
+          <div class="iwrapper">
+            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Employment Sectors/topEmploymentSectors.html" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+          </div>     
+        </div>
+		
+	   <div class="chart income" align="center">
+          <h2>Household Adjusted Gross Income</h2>
+          <div class="iwrapper">
+            <iframe class="frame" sandbox="allow-popups allow-scripts allow-forms allow-same-origin" src="Income/Income.html" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+          </div>
+        </div>
+    </div>
+
+        <div class="chart more-stats">
+          <div align="center">
+            <h2>More Stats</h2>
+            <p class="desc">For all measures, a rank of 1st indicates the highest statistic and 77th indicates the lowest statistic among the 77 counties of Oklahoma (not necessarily best or worst).</p>
+            <p style="text-align:center; font-weight:bold" class="countyname"></p>
+          </div>
+          
+          <div class="grid-wrapper-stats">
+            <!--style="color:#972421; font-size:18px"-->
+            <div>
+              <h3>Demographics</h3>
+              <ul>
+                <li class="fact" id="voting-age-citizens"><b>Number of voting-age citizens:  </b></li>
+                <li class="fact" id="percent-under-eighteen"><b>Percent aged under 18:  </b></li>
+                <li class="fact" id="percent-over-sixty-five"><b>Percent aged 65 and up:  </b></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Economy</h3>
+              <ul>
+                <li class="fact" id="median-household-income"><b>Median household income:  </b></li>
+                <li class="fact" id="residents-receiving-food-stamps"><b>Residents receiving food stamps:  </b></li>
+                <li class="fact" id="residents-under-poverty-line"><b>Residents living under poverty line (all ages):  </b></li>
+                <li class="fact" id="children-under-poverty-line"><b>Children living under poverty line:  </b></li>
+                <li class="fact" id="median-home-value"><b>Median value of owner-occupied homes:  </b></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Education</h3>
+              <ul>  
+                <li class="fact" id="average-letter-grade"><b>Average A-F school grade:  </b></li>
+                <li class="fact" id="free-reduced-lunch-eligibility"><b>Students eligible for free/reduced lunch price:  </b></li>
+                <li class="fact" id="public-school-enrollment"><b>Students enrolled in public school:  </b></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Health</h3>
+              <ul>
+                <li class="fact" id="overall-health-rank"><b>Overall health rank:  </b></li>
+                <li class="fact" id="residents-with-disabilities"><b>Residents with a disability:  </b></li>
+                <li class="fact" id="adults-with-obesity"><b>Adults with obesity:  </b></li>
+                <li class="fact" id="uninsured-residents"><b>Percentage of uninsured residents:  </b></li>
+              </ul>
+            </div>
+          </div>
+          
+          <br>
+          <div class="link-to-printable-chart" align="center"></div>
+          <br>
+        </div>
+    
+        <div class="column">
+          <div>
+            <h4 align="center">All data is the most recent available at time of publication, ranging from 2015 to 2017.</h4>
+            <p style="text-align:center"><img align="center" src="okpolicyLogo.png"></p>
+          </div>
+        </div>
+
+    
+  </body>
+  
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script>
+
+    /* Array of all counties that's used to populate the drop-down menu: */
+    var counties = ["Adair County","Alfalfa County","Atoka County","Beaver County","Beckham County","Blaine County","Bryan County","Caddo County","Canadian County","Carter County","Cherokee County","Choctaw County","Cimarron County","Cleveland County","Coal County","Comanche County","Cotton County","Craig County","Creek County","Custer County","Delaware County","Dewey County","Ellis County","Garfield County","Garvin County","Grady County","Grant County","Greer County","Harmon County","Harper County","Haskell County","Hughes County","Jackson County","Jefferson County","Johnston County","Kay County","Kingfisher County","Kiowa County","Latimer County","Le Flore County","Lincoln County","Logan County","Love County","Major County","Marshall County","Mayes County","McClain County","McCurtain County","McIntosh County","Murray County","Muskogee County","Noble County","Nowata County","Okfuskee County","Oklahoma County","Okmulgee County","Osage County","Ottawa County","Pawnee County","Payne County","Pittsburg County","Pontotoc County","Pottawatomie County","Pushmataha County","Roger Mills County","Rogers County","Seminole County","Sequoyah County","Stephens County","Texas County","Tillman County","Tulsa County","Wagoner County","Washington County","Washita County","Woods County","Woodward County"]
+    
+    /* Pull the 'additional statistics' data from a consolidated CSV file, then use it: */
+    d3.csv("CountyMetrics_Master.csv", function(error, data) {
+      if (error) throw error;
+      
+      /* Get this window's URL and see if there was a 'county' parameter included: */
+      var url = window.location.href;
+      var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
+      
+      /* If there is a county parameter, isolate it and check its validity: */
+      if (queryString) {
+        
+        queryString = queryString.split('#')[0];
+        var param = queryString.split('='),
+            county = param[1].replace("_", " ") + " County";
+        
+        /* If parameter is valid, set it as the default county to load the page on: */
+        if (counties.includes(county)) { 
+          window.selection = county; // Global variable for iframes to reach
+          var selection = county; // Local variable for parent document to carry
+        
+        /* If the parameter is not valid, set the default county to Adair: */  
+        } else { 
+          window.selection = "Adair County";
+          var selection = "Adair County"; 
+        }
+        
+      /* If no parameter was given, then also set the default county to Adair: */  
+      } else { 
+        window.selection = "Adair County";
+        var selection = "Adair County";
+      }
+      
+      /* Siphon out the data applicable to the selected county: */
+      var mappedData = mapData(selection, data);
+      
+      d3.select(".countyname")
+        .text(selection)
+          
+      var stat = d3.selectAll(".fact")
+        .append("text")
+        .attr("x", 10)
+        .attr("y", 0);
+      
+      var ids = $('.fact').map(function(index) {
+        // this callback function will be called once for each matching element
+        return this.id; });
+      
+      /* Match each .fact with the corresponding data from the CSV using a switch case: */
+      function setStatistic() {
+        for (i = 0; i < ids.length; i++) {
+          switch (ids[i]) {
+            case 'voting-age-citizens':
+              /*              (Element ID,   "Search term to match with",   Display rank?) */
+              displayStatistic("#" + ids[i], "Number of voting-age citizens", true);
+              break;
+            case 'percent-under-eighteen':
+              displayStatistic("#" + ids[i], "Percent aged under 18", true);
+              break;
+            case 'percent-over-sixty-five':
+              displayStatistic("#" + ids[i], "Percent aged 65 and up", true);
+              break;
+            case 'median-household-income':
+              displayStatistic("#" + ids[i], "Median household income", true);
+              break;
+            case 'residents-receiving-food-stamps':
+              displayStatistic("#" + ids[i], "Residents receiving food stamps", true);
+              break;
+            case 'residents-under-poverty-line':
+              displayStatistic("#" + ids[i], "Poverty (all ages)", true);
+              break;
+            case 'children-under-poverty-line':
+              displayStatistic("#" + ids[i], "Children living in poverty", true);
+              break;
+            case 'median-home-value':
+              displayStatistic("#" + ids[i], "Median value of owner-occupied homes", true);
+              break;
+            case 'average-letter-grade':
+              displayStatistic("#" + ids[i], "Average A-F school grade", true);
+              break;
+            case 'free-reduced-lunch-eligibility':
+              displayStatistic("#" + ids[i], "Students eligible for free/reduced lunch price", true);
+              break;
+            case 'public-school-enrollment':
+              displayStatistic("#" + ids[i], "Students enrolled in public school", true);
+              break;
+            case 'overall-health-rank':
+              displayStatistic("#" + ids[i], "Overall health rank", false);
+              break;
+            case 'residents-with-disabilities':
+              displayStatistic("#" + ids[i], "Residents with a disability", true);
+              break;
+            case 'adults-with-obesity':
+              displayStatistic("#" + ids[i], "Adults with obesity", true);
+              break;
+            case 'uninsured-residents':
+              displayStatistic("#" + ids[i], "Percentage of uninsured residents", true);
+              break;
+            default:
+              console.log(ids[i]);
+              d3.select('#' + ids[i]).append("text")
+              .attr("x", 10)
+              .attr("y", 0)
+              .text("Error 01 (statistic is not accounted for.)")
+          }
+        }
+      }
+      
+      setStatistic(); //Runs once on page load so that statistics are set for the default county
+      
+      /* Helper function to add the appropriate numerical values (as strings) to 
+         each statistic outlined in the body.
+         N.B. Rank will be shown by default. Pass FALSE in instances where rank 
+         should not be shown or would be redundant (e.g. 'Overall health rank') */
+      function displayStatistic(elemID, keyPhrase, rankFlag = true) {
+        var set = searchData(keyPhrase);
+        var text = set["Value"];
+        if (rankFlag) text += " (" + set["Rank"] + ")";
+        d3.select(elemID).select("text")
+              .text(text);
+      }
+      
+      /* Helper function that pairs element IDs with matching terms defined in the CSV */
+      function searchData(term) {
+        for (i in mappedData) {
+          if (term === mappedData[i]["Metric"])
+            {return mappedData[i];}
+        }
+        return {"Value":"Error 02", "Rank":"the search term could not be found."};
+      }
+      
+      
+      /* Helper function that siphons all the stats for the ONE selected county.
+         This set is returned as an array of dictionaries:
+         [ {"Metric: "...", "Value": X, "Rank": Y}, {...} ]"*/
+      function mapData(selection, data) {
+        var mapping = [];
+        for (var i = 0; i < data.length; i+=2) {
+          var metric = data[i].Metric;  
+          if (data[i][selection] === "") 
+            {var value = "statistic undefined";}
+          else
+            {var value = data[i][selection];}         
+          if (data[i+1][selection] === "") 
+            {var rank = "rank undefined";}
+          else
+            {var rank = applySuffix(data[i+1][selection]);}          
+          if (metric === "Overall health rank") {
+            value = applySuffix(value); 
+          }    
+          var setup = {}
+          setup["Metric"] = metric;
+          setup["Value"] = value;
+          setup["Rank"] = rank;  
+          mapping.push(setup);
+        }
+        return mapping;
+      }
+      
+      /* Applies a suffix (like st to 1st, nd to 2nd) for a given ranking: */
+      function applySuffix(str) {
+        if (str[str.length - 1] == "1" && str != "11") {
+            str += "st";
+          } else if (str[str.length - 1] == "2" && str != "12") {
+            str += "nd";
+          } else if (str[str.length - 1] == "3" && str != "13") {
+            str += "rd";
+          } else str += "th";
+        return str;
+      }
+      
+    /* Link to a printable factsheet for the selected county's charts: */  
+    var link = d3.selectAll(".link-to-printable-chart")
+      .append("a")
+      .attr("href", "https://okpolicy.org/wp-content/uploads/Adair-2015.pdf?x43134")
+      .attr("target", "_blank")
+      .attr("style", "font-size:12px")
+      .html("Get a printable version of this county's charts & stats...");
+    
+    /****************************************************************************************/  
+    /* This section deals with URL parameters and what happens when we select a new county: */
+      
+      
+    /* When a new county is selected, update statistics section and URL parameter: */
+    var selector = d3.select('#drop')
+            .append("select")
+            .attr("id", "dropdown")
+            .on("change.master", function(d){
+              
+              var selection = this.options[this.selectedIndex].value;
+              
+              /* Update link to printable factsheet: */
+              linkedSheet = function() {
+                if (selection === 'Le Flore County') {
+                  return "https://okpolicy.org/wp-content/uploads/Leflore-2015.pdf?x43134";
+                } else if (selection === 'Roger Mills County') {
+                  return "https://okpolicy.org/wp-content/uploads/Roger-Mills-2015.pdf?x43134"
+                } else {
+                  return "https://okpolicy.org/wp-content/uploads/" + selection.slice(0, -7) + "-2015.pdf?x43134";
+                }
+              }
+              
+              link.transition()
+                  .attr("href", linkedSheet);
+              
+              /* Update county name displayed over additional statistics section: */
+              d3.select(".countyname")
+                .text(selection);
+              
+              /* Reset the current dataset and update the additional statistics section: */
+              mappedData = mapData(selection, data);
+              setStatistic();
+    
+              
+              
+//IMPORTANT(!): The url argument below will need to be changed once uploaded to the server!
+              /* Update the "county" parameter in the URL: */
+              window.history.pushState("foo", "CountySTATS", "countystats.html?county=" + selection.slice(0, -7).replace(" ", "_"))
+              
+            });
+      
+    /* Loads all the county names into the drop-down selector */
+    selector.selectAll("option")
+          .data(counties)
+          .enter().append("option")
+          .attr("value", function(d){
+            return d;
+          })
+          .text(function(d){
+            return d;
+          });
+    
+    /* Sets the default selection to a county given by the URL parameter, if there is one. */
+    var selector = document.getElementById("dropdown");
+    for ( var i = 0; i < selector.options.length; i++ ) {
+        if ( selector.options[i].text == selection ) {
+            selector.options[i].selected = true;
+        }
+    }
+      
+    })
+  
+  </script>
+  
+</html>

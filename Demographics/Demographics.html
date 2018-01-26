@@ -92,7 +92,7 @@ h1 {
   d3.csv("data.csv", numericize, function(error, data) {
     if (error) throw error;
 
-    var selection = 'Adair County',         //(default selection value)
+    var selection = window.parent.selection,         //(default selection value)
         keys = data.columns.slice(1),
         currentKeys = ['State', selection];
 
