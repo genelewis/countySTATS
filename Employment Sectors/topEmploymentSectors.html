@@ -102,7 +102,7 @@ h1 {
     //Set the domains of the axes
     x0.domain(dataset.map(function(d) { return d.Sector; }));
     x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
-    y.domain([0, d3.max(dataset.map(function(d) {console.log(d.Value); return d.Value;})) + 10])// + 10]).nice();
+    y.domain([0, d3.max(dataset.map(function(d) {return d.Value;})) + 10])// + 10]).nice();
 
     //Set up tooltip displays
     var tip = d3.tip()
