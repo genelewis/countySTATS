@@ -252,13 +252,15 @@
         /* If the parameter is not valid, set the default county to Adair: */  
         } else { 
           window.selection = "Adair County";
-          var selection = "Adair County"; 
+          var selection = "Adair County";
+/* ! */   window.history.pushState("foo", "CountySTATS", "countystats.html?county=" + selection.slice(0, -7).replace(" ", "_"))
         }
         
       /* If no parameter was given, then also set the default county to Adair: */  
       } else { 
         window.selection = "Adair County";
         var selection = "Adair County";
+/* ! */ window.history.pushState("foo", "CountySTATS", "countystats.html?county=" + selection.slice(0, -7).replace(" ", "_"))
       }
       
       /* Siphon out the data applicable to the selected county: */
@@ -443,7 +445,7 @@
     
               
               
-//IMPORTANT(!): The url argument below will need to be changed once uploaded to the server!
+//IMPORTANT(!): The url argument below (and several above!) will need to be changed once uploaded to the server!
               /* Update the "county" parameter in the URL: */
               window.history.pushState("foo", "CountySTATS", "countystats.html?county=" + selection.slice(0, -7).replace(" ", "_"))
               
