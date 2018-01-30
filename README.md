@@ -79,7 +79,7 @@ The rest is all Javascript code embedded in a `<script>` element.  For the most 
 
 1. Define the SVG using [margin conventions](https://bl.ocks.org/mbostock/3019563) and use D3 to set variables for the scales along the x- and y-axes (as well as a coloring scale, if needed).
 
-```
+```js
 //Define the container SVG with margin conventions
   var svg = d3.select("svg"),
       margin = {top: 20, right: 20, bottom: 15, left: 40},
@@ -107,7 +107,7 @@ Notice that we also append a `g` element to our main SVG that will fit to its ma
 
 2. Open the data file using `d3.csv`.  This method may use an optional callback function to help read in and format the data, and will always use another callback function to build the chart itself during the following steps.
 
-```
+```js
 //Import the raw data from CSV
   d3.csv("data.csv", numericize, function(error, data) {
     if (error) throw error;
@@ -117,7 +117,7 @@ Notice that we also append a `g` element to our main SVG that will fit to its ma
 
 3. Create any other helper variables, set the default selection value (‘Adair County’), and set the _domains_ of the x- and y-axes (note that this step is different than the way we previously set the _scale_).  Note also that at this point, we haven’t created any visuals inside of our original SVG container— we’ve just done a bit of math and housekeeping to make creating those visuals easier in the next step.
 
-```
+```js
 var selection = window.parent.selection, //(default selection value)
     keys = data.columns.slice(1),
     currentKeys = ['State', selection];
@@ -137,7 +137,7 @@ And, note that we set out default selection value according to a global variable
 
 4. Now we start creating visuals by appending other kinds of SVG elements (path, rect, g, etc.) to our initial container.  We accomplish this using the D3 ENTER > UPDATE > EXIT strategy, where we can essentially create one data point (i.e., a point on a line graph, a bar in a bar graph) for each item in the array of data that we loaded in from our CSV.  That process looks something like this:
 
-```
+```js
 //Begin appending bars to the graph:
 
 var bars = graph.append("g")
@@ -177,7 +177,7 @@ One weird thing to watch out for is that each event listener must have its own *
 
 The callback function here then defines what parts of the chart should shift to represent the new county.  This varies depending on the chart, and the charts use D3 transitions to help make sure that the shift is smooth and able to be followed by the user’s eye.  In most instances, this means recalculating which slice of data from the .CSV we’re working with, and then some combination of moving plot points/bar lines and rescaling the x- and y-axes to keep the new data to a good fit.  We also update the labels on the legend here.  It will look something like this:
 
-```
+```js
 //Update the data:
   selection = this.options[this.selectedIndex].value;
   currentKeys[1] = selection;
