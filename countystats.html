@@ -72,6 +72,15 @@
         grid-row-gap: 10px;
         grid-template-columns: 1fr;
       }
+      .grid-wrapper-stats-three {
+        position: relative;
+        margin: 0 auto;
+        padding: 0px;
+        max-width: 1023px;
+        display: grid;
+        grid-row-gap: 10px;
+        grid-template-columns: 1fr 1fr 1fr;
+      }
     @media (min-width: 500px) {
       .grid-wrapper-stats {
         padding-left: 20%;
@@ -249,18 +258,19 @@
             <p class="desc">For all measures, a rank of 1st indicates the highest statistic and 77th indicates the lowest statistic among the 77 counties of Oklahoma (not necessarily best or worst).</p>
             <p style="text-align:center; font-weight:bold" class="countyname"></p>
           </div>
-          
-          <div class="grid-wrapper-stats">
+		
+	 <div class="chart more-stats">	
+	  <div align="center">
+           <h3>Demographics</h3>
+	 </div>
+		
+          <div class="grid-wrapper-stats-three">
             <!--style="color:#972421; font-size:18px"-->
-            <div>
-              <h3>Demographics</h3>
-              <ul>
-                <li class="fact" id="voting-age-citizens"><b>Number of voting-age citizens:  </b></li>
-                <li class="fact" id="percent-under-eighteen"><b>Percent aged under 18:  </b></li>
-                <li class="fact" id="percent-over-sixty-five"><b>Percent aged 65 and up:  </b></li>
-              </ul>
-            </div>
-            <div>
+                <div class="fact" id="voting-age-citizens"><b>Number of voting-age citizens:  </b></div>
+                <div class="fact" id="percent-under-eighteen"><b>Percent aged under 18:  </b></div>
+                <div class="fact" id="percent-over-sixty-five"><b>Percent aged 65 and up:  </b></div>
+	 </div>
+	<div class="grid-wrapper-stats"> 
               <h3>Economy</h3>
               <ul>
                 <li class="fact" id="median-household-income"><b>Median household income:  </b></li>
