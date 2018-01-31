@@ -74,6 +74,8 @@
       }
       .grid-wrapper-stats-two {
         position: relative;
+        align-items: center;
+        
         margin: 0 auto;
         padding: 0px;
         max-width: 1023px;
@@ -83,6 +85,7 @@
       }
       .grid-wrapper-stats-three {
         position: relative;
+        align-items: center;
         margin: 0 auto;
         padding: 0px;
         max-width: 1023px;
@@ -92,6 +95,7 @@
       }
 	.grid-wrapper-stats-four {
         position: relative;
+        align-items: center;
         margin: 0 auto;
         padding: 0px;
         max-width: 1023px;
@@ -101,6 +105,7 @@
       }
 	.grid-wrapper-stats-five {
         position: relative;
+        align-items: center;
         margin: 0 auto;
         padding: 0px;
         max-width: 1023px;
@@ -125,6 +130,20 @@
       }
       .more-stats {
         margin: 0px 200px 0px 200px;
+      }
+    }
+    @media (max-width: 500px) {
+      .grid-wrapper-stats-two {
+        grid-template-columns: 1fr;
+      }
+      .grid-wrapper-stats-three {
+        grid-template-columns: 1fr;
+      }
+      .grid-wrapper-stats-four {
+        grid-template-columns: 1fr;
+      }
+      .grid-wrapper-stats-five {
+        grid-template-columns: 1fr;
       }
     }
       
@@ -293,11 +312,11 @@
           </div>
 	 </div>
 		
-         <div class="grid-wrapper-stats-three">
+         <div class="grid-wrapper-stats-three" align="center">
             <!--style="color:#972421; font-size:18px"-->
-                <div class="fact" id="voting-age-citizens"><b>Number of voting-age citizens:  </b></div>
-                <div class="fact" id="percent-under-eighteen"><b>Percent aged under 18:  </b></div>
-                <div class="fact" id="percent-over-sixty-five"><b>Percent aged 65 and up:  </b></div>
+                <div class="fact" id="voting-age-citizens"><img src="foodstamps.svg"> <br> <b>Number of voting-age citizens:</b> <br> </div>
+                <div class="fact" id="percent-under-eighteen"><img src="foodstamps.svg"> <br> <b>Percent aged under 18: </b> <br> </div>
+                <div class="fact" id="percent-over-sixty-five"><img src="foodstamps.svg"> <br> <b>Percent aged 65 and up: </b> <br> </div>
 	 </div>
 	
 	 <div class="chart more-stats">	
@@ -306,12 +325,12 @@
           </div>
 	 </div>      
 		 
-	 <div class="grid-wrapper-stats-five">
-                <div class="fact" id="median-household-income"><b>Median household income:  </b></div>
-                <div class="fact" id="residents-receiving-food-stamps"><b>Residents receiving food stamps:  </b></div>
-                <div class="fact" id="residents-under-poverty-line"><b>Residents living under poverty line (all ages):  </b></div>
-                <div class="fact" id="children-under-poverty-line"><b>Children living under poverty line:  </b></div>
-                <div class="fact" id="median-home-value"><b>Median value of owner-occupied homes:  </b></div>
+	 <div class="grid-wrapper-stats-five" align="center">
+                <div class="fact" id="median-household-income"><img src="foodstamps.svg"> <br> <b>Median household income: </b> <br> </div>
+                <div class="fact" id="residents-receiving-food-stamps"><img src="foodstamps.svg"> <br> <b>Residents receiving food stamps: </b> <br> </div>
+                <div class="fact" id="residents-under-poverty-line"><img src="foodstamps.svg"> <br> <b>Residents living under poverty line (all ages): </b> <br> </div>
+                <div class="fact" id="children-under-poverty-line"><img src="foodstamps.svg"> <br> <b>Children living under poverty line: </b> <br> </div>
+                <div class="fact" id="median-home-value"><img src="foodstamps.svg"> <br> <b>Median value of owner-occupied homes: </b> <br> </div>
          </div>
 		 
 	 <div class="chart more-stats">	
@@ -320,9 +339,9 @@
           </div>
 	 </div>   
               
-	 <div class="grid-wrapper-stats-two">
-                <div class="fact" id="free-reduced-lunch-eligibility"><b>Students eligible for free/reduced lunch price:  </b></div>
-                <div class="fact" id="public-school-enrollment"><b>Students enrolled in public school:  </b></div>
+	 <div class="grid-wrapper-stats-two" align="center">
+                <div class="fact" id="free-reduced-lunch-eligibility"><img src="foodstamps.svg"> <br> <b>Students eligible for free/reduced lunch price: </b> <br> </div>
+                <div class="fact" id="public-school-enrollment"><img src="foodstamps.svg"> <br> <b>Students enrolled in public school: </b> <br> </div>
           </div>
 		 
 	 <div class="chart more-stats">	
@@ -331,11 +350,11 @@
           </div>
 	 </div>
 		 
-	 <div class="grid-wrapper-stats-four">		 
-                <div class="fact" id="overall-health-rank"><b>Overall health rank:  </b></div>
-                <div class="fact" id="residents-with-disabilities"><b>Residents with a disability:  </b></div>
-                <div class="fact" id="adults-with-obesity"><b>Adults with obesity:  </b></div>
-                <div class="fact" id="uninsured-residents"><b>Percentage of uninsured residents:  </b></div>
+	 <div class="grid-wrapper-stats-four" align="center">		 
+                <div class="fact" id="overall-health-rank"><img src="foodstamps.svg"> <br> <b>Overall health rank: </b> <br> </div>
+                <div class="fact" id="residents-with-disabilities"><img src="foodstamps.svg"> <br> <b>Residents with a disability: </b> <br> </div>
+                <div class="fact" id="adults-with-obesity"><img src="foodstamps.svg"> <br> <b>Adults with obesity: </b> <br> </div>
+                <div class="fact" id="uninsured-residents"><img src="foodstamps.svg"> <br> <b>Percentage of uninsured residents: </b> <br> </div>
           </div>
           
           <br>
