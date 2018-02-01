@@ -99,7 +99,7 @@
 
       //Define the lines
       var line = d3.line()
-          .curve(d3.curveBasis)
+          .curve(d3.curveMonotoneX)
           .x(function(d) {return x(d.year);})
           .y(function(d) {return y(d.unemp);});
       
@@ -322,53 +322,29 @@
                 return d;
               });
 
-            d3.selectAll(".mouse-per-line").select("circle")
-              .attr("transform", function(d, i) {
-                var xDate = x.invert(mouse[0]),
-                    bisect = d3.bisector(function(d) { return d.year; }).right;
-                    idx = bisect(d.values, xDate);
+          d3.selectAll(".mouse-per-line").select("circle")
+            .attr("transform", function(d, i) {
+              var xDate = x.invert(mouse[0]),
+                  bisect = d3.bisector(function(d) { return d.year; }).right,
+                  idx = bisect(d.values, xDate),
+                  d0 = data[idx - 1],
+                  d1 = data[idx],
+                  d = xDate - d0.year > d1.year - xDate ? d1 : d0;
 
-                var beginning = 0,
-                    end = tracelines[i].getTotalLength(),
-                    target = null;
+              return "translate(" + x(d.year) + "," + y(d[currentPlaces[i].id]) + ")";
+            });
 
-                while (true){
-                  target = Math.floor((beginning + end) / 2);
-                  pos = tracelines[i].getPointAtLength(target);
-                  if ((target === end || target === beginning) && pos.x !== mouse[0]) {
-                      break;
-                  }
-                  if (pos.x > mouse[0])      end = target;
-                  else if (pos.x < mouse[0]) beginning = target;
-                  else break; //position found
-                }
+          d3.selectAll(".mouse-per-line").select("text")
+            .text(function(d, i) {
+              var xDate = x.invert(mouse[0]),
+                  bisect = d3.bisector(function(d) { return d.year; }).right,
+                  idx = bisect(d.values, xDate),
+                  d0 = data[idx - 1],
+                  d1 = data[idx],
+                  d = xDate - d0.year > d1.year - xDate ? d1 : d0;
 
-                return "translate(" + mouse[0] + "," + pos.y +")";
-              });
-          
-            d3.selectAll(".mouse-per-line").select("text")
-              .text(function(d, i) {
-                var xDate = x.invert(mouse[0]),
-                    bisect = d3.bisector(function(d) { return d.year; }).right;
-                    idx = bisect(d.values, xDate);
-              
-                var beginning = 0,
-                    end = tracelines[i].getTotalLength(),
-                    target = null;
-              
-                while (true){
-                  target = Math.floor((beginning + end) / 2);
-                  pos = tracelines[i].getPointAtLength(target);
-                  if ((target === end || target === beginning) && pos.x !== mouse[0]) {
-                      break;
-                  }
-                  if (pos.x > mouse[0])      end = target;
-                  else if (pos.x < mouse[0]) beginning = target;
-                  else break; //position found
-                }
-              
-                return y.invert(pos.y).toFixed(2) + " %";
-              });
+              return (d[currentPlaces[i].id]).toFixed(1) + "%";
+            });
           });
         };
     });
