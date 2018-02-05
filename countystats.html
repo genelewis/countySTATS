@@ -175,7 +175,7 @@
             <div>
               <h3>Demographics</h3>
               <ul>
-                <li class="fact" id="voting-age-citizens"><b>Number of voting-age citizens:  </b></li>
+                <li class="fact" id="median-age"><b>Median age:  </b></li>
                 <li class="fact" id="percent-under-eighteen"><b>Percent aged under 18:  </b></li>
                 <li class="fact" id="percent-over-sixty-five"><b>Percent aged 65 and up:  </b></li>
               </ul>
@@ -283,9 +283,9 @@
       function setStatistic() {
         for (i = 0; i < ids.length; i++) {
           switch (ids[i]) {
-            case 'voting-age-citizens':
+            case 'median-age':
               /*              (Element ID,   "Search term to match with",   Display rank?) */
-              displayStatistic("#" + ids[i], "Number of voting-age citizens", true);
+              displayStatistic("#" + ids[i], "Median age", true);
               break;
             case 'percent-under-eighteen':
               displayStatistic("#" + ids[i], "Percent aged under 18", true);
