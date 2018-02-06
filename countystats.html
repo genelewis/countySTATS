@@ -53,6 +53,19 @@
         height: 0;
         overflow: show;
       }
+      .icon {
+        height: 4.5em;
+        width: auto;
+        }
+      hr { 
+        display: block;
+        margin-top: 3em;
+        margin-bottom: 3em;
+        margin-left: auto;
+        margin-right: auto;
+        border-style: inset;
+        border-width: 1px;
+}
       .grid-wrapper {
         position: relative;
         margin: 0 auto;
@@ -224,7 +237,10 @@
             <p class="desc">For all measures, a rank of 1st indicates the highest statistic and 77th indicates the lowest statistic among the 77 counties of Oklahoma (not necessarily best or worst).</p>
             <p style="text-align:center; font-weight:bold" class="countyname"></p>
           </div>
+    <hr>
 	</div>
+      
+
 		
 	 <div class="chart more-stats">	
 	  <div align="center">
@@ -234,53 +250,60 @@
 		
          <div class="grid-wrapper-stats-three" align="center">
             <!--style="color:#972421; font-size:18px"-->
-                <div class="fact" id="voting-age-citizens"><img src="voting.svg"> <br> <b>Number of voting-age citizens:</b> <br> </div>
-                <div class="fact" id="percent-under-eighteen"><img src="children.svg"> <br> <b>Percent aged under 18: </b> <br> </div>
-                <div class="fact" id="percent-over-sixty-five"><img src="senior.svg"> <br> <b>Percent aged 65 and up: </b> <br> </div>
-	 </div>
-	
+                <div class="fact" id="voting-age-citizens"><img class="icon" src="icons/voting.svg"> <br> <b>Number of voting-age citizens:</b> <br> </div>
+                <div class="fact" id="percent-under-eighteen"><img class="icon" src="icons/children.svg"> <br> <b>Percent aged under 18: </b> <br> </div>
+                <div class="fact" id="percent-over-sixty-five"><img class="icon" src="icons/senior.svg"> <br> <b>Percent aged 65 and up: </b> <br> </div>
+	  
+      </div>
+
+      
 	 <div class="chart more-stats">	
 	  <div align="center">
+          <hr>
            <h2>Economic</h2>
           </div>
 	 </div>      
 		 
 	 <div class="grid-wrapper-stats-five" align="center">
-                <div class="fact" id="median-household-income"><img src="income.svg"> <br> <b>Median household income: </b> <br> </div>
-                <div class="fact" id="residents-receiving-food-stamps"><img src="foodstamps.svg"> <br> <b>Residents receiving food stamps: </b> <br> </div>
-                <div class="fact" id="residents-under-poverty-line"><img src="poverty.svg"> <br> <b>Residents living under poverty line (all ages): </b> <br> </div>
-                <div class="fact" id="children-under-poverty-line"><img src="povertychildren.svg"> <br> <b>Children living under poverty line: </b> <br> </div>
-                <div class="fact" id="median-home-value"><img src="homevalue.svg"> <br> <b>Median value of owner-occupied homes: </b> <br> </div>
+                <div class="fact" id="median-household-income"><img class="icon" src="icons/income.svg"> <br> <b>Median household income: </b> <br> </div>
+                <div class="fact" id="residents-receiving-food-stamps"><img class="icon" src="icons/foodstamps.svg"> <br> <b>Residents receiving food stamps: </b> <br> </div>
+                <div class="fact" id="residents-under-poverty-line"><img class="icon" src="icons/poverty.svg"> <br> <b>Residents living under poverty line (all ages): </b> <br> </div>
+                <div class="fact" id="children-under-poverty-line"><img class="icon" src="icons/povertychildren.svg"> <br> <b>Children living under poverty line: </b> <br> </div>
+                <div class="fact" id="median-home-value"><img class="icon" src="icons/homevalue.svg"> <br> <b>Median value of owner-occupied homes: </b> <br> </div>
          </div>
 		 
 	 <div class="chart more-stats">	
 	  <div align="center">
+          <hr>
            <h2>Education</h2>
           </div>
 	 </div>   
               
 	 <div class="grid-wrapper-stats-two" align="center">
-                <div class="fact" id="free-reduced-lunch-eligibility"><img src="schoollunch.svg"> <br> <b>Students eligible for free/reduced lunch price: </b> <br> </div>
-                <div class="fact" id="public-school-enrollment"><img src="publicschool.svg"> <br> <b>Students enrolled in public school: </b> <br> </div>
+                <div class="fact" id="free-reduced-lunch-eligibility"><img class="icon" src="icons/schoollunch.svg"> <br> <b>Students eligible for free/reduced lunch price: </b> <br> </div>
+                <div class="fact" id="public-school-enrollment"><img class="icon" src="icons/publicschool.svg"> <br> <b>Students enrolled in public school: </b> <br> </div>
           </div>
 		 
 	 <div class="chart more-stats">	
 	  <div align="center">
+          <hr>
            <h2>Health</h2>
           </div>
 	 </div>
 		 
 	 <div class="grid-wrapper-stats-four" align="center">		 
-                <div class="fact" id="overall-health-rank"><img src="health.svg"> <br> <b>Overall health rank: </b> <br> </div>
-                <div class="fact" id="residents-with-disabilities"><img src="disability.svg"> <br> <b>Residents with a disability: </b> <br> </div>
-                <div class="fact" id="adults-with-obesity"><img src="obesity.svg"> <br> <b>Adults with obesity: </b> <br> </div>
-                <div class="fact" id="uninsured-residents"><img src="uninsured.svg"> <br> <b>Percentage of uninsured residents: </b> <br> </div>
+                <div class="fact" id="overall-health-rank"><img class="icon" src="icons/health.svg"> <br> <b>Overall health rank: </b> <br> </div>
+                <div class="fact" id="residents-with-disabilities"><img class="icon" src="icons/disability.svg"> <br> <b>Residents with a disability: </b> <br> </div>
+                <div class="fact" id="adults-with-obesity"><img class="icon" src="icons/obesity.svg"> <br> <b>Adults with obesity: </b> <br> </div>
+                <div class="fact" id="uninsured-residents"><img class="icon" src="icons/uninsured.svg"> <br> <b>Percentage of uninsured residents: </b> <br> </div>
           </div>
-          
-          <br>
+      
+     <div class="chart more-stats">
+            <hr>
+     </div>
+      
           <div class="link-to-printable-chart" align="center"></div>
           <br>
-        </div>
     
         <div class="column">
           <div>
