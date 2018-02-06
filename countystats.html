@@ -72,6 +72,47 @@
         grid-row-gap: 10px;
         grid-template-columns: 1fr;
       }
+      .grid-wrapper-stats-two {
+        position: relative;
+        align-items: center;
+        
+        margin: 0 auto;
+        padding: 0px;
+        max-width: 1023px;
+        display: grid;
+        grid-row-gap: 10px;
+        grid-template-columns: 1fr 1fr;
+      }
+      .grid-wrapper-stats-three {
+        position: relative;
+        align-items: center;
+        margin: 0 auto;
+        padding: 0px;
+        max-width: 1023px;
+        display: grid;
+        grid-row-gap: 10px;
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+	.grid-wrapper-stats-four {
+        position: relative;
+        align-items: center;
+        margin: 0 auto;
+        padding: 0px;
+        max-width: 1023px;
+        display: grid;
+        grid-row-gap: 10px;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+      }
+	.grid-wrapper-stats-five {
+        position: relative;
+        align-items: center;
+        margin: 0 auto;
+        padding: 0px;
+        max-width: 1023px;
+        display: grid;
+        grid-row-gap: 10px;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      }
     @media (min-width: 500px) {
       .grid-wrapper-stats {
         padding-left: 20%;
@@ -89,6 +130,20 @@
       }
       .more-stats {
         margin: 0px 200px 0px 200px;
+      }
+    }
+    @media (max-width: 500px) {
+      .grid-wrapper-stats-two {
+        grid-template-columns: 1fr;
+      }
+      .grid-wrapper-stats-three {
+        grid-template-columns: 1fr;
+      }
+      .grid-wrapper-stats-four {
+        grid-template-columns: 1fr;
+      }
+      .grid-wrapper-stats-five {
+        grid-template-columns: 1fr;
       }
     }
       
@@ -165,47 +220,61 @@
 
         <div class="chart more-stats">
           <div align="center">
-            <h2>More Stats</h2>
+            <h3>More Stats</h3>
             <p class="desc">For all measures, a rank of 1st indicates the highest statistic and 77th indicates the lowest statistic among the 77 counties of Oklahoma (not necessarily best or worst).</p>
             <p style="text-align:center; font-weight:bold" class="countyname"></p>
           </div>
-          
-          <div class="grid-wrapper-stats">
+	</div>
+		
+	 <div class="chart more-stats">	
+	  <div align="center">
+           <h2>Demographics</h2>
+          </div>
+	 </div>
+		
+         <div class="grid-wrapper-stats-three" align="center">
             <!--style="color:#972421; font-size:18px"-->
-            <div>
-              <h3>Demographics</h3>
-              <ul>
-                <li class="fact" id="median-age"><b>Median age:  </b></li>
-                <li class="fact" id="percent-under-eighteen"><b>Percent aged under 18:  </b></li>
-                <li class="fact" id="percent-over-sixty-five"><b>Percent aged 65 and up:  </b></li>
-              </ul>
-            </div>
-            <div>
-              <h3>Economy</h3>
-              <ul>
-                <li class="fact" id="median-household-income"><b>Median household income:  </b></li>
-                <li class="fact" id="residents-receiving-food-stamps"><b>Residents receiving food stamps:  </b></li>
-                <li class="fact" id="residents-under-poverty-line"><b>Residents living under poverty line (all ages):  </b></li>
-                <li class="fact" id="children-under-poverty-line"><b>Children living under poverty line:  </b></li>
-                <li class="fact" id="median-home-value"><b>Median value of owner-occupied homes:  </b></li>
-              </ul>
-            </div>
-            <div>
-              <h3>Education</h3>
-              <ul>  
-                <li class="fact" id="free-reduced-lunch-eligibility"><b>Students eligible for free/reduced price lunch:  </b></li>
-                <li class="fact" id="public-school-enrollment"><b>Students enrolled in public school:  </b></li>
-              </ul>
-            </div>
-            <div>
-              <h3>Health</h3>
-              <ul>
-                <li class="fact" id="overall-health-rank"><b>Overall health rank:  </b></li>
-                <li class="fact" id="residents-with-disabilities"><b>Residents with a disability:  </b></li>
-                <li class="fact" id="adults-with-obesity"><b>Adults with obesity:  </b></li>
-                <li class="fact" id="uninsured-residents"><b>Percentage of uninsured residents:  </b></li>
-              </ul>
-            </div>
+                <div class="fact" id="voting-age-citizens"><img src="voting.svg"> <br> <b>Number of voting-age citizens:</b> <br> </div>
+                <div class="fact" id="percent-under-eighteen"><img src="children.svg"> <br> <b>Percent aged under 18: </b> <br> </div>
+                <div class="fact" id="percent-over-sixty-five"><img src="senior.svg"> <br> <b>Percent aged 65 and up: </b> <br> </div>
+	 </div>
+	
+	 <div class="chart more-stats">	
+	  <div align="center">
+           <h2>Economic</h2>
+          </div>
+	 </div>      
+		 
+	 <div class="grid-wrapper-stats-five" align="center">
+                <div class="fact" id="median-household-income"><img src="income.svg"> <br> <b>Median household income: </b> <br> </div>
+                <div class="fact" id="residents-receiving-food-stamps"><img src="foodstamps.svg"> <br> <b>Residents receiving food stamps: </b> <br> </div>
+                <div class="fact" id="residents-under-poverty-line"><img src="poverty.svg"> <br> <b>Residents living under poverty line (all ages): </b> <br> </div>
+                <div class="fact" id="children-under-poverty-line"><img src="povertychildren.svg"> <br> <b>Children living under poverty line: </b> <br> </div>
+                <div class="fact" id="median-home-value"><img src="homevalue.svg"> <br> <b>Median value of owner-occupied homes: </b> <br> </div>
+         </div>
+		 
+	 <div class="chart more-stats">	
+	  <div align="center">
+           <h2>Education</h2>
+          </div>
+	 </div>   
+              
+	 <div class="grid-wrapper-stats-two" align="center">
+                <div class="fact" id="free-reduced-lunch-eligibility"><img src="schoollunch.svg"> <br> <b>Students eligible for free/reduced lunch price: </b> <br> </div>
+                <div class="fact" id="public-school-enrollment"><img src="publicschool.svg"> <br> <b>Students enrolled in public school: </b> <br> </div>
+          </div>
+		 
+	 <div class="chart more-stats">	
+	  <div align="center">
+           <h2>Health</h2>
+          </div>
+	 </div>
+		 
+	 <div class="grid-wrapper-stats-four" align="center">		 
+                <div class="fact" id="overall-health-rank"><img src="health.svg"> <br> <b>Overall health rank: </b> <br> </div>
+                <div class="fact" id="residents-with-disabilities"><img src="disability.svg"> <br> <b>Residents with a disability: </b> <br> </div>
+                <div class="fact" id="adults-with-obesity"><img src="obesity.svg"> <br> <b>Adults with obesity: </b> <br> </div>
+                <div class="fact" id="uninsured-residents"><img src="uninsured.svg"> <br> <b>Percentage of uninsured residents: </b> <br> </div>
           </div>
           
           <br>
