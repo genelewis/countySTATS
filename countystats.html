@@ -68,6 +68,7 @@
 }
       .grid-wrapper {
         position: relative;
+        align-items: flex-end;
         margin: 0 auto;
         padding: 0px 0px 0px 0px;
         max-width: 1023px;
@@ -78,6 +79,7 @@
       }
       .grid-wrapper-stats {
         position: relative;
+        align-items: flex-end;
         margin: 0 auto;
         padding: 0px;
         max-width: 1023px;
@@ -88,7 +90,6 @@
       .grid-wrapper-stats-two {
         position: relative;
         align-items: center;
-        
         margin: 0 auto;
         padding: 0px;
         max-width: 1023px;
@@ -129,17 +130,20 @@
     @media (min-width: 500px) {
       .grid-wrapper-stats {
         padding-left: 20%;
+        align-items: flex-end;
       }
     }
     @media (min-width: 850px) {
       .grid-wrapper-stats {
         grid-template-columns: 1fr 1fr;
         padding-left: 20px;
+        align-items: flex-end;
       }
     }
     @media (min-width: 1024px) {
       .grid-wrapper {
         grid-template-columns: 1fr 1fr;
+        align-items: flex-end;
       }
       .more-stats {
         margin: 0px 200px 0px 200px;
