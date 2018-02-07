@@ -194,6 +194,7 @@
             selection = this.options[this.selectedIndex].value;
             currentPlaces[2] = places[places.findIndex(x => x.id == selection)]
             legendText.data(currentPlaces);
+            legendLabel.data(currentPlaces);
             var s = document.getElementById('#svg');
             var cname = 'Unemployment-' + selection.slice(0, -7);
             svg.className = 'Unemployment-' + selection.slice(0, -7);
@@ -219,12 +220,15 @@
             legendText.transition()
                 .text(function(d) {return d.id;});
         
-            //Shift the gridlines, if necessary
+            //Shift the gridlines / printable mode labels, if necessary
               if (parent.ENABLE_PRINTABLE_CHARTS) {
                 ylines.transition()
                   .call(make_y_gridlines()
                     .tickSize(-width)
                     .tickFormat(""))
+                
+                legendLabel.transition()
+                  .text(function(d) {return d.values[d.values.length - 1].unemp.toFixed(1) + "% (2016)";});
               }
         
         });
@@ -237,27 +241,36 @@
         .selectAll("g")
           .data(currentPlaces, function(d) {return d.id;})
         .enter().append("g")
-          .attr("transform", function(d, i) { return "translate(-20," + ((i * 20)+5) + ")"; });
+          .attr("transform", function(d, i) { 
+            if (parent.ENABLE_PRINTABLE_CHARTS) {
+              return "translate(-60," + ((i * 20)+5) + ")";
+            } else {
+            return "translate(-20," + ((i * 20)+5) + ")"; }})
+          .attr("class", "legend label");
         
       var legendBox = legend.append("rect")
           .attr("width", 19)
           .attr("height", 19)
           .attr("x", width-19)
+          .attr("class", "legend box")
           .attr("fill", function(d) {return z(d.id);})
       
       var legendText = legend.append("text")
           .attr("x", width - 24)
           .attr("y", 9.5)
           .attr("dy", "0.32em")
-          .attr("class", "legend")
+          .attr("class", "legend text")
           .text(function(d) {return d.id;});
       
-      /*var percentText = legend.append("text")
-          .attr("x", width + 33)
+      if (parent.ENABLE_PRINTABLE_CHARTS) {
+        var legendLabel = legend.append("text")
+          .attr("x", width + 2)
           .attr("y", 9.5)
           .attr("dy", "0.32em")
-          .attr("class", "legend-percent")
-          .text("--   --");*/
+          .attr("text-anchor", "start")
+          .attr("class", "legend printable")
+          .text(function(d) {return d.values[d.values.length - 1].unemp.toFixed(1) + "% (2016)";});
+      }
     
     //The following section controls how data is shown on all three lines on mouseover
     //(Directly incorporated from larsenmtl's block "D3 mouseover multi-line chart" on blocks.org)
