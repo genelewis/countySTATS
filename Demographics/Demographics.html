@@ -157,7 +157,7 @@ h1 {
         .attr("text-anchor", "middle")
         .attr("x", function(d) { return x1(d.Ethnicity); })
         .attr("y", function(d) { return y(d.Value) - 2; })
-        .style("font", "11px Arial")
+        .style("font", "14px Arial")
         .text(function(d) { return d.Value + "%"; });
     }
 
@@ -234,13 +234,7 @@ h1 {
               if (parent.ENABLE_PRINTABLE_CHARTS) {
                 graph.selectAll('.bartext')
                   .data(dataset)
-                  .attr("transform", function(d,i) { 
-                          if (i%2 == 0){
-                            var offset = 4 + x1.bandwidth()/2;
-                          } else {
-                            var offset = x1.bandwidth() + 5 + x1.bandwidth()/2;
-                          }
-                          return "translate(" + (x0(d.Ethnicity) + offset) + ",0)"; })
+                  .transition()
                   .attr("x", function(d) { return x1(d.Ethnicity); })
                   .attr("y", function(d) { return y(d.Value) - 2; })
 				  .style("font", "14px Arial")
