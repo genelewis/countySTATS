@@ -194,7 +194,6 @@
             selection = this.options[this.selectedIndex].value;
             currentPlaces[2] = places[places.findIndex(x => x.id == selection)]
             legendText.data(currentPlaces);
-            legendLabel.data(currentPlaces);
             var s = document.getElementById('#svg');
             var cname = 'Unemployment-' + selection.slice(0, -7);
             svg.className = 'Unemployment-' + selection.slice(0, -7);
@@ -227,6 +226,7 @@
                     .tickSize(-width)
                     .tickFormat(""))
                 
+                legendLabel.data(currentPlaces);
                 legendLabel.transition()
                   .text(function(d) {return d.values[d.values.length - 1].unemp.toFixed(1) + "% (2016)";});
               }
