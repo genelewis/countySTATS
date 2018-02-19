@@ -254,27 +254,7 @@ h1 {
           filteredData.push(state);
 
       });
-      filteredData = sortData(filteredData, 0)
       return filteredData;
-    }
-    //Helper function to sort the data from greatest > least by county value
-    function sortData(filteredData, i) {
-      var max = filteredData[i].Value;
-      for (var j = i; j < filteredData.length; j = j+2) {
-        if (filteredData[j].Value > max) {
-          max = filteredData[j].Value;
-          var temp = [filteredData[i], filteredData[i+1]];
-          filteredData[i] = filteredData[j];
-          filteredData[i+1] = filteredData[j+1];
-          filteredData[j] = temp[0];
-          filteredData[j+1] = temp[1];
-        }
-      }
-      if (i == filteredData.length - 2) {
-        return filteredData;
-      } else {
-        return sortData(filteredData, i+2);
-      }
     }
     //Helper function to convert data from string to numeric form
     function numericize(d, i, columns) {
