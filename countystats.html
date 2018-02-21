@@ -182,8 +182,8 @@
       <div style="text-align: center"><object type="image/svg+xml" data="Oklahoma_county_map-2018.svg">Your browser does not support SVG.</object></div>
     </div>
     
-    <div id="drop" align="center"></div>
-    
+    <div id="drop" align="center"></div><br>
+    <div class="page-permalink" align="center">Permalink to this page: </div>
     
     <div class="grid-wrapper">
         <div class="chart population" align="center">
@@ -506,6 +506,14 @@
       .attr("style", "font-size:12px")
       .html("Get a printable version of this county's charts & stats...");
     
+    /* Link to a printable factsheet for the selected county's charts: */  
+    var permalink = d3.selectAll(".page-permalink")
+      .append("a")
+      .attr("href", "https://okpolicy.org/countystats/countystats.html?county=" + selection.slice(0, -7).replace(" ","_"))
+      .attr("target", "_blank")
+      .attr("style", "font-size:12px")
+      .html("https://okpolicy.org/countystats/countystats.html?county=" + selection.slice(0, -7).replace(" ","_"));  
+      
     /****************************************************************************************/  
     /* This section deals with URL parameters and what happens when we select a new county: */
       
@@ -531,6 +539,10 @@
               
               link.transition()
                   .attr("href", linkedSheet);
+              
+              permalink.transition()
+                  .attr("href", "https://okpolicy.org/countystats/countystats.html?county=" + selection.slice(0, -7).replace(" ","_"))
+              permalink.html("https://okpolicy.org/countystats/countystats.html?county=" + selection.slice(0, -7).replace(" ","_"));
               
               /* Update county name displayed over additional statistics section: */
               d3.select(".countyname")
