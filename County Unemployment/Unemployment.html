@@ -194,11 +194,6 @@
             selection = this.options[this.selectedIndex].value;
             currentPlaces[2] = places[places.findIndex(x => x.id == selection)]
             legendText.data(currentPlaces);
-            var s = document.getElementById('#svg');
-            var cname = 'Unemployment-' + selection.slice(0, -7);
-            svg.className = 'Unemployment-' + selection.slice(0, -7);
-            console.log(svg.className);
-            console.log('Unemployment-' + selection.slice(0, -7));
         
             y.domain([ 0, 15]);
             

@@ -132,7 +132,6 @@ h1 {
           .attr("width", x1.bandwidth())
           .attr("height", function(d) { return height - y(d.Value); })
           .attr("fill", function(d) { return z(d.Type); })
-          //.on('mouseover', function(d) {console.log(this);})
     
     if (!parent.ENABLE_PRINTABLE_CHARTS) {
       rects.on('mouseover', function(d) {
@@ -213,7 +212,7 @@ h1 {
           
             //Rescale the x-axis to the new sectors, rescale the y-axis to fit the new data
               x0.domain(dataset.map(function(d) { return d.Sector; }));
-              y.domain([0, d3.max(dataset.map(function(d) {console.log(d.Value); return d.Value;})) + 10])// + 10]).nice();
+              y.domain([0, d3.max(dataset.map(function(d) {return d.Value;})) + 10])// + 10]).nice();
 
             //Associate the new selection of data with the bars
               d3.selectAll(".bar")
