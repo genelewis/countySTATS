@@ -116,7 +116,7 @@
       
       
       var selection = window.parent.selection; //(default selection value)
-      var currentPlaces = [places[0], places[1], places[2]];
+      var currentPlaces = [places[0], places[1], places[places.findIndex(x => x.id == selection)]];
       
       //Set the domains of the axes
       x.domain(d3.extent(data, function(d) {return d.year}));
