@@ -87,7 +87,15 @@
       //Define the scales of the x- and y-axes
       var x = d3.scaleTime().range([0, width]),
           y = d3.scaleLinear().range([height, 0]),
-          z = d3.scaleOrdinal().range(["#febd60","#972421","#2f507f"]);
+          z = function(d) {
+            if (d == "National") {
+              return "#febd60";
+            } else if (d == "State") {
+              return "#972421";
+            } else {
+              return "#2f507f";
+            }
+        }
 
       //Define the axes
       var xAxis = d3.axisBottom(x)
@@ -121,7 +129,6 @@
       //Set the domains of the axes
       x.domain(d3.extent(data, function(d) {return d.year}));
       y.domain([0, 15]);
-      z.domain(places.map(function(c) { return c.id; }));
       
      // These functions add gridlines across the graph (DISABLED by default):
       if (parent.ENABLE_PRINTABLE_CHARTS) {
