@@ -211,36 +211,40 @@
         }
       }
 
-    //Find the dropdown menu from the parent document and listen for a change in selection
-    var selector = window.parent.document.getElementById('dropdown');
-    selector = d3.select(selector)
-      .on("change.pop", function(d) {
-
-        //Update the data:
-          selection = this.options[this.selectedIndex].value;
-          y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }) + 10000, 50000)]);
-          legendText.data([selection]);
-
-        //Transition the line
-          path.transition()
-              .attr("d", line);
-
-        //Rescale the y-axis to fit the data
-          d3.select('.y.axis').transition()
-              .call(yAxis);
+    //Listen for a signal from the parent document to change the selection
+    window.onmessage = function(event) {
       
-        //Update the legend
-          legendText.transition()
-              .text(function(d) {return d;})
-      
-        //Shift the gridlines, if necessary
-          if (parent.ENABLE_PRINTABLE_CHARTS) {
-            ylines.transition()
-              .call(make_y_gridlines()
-                .tickSize(-width)
-                .tickFormat(""))
-          }
-        });
+      //Do we trust the sender of this message?
+      //if (event.origin !== "http://www.okpolicy.org" || event.data !== "promptUpdate")
+        //return;
+      console.log("receive");
+      var selector = window.parent.document.getElementById('dropdown');
+
+      //Update the data:
+        selection = selector.options[selector.selectedIndex].value;
+        y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }) + 10000, 50000)]);
+        legendText.data([selection]);
+
+      //Transition the line
+        path.transition()
+            .attr("d", line);
+
+      //Rescale the y-axis to fit the data
+        d3.select('.y.axis').transition()
+            .call(yAxis);
+
+      //Update the legend
+        legendText.transition()
+            .text(function(d) {return d;})
+
+      //Shift the gridlines, if necessary
+        if (parent.ENABLE_PRINTABLE_CHARTS) {
+          ylines.transition()
+            .call(make_y_gridlines()
+              .tickSize(-width)
+              .tickFormat(""))
+        }
+      };
 
     //Create the legend
       var legend = graph.append("g")

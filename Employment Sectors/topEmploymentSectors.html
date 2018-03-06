@@ -199,13 +199,17 @@ h1 {
     };
     d3.select('.xaxis').selectAll(".tick text").each(insertLinebreaks);
 
-    //Find the dropdown menu from the parent document and listen for a change in selection
-    var selector = window.parent.document.getElementById('dropdown');
-        selector = d3.select(selector)
-          .on("change", function(d){
+    //Listen for a signal from the parent document to change the selection
+    window.onmessage = function(event) {
+      
+      //Do we trust the sender of this message?
+      //if (event.origin !== "http://www.okpolicy.org" || event.data !== "promptUpdate")
+        //return;
+      console.log("receive");
+      var selector = window.parent.document.getElementById('dropdown');
 
             //Update data:
-              selection = this.options[this.selectedIndex].value;
+              selection = selector.options[selector.selectedIndex].value;
               currentKeys[1] = selection;
               dataset = formatData(data, selection);
               legendText.data(currentKeys.slice().reverse());
@@ -240,7 +244,7 @@ h1 {
                   .attr("y", function(d) { return y(d.Value) - 2; })
                   .text(function(d) { return d.Value + "%"; });
           
-          });
+          };
 
     //Append the legend to the main graph
     var legend = graph.append("g")
