@@ -1,269 +1,336 @@
 <!DOCTYPE html>
-<style>
- 
-.axis .domain {
-  display: none;
-}
-  
-.d3-tip {
-  line-height: 1;
-  font-weight: bold;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border-radius: 2px;
-  font: 10px Arial;
-}
 
-/* Creates a small triangle extender for the tooltip */
-.d3-tip:after {
-  box-sizing: border-box;
-  display: inline;
-  font-size: 10px;
-  width: 100%;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
-  position: absolute;
-  text-align: center;
-}
-  
-/* Style northward tooltips differently */
-.d3-tip.n:after {
-  margin: -1px 0 0 0;
-  top: 100%;
-  left: 0;
-}
-  
-h1 {
-  text-anchor: middle;
-  font-family: sans-serif;
-  text-align: justify
-}
+<head>
+  <style>
+    .axis .domain {
+      display: none;
+    }
 
-</style>
+    .d3-tip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+      font: 10px Arial;
+    }
 
-<title>Household Adjusted Gross Income</title>
+    /* Creates a small triangle extender for the tooltip */
 
-<svg class="Income" id="chart" width="480" height="260" viewBox="0 0 480 260"
-    preserveAspectRatio="xMidYMid meet"><title>Household Adjusted Gross Income</title></svg>
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
 
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="d3-tip.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script>
+    /* Style northward tooltips differently */
 
-  var mychart = $("#chart"),
-      aspect = mychart.width() / mychart.height(),
-      container = mychart.parent();
+    .d3-tip.n:after {
+      margin: -1px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
 
-  $(window).on("resize", adjustSize);
-  $(window).on("load", adjustSize);
+    h1 {
+      text-anchor: middle;
+      font-family: sans-serif;
+      text-align: justify
+    }
 
-  function adjustSize() {
+  </style>
+  <meta charset="utf-8">
+
+  <title>Household Adjusted Gross Income</title>
+
+</head>
+
+<body>
+  <svg class="Income" id="chart" width="480" height="260" viewBox="0 0 480 260" preserveAspectRatio="xMidYMid meet"></svg>
+
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="d3-tip.js"></script>
+
+  <script>
+    
+    /******* Dynamic Resizing *******/
+    
+    var mychart = $("#chart"),
+        aspect = mychart.width() / mychart.height(),
+        container = mychart.parent();
+
+    $(window).on("resize", adjustSize);
+    $(window).on("load", adjustSize);
+
+    function adjustSize() {
       var targetWidth = container.width();
       mychart.attr("width", targetWidth);
       mychart.attr("height", Math.round(targetWidth / aspect));
-  }
-  
-  //Define the container SVG with margin conventions
-  var svg = d3.select("svg"),
-      margin = {top: 20, right: 20, bottom: 15, left: 40},
-      width = +svg.attr("width") - margin.left - margin.right,
-      height = +svg.attr("height") - margin.top - margin.bottom -30,
-      graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    }
+    
+    /******* Variable Definitions & Data Setup *******/
 
-  //Define the scales of the x- and y-axes
-  var x0 = d3.scaleBand()
+    //Define the container SVG with margin conventions
+    var svg = d3.select("svg"),
+        margin = {top: 20, right: 20, bottom: 15, left: 40},
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom - 30,
+        graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    //Define the scales of the x- and y-axes
+    var x0 = d3.scaleBand()
       .rangeRound([0, width])
       .paddingInner(0.1);
 
-  var x1 = d3.scaleBand()
+    var x1 = d3.scaleBand()
       .padding(0.05);
 
-  var y = d3.scaleLinear()
+    var y = d3.scaleLinear()
       .rangeRound([height, 0]);
 
-  //Define a coloring scale
-  var z = function(d) {
-    if (d == "State") {
-      return "#972421";
-    } else {
-      return "#2f507f";
+    //Define a coloring scale
+    var z = function(d) {
+      if (d == "State") {
+        return "#972421";
+      } else {
+        return "#2f507f";
+      }
     }
-  }
 
-  //Import the raw data from CSV
-  d3.csv("data.csv", numericize, function(error, data) {
-    if (error) throw error;
+    //Import the raw data from CSV
+    d3.csv("data.csv", numericize, function(error, data) {
+      if (error) throw error;
 
-    var selection = window.parent.selection,         //(default selection value)
-        keys = data.columns.slice(1),
-        currentKeys = [selection, "State"];
+      var selection = window.parent.selection, //(default selection value)
+          keys = data.columns.slice(1),
+          currentKeys = [selection, "State"];
 
-    //Siphon out only the data relevant to the selected county
-    var dataset = formatData(data, selection);
+      //Siphon out only the data relevant to the selected county
+      var dataset = formatData(data, selection);
 
-    //Set the domains of the axes
-    x0.domain(dataset.map(function(d) {return d.Income; }));
-    x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
-    y.domain([0, 50]).nice();
+      //Set the domains of the axes
+      x0.domain(dataset.map(function(d) {return d.Income;}));
+      x1.domain(currentKeys).rangeRound([0, x0.bandwidth()]);
+      y.domain([0, 50]).nice();
 
-    //Set up tooltip displays
-    var tip = d3.tip()
-      .attr('class', 'd3-tip')
-      .offset([-10, 0])
-      .html(function(d) {
-        return "<span style='color:#fff; font-weight: bold;'>" + d.value + "%</span>";
-      })
-    graph.call(tip);
+      //Set up tooltip displays
+      var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function(d) {
+          return "<span style='color:#fff; font-weight: bold;'>" + d.value + "%</span>";
+        })
+      graph.call(tip);
 
-    
-    //Begin appending bars to the graph
-    var bars = graph.append("g")
+      /******* Chart Construction *******/
+
+      //Begin appending bars to the graph
+      var bars = graph.append("g")
         .selectAll("g")
         .data(data)
         .enter().append("g")
-          .attr("transform", function(d) { return "translate(" + x0(d.Income) + ",0)"; })
-          .attr("class", "gcontainer")
+        .attr("transform", function(d) {
+          return "translate(" + x0(d.Income) + ",0)";
+        })
+        .attr("class", "gcontainer")
         .selectAll("rect")
-        .data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
-        .enter().append("rect")
-          .attr("class", "bar")
-          .attr("x", function(d) { return x1(d.key); })
-          .attr("y", function(d, i) { return y(d.value); })
-          .attr("width", x1.bandwidth())
-          .attr("height", function(d) { return height - y(d.value); })
-          .attr("fill", function(d) { return z(d.key); })
-    
-    if (!parent.ENABLE_PRINTABLE_CHARTS) {
-          bars.on('mouseover', function(d) {
-                  d3.select(this).attr("fill", d3.rgb(z(d.key)).brighter(0.5));
-                  tip.show(d);
-                })
-                .on('mouseout', function(d) {
-                  d3.select(this).attr("fill", d3.rgb(z(d.key)).darker(0.1));
-                  tip.hide(d);
-                });
-          } else {
-            graph.selectAll(".gcontainer").selectAll(".bartext")
-              .data(function(data) { return currentKeys.map(function(key) { return {key: key, value: data[key]}; }); })
-            .enter().append("text")
-              .attr("class", "bartext")
-              .attr("transform", function(d) { return "translate(" + x1.bandwidth()/2 + ",0)"; })
-              .attr("text-anchor", "middle")
-              .attr("x", function(d) { return x1(d.key); })
-              .attr("y", function(d) { console.log(d.value); return y(d.value) - 2; })
-              .style("font", "11px Arial")
-              .text(function(d) { return d.value + "%"; });
-          }
-
-    //Create the axes
-    var xAxis = d3.axisBottom(x0)
-    
-    graph.append("g")
-          .attr("class", "xaxis")
-          .style("font", "11px Arial")
-          .attr("transform", "translate(0," + (height) + ")")
-          .call(xAxis)
-          .selectAll(".tick text")
-
-    var yaxis = graph.append("g")
-          .attr("class", "yaxis")
-          .style("font", "11px Arial")
-          .call(d3.axisLeft(y).ticks(null, "s"))
-        .append("text")
-              .attr("x", 2)
-              .attr("y", y(y.ticks().pop()) + 0.5)
-              .attr("dy", "0.32em")
-              .attr("fill", "#000")
-              .attr("font-weight", "bold")
-              .attr("text-anchor", "start")
-              .text("Percentage");
-
-    //Helper function to streamline wrapping long label text
-    var insertLinebreaks = function (d) {
-      var el = d3.select(this);
-      var words = d.split(' ');
-      el.text('');
-
-      for (var i = 0; i < words.length; i++) {
-          var tspan = el.append('tspan').text(words[i]);
-          if (i > 0)
-              tspan.attr('x', 0).attr('dy', '12');
-      }
-    };
-    d3.select('.xaxis').selectAll(".tick text").transition().each(insertLinebreaks)
-
-    //Listen for a signal from the parent document to change the selection
-    window.onmessage = function(event) {
-      
-      //Do we trust the sender of this message?
-      //if (event.origin !== "http://www.okpolicy.org" || event.data !== "promptUpdate")
-        //return;
-      console.log("receive");
-      var selector = window.parent.document.getElementById('dropdown');
-
-              //Update data:
-				  selection = selector.options[selector.selectedIndex].value;
-				  currentKeys[0] = selection;
-				  bars.data(function(d) { return currentKeys.map(function(key) { return {key: key, value: d[key]}; }); })
-				  legendText.data(currentKeys.slice());
-
-              //Transition the bars
-                var t0 = svg.transition().duration(450).ease(d3.easeBounce);
-                t0.selectAll(".bar").attr("height", function(d){return height - y(d.value);})
-                  .attr("y", function(d){return y(d.value);})
-                  .ease(d3.easeBounce);
-              
-              //Update the legend
-                legendText.transition()
-                    .text(function(d) {return d;})
-          
-              //Update the static labels, if necessary
-                graph.selectAll(".gcontainer").selectAll(".bartext")
-                  .data(function(data) { return currentKeys.map(function(key) { return {key: key, value: data[key]}; }); })
-                  .attr("y", function(d) { console.log(d.value); return y(d.value) - 2; })
-                  .text(function(d) { return d.value + "%"; });
-                  
+        .data(function(d) {
+          return currentKeys.map(function(key) {
+            return {
+              key: key,
+              value: d[key]
             };
+          });
+        })
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) {
+          return x1(d.key);
+        })
+        .attr("y", function(d, i) {
+          return y(d.value);
+        })
+        .attr("width", x1.bandwidth())
+        .attr("height", function(d) {
+          return height - y(d.value);
+        })
+        .attr("fill", function(d) {
+          return z(d.key);
+        })
 
-    //Append the legend to the main graph
-    var legend = graph.append("g")
+      if (!parent.ENABLE_PRINTABLE_CHARTS) {
+        bars.on('mouseover', function(d) {
+            d3.select(this).attr("fill", d3.rgb(z(d.key)).brighter(0.5));
+            tip.show(d);
+          })
+          .on('mouseout', function(d) {
+            d3.select(this).attr("fill", d3.rgb(z(d.key)).darker(0.1));
+            tip.hide(d);
+          });
+      } else {
+        graph.selectAll(".gcontainer").selectAll(".bartext")
+          .data(function(data) {
+            return currentKeys.map(function(key) {
+              return {
+                key: key,
+                value: data[key]
+              };
+            });
+          })
+          .enter().append("text")
+          .attr("class", "bartext")
+          .attr("transform", function(d) {
+            return "translate(" + x1.bandwidth() / 2 + ",0)";
+          })
+          .attr("text-anchor", "middle")
+          .attr("x", function(d) {
+            return x1(d.key);
+          })
+          .attr("y", function(d) {
+            console.log(d.value);
+            return y(d.value) - 2;
+          })
+          .style("font", "11px Arial")
+          .text(function(d) {
+            return d.value + "%";
+          });
+      }
+
+      //Create the axes
+      var xAxis = d3.axisBottom(x0)
+
+      graph.append("g")
+        .attr("class", "xaxis")
+        .style("font", "11px Arial")
+        .attr("transform", "translate(0," + (height) + ")")
+        .call(xAxis)
+        .selectAll(".tick text")
+
+      var yaxis = graph.append("g")
+        .attr("class", "yaxis")
+        .style("font", "11px Arial")
+        .call(d3.axisLeft(y).ticks(null, "s"))
+        .append("text")
+        .attr("x", 2)
+        .attr("y", y(y.ticks().pop()) + 0.5)
+        .attr("dy", "0.32em")
+        .attr("fill", "#000")
+        .attr("font-weight", "bold")
+        .attr("text-anchor", "start")
+        .text("Percentage");
+      
+      //Append the legend to the main graph
+      var legend = graph.append("g")
         .attr("font-family", "sans-serif")
         .attr("font-size", 10)
         .attr("text-anchor", "end")
-      .selectAll("g")
-      .data(currentKeys.slice())
-      .enter().append("g")
-        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+        .selectAll("g")
+        .data(currentKeys.slice())
+        .enter().append("g")
+        .attr("transform", function(d, i) {
+          return "translate(0," + i * 20 + ")";
+        });
 
-    var legendBox = legend.append("rect")
+      var legendBox = legend.append("rect")
         .attr("x", width - 19)
         .attr("width", 19)
         .attr("height", 19)
         .attr("fill", z);
 
-    var legendText = legend.append("text")
+      var legendText = legend.append("text")
         .attr("x", width - 24)
         .attr("y", 9.5)
         .attr("dy", "0.32em")
-        .text(function(d) { 
-        return d; });
+        .text(function(d) {
+          return d;
+        });
+
+      //Manage label wrapping:
+      d3.select('.xaxis').selectAll(".tick text").transition().each(insertLinebreaks)
+      
+      /******* Chart Update Pattern *******/
+
+      /* Listen for a signal from the parent document to change the selection:
+      
+        NOTE: MESSAGE PASSING HAS INHERENT SECURITY RISKS!
+        Please make sure that listeners only accept authenticated addresses (i.e., okpolicy.org).
+        For more information, see the Mozilla Dev Net documentation on Window.postMessage();. */
+      window.onmessage = function(event) {
+
+        //Do we trust the sender of this message?
+        //if (event.origin !== "http://www.okpolicy.org" || event.data !== "promptUpdate")
+        //return;
+
+        //Update data:
+        selection = event.data;
+        currentKeys[0] = selection;
+        bars.data(function(d) {
+          return currentKeys.map(function(key) {
+            return {
+              key: key,
+              value: d[key]
+            };
+          });
+        })
+        legendText.data(currentKeys.slice());
+
+        //Transition the bars
+        var t0 = svg.transition().duration(450).ease(d3.easeBounce);
+        t0.selectAll(".bar").attr("height", function(d) {
+            return height - y(d.value);
+          })
+          .attr("y", function(d) {
+            return y(d.value);
+          })
+          .ease(d3.easeBounce);
+
+        //Update the legend
+        legendText.transition()
+          .text(function(d) {
+            return d;
+          })
+
+        //Update the static labels, if necessary
+        graph.selectAll(".gcontainer").selectAll(".bartext")
+          .data(function(data) {
+            return currentKeys.map(function(key) {
+              return {
+                key: key,
+                value: data[key]
+              };
+            });
+          })
+          .attr("y", function(d) {
+            console.log(d.value);
+            return y(d.value) - 2;
+          })
+          .text(function(d) {
+            return d.value + "%";
+          });
+      };
     });
+    
+    /******* Helper Functions *******/
 
     //Helper function to siphon out one county's-worth of data at a time
-    function formatData(data, selection){
+    function formatData(data, selection) {
       var filteredData = [];
 
-      data.forEach(function(val, idx, arr){
+      data.forEach(function(val, idx, arr) {
         var sect = String(data[idx].Income);
         var countyval = +val[selection];
         var stateval = +val['State'];
 
         if (countyval != 0) {
           var county = {},
-              state = {};
+            state = {};
           county["Income"] = sect;
           county["Value"] = countyval;
           county["Type"] = "county";
@@ -281,9 +348,22 @@ h1 {
 
     //Helper function to convert data from string to numeric form
     function numericize(d, i, columns) {
-      for (var i = 1, n = columns.length; i < n; ++i) 
+      for (var i = 1, n = columns.length; i < n; ++i)
         d[columns[i]] = +d[columns[i]];
       return d;
     }
-  
-</script>
+    
+    //Helper function to streamline wrapping long label text
+    var insertLinebreaks = function(d) {
+      var el = d3.select(this);
+      var words = d.split(' ');
+      el.text('');
+
+      for (var i = 0; i < words.length; i++) {
+        var tspan = el.append('tspan').text(words[i]);
+        if (i > 0)
+          tspan.attr('x', 0).attr('dy', '12');
+      }
+    };
+
+  </script>
