@@ -1,32 +1,36 @@
 <!DOCTYPE html>
+
 <head>
   <style>
-    body {font: 12px Helvetica;}
+    body {
+      font: 12px Helvetica;
+    }
+
     .line {
-        stroke: #ccc;
-        stroke-width: 2;
-        fill: none;
+      stroke: #ccc;
+      stroke-width: 2;
+      fill: none;
     }
-    
-    path{
-        stroke: #ccc;
-        stroke-width: 1;
+
+    path {
+      stroke: #ccc;
+      stroke-width: 1;
     }
-    
+
     .grid line {
-        stroke: lightgrey;
-        stroke-opacity: 0.7;
-        stroke-width: 1
-        shape-rendering: crispEdges;
+      stroke: lightgrey;
+      stroke-opacity: 0.7;
+      stroke-width: 1 shape-rendering: crispEdges;
     }
-    
+
     .axis path,
     .axis line {
-        fill: none;
-        stroke: grey;
-        stroke-width: 1;
-        shape-rendering: crispEdges;
+      fill: none;
+      stroke: grey;
+      stroke-width: 1;
+      shape-rendering: crispEdges;
     }
+
     .overlay {
       fill: none;
       pointer-events: all;
@@ -36,36 +40,41 @@
       fill: none;
       stroke: grey;
     }
-</style>
+
+  </style>
   <meta charset="utf-8">
 
   <title>County Unemployment</title>
+  
 </head>
- 
+
 <body>
-  
-  <svg class="Unemployment" id="chart" width="480" height="260" viewBox="0 0 480 260"
-    preserveAspectRatio="xMidYMid meet"><title>Unemployment</title></svg>
-  
+
+  <svg class="Unemployment" id="chart" width="480" height="260" viewBox="0 0 480 260" preserveAspectRatio="xMidYMid meet"></svg>
+
   <!-- load the d3.js library -->
   <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script src="/../svg-crowbar.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  
   <script>
+    
+    /******* Dynamic Resizing *******/
     
     //Set up dynamically-sizing charts (they'll fit to their iframe container)
     var mychart = $("#chart"),
-        aspect = mychart.width() / mychart.height(),
-        container = mychart.parent();
-        
+      aspect = mychart.width() / mychart.height(),
+      container = mychart.parent();
+
     $(window).on("resize", adjustSize);
     $(window).on("load", adjustSize);
-                 
+
     function adjustSize() {
-        var targetWidth = container.width();
-        mychart.attr("width", targetWidth);
-        mychart.attr("height", Math.round(targetWidth / aspect));
+      var targetWidth = container.width();
+      mychart.attr("width", targetWidth);
+      mychart.attr("height", Math.round(targetWidth / aspect));
     }
+
+    /******* Variable Definitions & Data Setup *******/    
     
     //Define the container SVG with margin conventions
     var svg = d3.select("svg"),
@@ -77,193 +86,177 @@
     //Import the raw data from CSV
     d3.csv("data.csv", numericize, function(error, data) {
       if (error) throw error;
-      
+
       //Helper variable for formatting dates      
       var parseDate = d3.timeParse('%Y');
       data.forEach(function(d) {
-          d.year = parseDate(d.year);
+        d.year = parseDate(d.year);
       })
-      
+
       //Define the scales of the x- and y-axes
       var x = d3.scaleTime().range([0, width]),
-          y = d3.scaleLinear().range([height, 0]),
-          z = function(d) {
-            if (d == "National") {
-              return "#febd60";
-            } else if (d == "State") {
-              return "#972421";
-            } else {
-              return "#2f507f";
-            }
+        y = d3.scaleLinear().range([height, 0]),
+        z = function(d) {
+          if (d == "National") {
+            return "#febd60";
+          } else if (d == "State") {
+            return "#972421";
+          } else {
+            return "#2f507f";
+          }
         }
 
       //Define the axes
       var xAxis = d3.axisBottom(x)
-          .ticks(10)
-          .tickFormat(d3.timeFormat("%Y"));
+        .ticks(10)
+        .tickFormat(d3.timeFormat("%Y"));
 
       var yAxis = d3.axisLeft(y)
-          .ticks(10)
+        .ticks(10)
 
       //Define the lines
       var line = d3.line()
-          .curve(d3.curveMonotoneX)
-          .x(function(d) {return x(d.year);})
-          .y(function(d) {return y(d.unemp);});
-      
+        .curve(d3.curveMonotoneX)
+        .x(function(d) {
+          return x(d.year);
+        })
+        .y(function(d) {
+          return y(d.unemp);
+        });
+
       //Constructs dictionary of "places" (national, state, counties...)
       //(Makes dealing with multiple lines of data much easier)
       var places = data.columns.slice(1).map(function(id) {
-        return{
+        return {
           id: id,
           values: data.map(function(d) {
-            return {year: d.year, unemp: d[id]};
+            return {
+              year: d.year,
+              unemp: d[id]
+            };
           })
         };
       });
-      
-      
+
+
       var selection = window.parent.selection; //(default selection value)
       var currentPlaces = [places[0], places[1], places[places.findIndex(x => x.id == selection)]];
-      
+
       //Set the domains of the axes
-      x.domain(d3.extent(data, function(d) {return d.year}));
+      x.domain(d3.extent(data, function(d) {
+        return d.year
+      }));
       y.domain([0, 15]);
       
-     // These functions add gridlines across the graph (DISABLED by default):
-      if (parent.ENABLE_PRINTABLE_CHARTS) {
-        function make_x_gridlines() { return d3.axisBottom(x).ticks(10)}
-        function make_y_gridlines() { return d3.axisLeft(y).ticks(10)}
-      
-        var xlines = graph.append("g")			
-            .attr("class", "grid")
-            .attr("transform", "translate(0," + height + ")")
-            .call(make_x_gridlines()
-                .tickSize(-height)
-                .tickFormat(""))
+      /******* Chart Construction *******/
 
-        var ylines = graph.append("g")			
-            .attr("class", "grid")
-            .call(make_y_gridlines()
-                .tickSize(-width)
-                .tickFormat("")) 
+      // These functions add gridlines across the graph (DISABLED by default):
+      if (parent.ENABLE_PRINTABLE_CHARTS) {
+        function make_x_gridlines() {
+          return d3.axisBottom(x).ticks(10)
+        }
+
+        function make_y_gridlines() {
+          return d3.axisLeft(y).ticks(10)
+        }
+
+        var xlines = graph.append("g")
+          .attr("class", "grid")
+          .attr("transform", "translate(0," + height + ")")
+          .call(make_x_gridlines()
+            .tickSize(-height)
+            .tickFormat(""))
+
+        var ylines = graph.append("g")
+          .attr("class", "grid")
+          .call(make_y_gridlines()
+            .tickSize(-width)
+            .tickFormat(""))
       }
-      
+
       //Apend the axes and lines of data
       graph.append("g")
-          .attr("class", "x axis")
-          .style("font", "11px Arial")
-          .attr("transform", "translate(0," + height + ")")
-          .call(xAxis);
+        .attr("class", "x axis")
+        .style("font", "11px Arial")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
 
       graph.append("g")
-          .attr("class", "y axis")
-          .style("font", "11px Arial")
-          .call(yAxis)
+        .attr("class", "y axis")
+        .style("font", "11px Arial")
+        .call(yAxis)
         .append("text")
-            .attr("x", 2)
-            .attr("y", y(y.ticks().pop()) + 0.5)
-            .attr("dy", "0.32em")
-            .attr("fill", "#000")
-            .attr("font-weight", "bold")
-            .attr("text-anchor", "start")
-            .text("Percentage");   
-      
+        .attr("x", 2)
+        .attr("y", y(y.ticks().pop()) + 0.5)
+        .attr("dy", "0.32em")
+        .attr("fill", "#000")
+        .attr("font-weight", "bold")
+        .attr("text-anchor", "start")
+        .text("Percentage");
+
       var place = graph.selectAll(".place")
-          .data(currentPlaces)
-          .enter().append("g")
-            .attr("class", "place");
-      
+        .data(currentPlaces)
+        .enter().append("g")
+        .attr("class", "place");
+
       var lines = place.append("path")
-          .attr("class", "line")
-          .attr("d", function(d) { return line(d.values); })
-          .style("stroke", function(d) { return z(d.id); });
+        .attr("class", "line")
+        .attr("d", function(d) {
+          return line(d.values);
+        })
+        .style("stroke", function(d) {
+          return z(d.id);
+        });
 
       //Append circles that show the exact data value on mouseover
       var focus = graph.append("g")
-            .attr("class", "focus")
-            .style("display", "none");
+        .attr("class", "focus")
+        .style("display", "none");
 
-        focus.append("circle")
-            .attr("r", 4.5);
+      focus.append("circle")
+        .attr("r", 4.5);
 
-        focus.append("text")
-            .attr("x", 9)
-            .attr("dy", ".35em");
-      
-      
-      //Find the dropdown menu from the parent document and listen for a change in selection
-      var selector = window.parent.document.getElementById('dropdown');
-      selector = d3.select(selector)
-        .on("change.unemp", function(d) {
-            
-          //Update the data:
-            selection = this.options[this.selectedIndex].value;
-            currentPlaces[2] = places[places.findIndex(x => x.id == selection)]
-            legendText.data(currentPlaces);
-        
-            y.domain([ 0, 15]);
-            
-            lines.data(currentPlaces);
-              
-            //Transition the lines:
-            lines.transition()
-                .attr("d", function(d) {
-                  return line(d.values); 
-                });
-            
-            //Rescale the Y axis
-            var t0 = svg.transition().duration(150);
-            var t1 = t0.transition();
-            t1.selectAll(".y.axis").call(yAxis);
-            
-            //Update the legend
-            legendText.transition()
-                .text(function(d) {return d.id;});
-        
-            //Shift the gridlines / printable mode labels, if necessary
-              if (parent.ENABLE_PRINTABLE_CHARTS) {
-                ylines.transition()
-                  .call(make_y_gridlines()
-                    .tickSize(-width)
-                    .tickFormat(""))
-                
-                legendLabel.data(currentPlaces);
-                legendLabel.transition()
-                  .text(function(d) {return d.values[d.values.length - 1].unemp.toFixed(1) + "% (2016)";});
-              }
-        
-        });
+      focus.append("text")
+        .attr("x", 9)
+        .attr("dy", ".35em");
       
       //Create the legend
       var legend = graph.append("g")
-          .attr("font-family", "sans-serif")
-          .attr("font-size", 10)
-          .attr("text-anchor", "end")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 10)
+        .attr("text-anchor", "end")
         .selectAll("g")
-          .data(currentPlaces, function(d) {return d.id;})
+        .data(currentPlaces, function(d) {
+          return d.id;
+        })
         .enter().append("g")
-          .attr("transform", function(d, i) { 
-            if (parent.ENABLE_PRINTABLE_CHARTS) {
-              return "translate(-60," + ((i * 20)+5) + ")";
-            } else {
-            return "translate(-20," + ((i * 20)+5) + ")"; }})
-          .attr("class", "legend label");
-        
+        .attr("transform", function(d, i) {
+          if (parent.ENABLE_PRINTABLE_CHARTS) {
+            return "translate(-60," + ((i * 20) + 5) + ")";
+          } else {
+            return "translate(-20," + ((i * 20) + 5) + ")";
+          }
+        })
+        .attr("class", "legend label");
+
       var legendBox = legend.append("rect")
-          .attr("width", 19)
-          .attr("height", 19)
-          .attr("x", width-19)
-          .attr("class", "legend box")
-          .attr("fill", function(d) {return z(d.id);})
-      
+        .attr("width", 19)
+        .attr("height", 19)
+        .attr("x", width - 19)
+        .attr("class", "legend box")
+        .attr("fill", function(d) {
+          return z(d.id);
+        })
+
       var legendText = legend.append("text")
-          .attr("x", width - 24)
-          .attr("y", 9.5)
-          .attr("dy", "0.32em")
-          .attr("class", "legend text")
-          .text(function(d) {return d.id;});
-      
+        .attr("x", width - 24)
+        .attr("y", 9.5)
+        .attr("dy", "0.32em")
+        .attr("class", "legend text")
+        .text(function(d) {
+          return d.id;
+        });
+
       if (parent.ENABLE_PRINTABLE_CHARTS) {
         var legendLabel = legend.append("text")
           .attr("x", width + 2)
@@ -271,12 +264,14 @@
           .attr("dy", "0.32em")
           .attr("text-anchor", "start")
           .attr("class", "legend printable")
-          .text(function(d) {return d.values[d.values.length - 1].unemp.toFixed(1) + "% (2016)";});
+          .text(function(d) {
+            return d.values[d.values.length - 1].unemp.toFixed(1) + "% (2016)";
+          });
       }
-    
-    //The following section controls how data is shown on all three lines on mouseover
-    //(Directly incorporated from larsenmtl's block "D3 mouseover multi-line chart" on blocks.org)
-    if (!parent.ENABLE_PRINTABLE_CHARTS) {
+
+      //The following section controls how data is shown on all three lines on mouseover
+      //(Directly incorporated from larsenmtl's block "D3 mouseover multi-line chart" on blocks.org)
+      if (!parent.ENABLE_PRINTABLE_CHARTS) {
         var mouseG = graph.append("g")
           .attr("class", "mouse-over-effects");
 
@@ -298,7 +293,9 @@
           .style("opacity", "0");
 
         mousePerLine.append("text")
-          .attr("transform", function(d, i) { return "translate(393," + ((i * 20) + 19) + ")"; })
+          .attr("transform", function(d, i) {
+            return "translate(393," + ((i * 20) + 19) + ")";
+          })
           .text("-- --")
 
         mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
@@ -337,33 +334,94 @@
                 return d;
               });
 
-          d3.selectAll(".mouse-per-line").select("circle")
-            .attr("transform", function(d, i) {
-              var xDate = x.invert(mouse[0]),
-                  bisect = d3.bisector(function(d) { return d.year; }).right,
+            d3.selectAll(".mouse-per-line").select("circle")
+              .attr("transform", function(d, i) {
+                var xDate = x.invert(mouse[0]),
+                  bisect = d3.bisector(function(d) {
+                    return d.year;
+                  }).right,
                   idx = bisect(d.values, xDate),
                   d0 = data[idx - 1],
                   d1 = data[idx],
                   d = xDate - d0.year > d1.year - xDate ? d1 : d0;
 
-              return "translate(" + x(d.year) + "," + y(d[currentPlaces[i].id]) + ")";
-            });
+                return "translate(" + x(d.year) + "," + y(d[currentPlaces[i].id]) + ")";
+              });
 
-          d3.selectAll(".mouse-per-line").select("text")
-            .text(function(d, i) {
-              var xDate = x.invert(mouse[0]),
-                  bisect = d3.bisector(function(d) { return d.year; }).right,
+            d3.selectAll(".mouse-per-line").select("text")
+              .text(function(d, i) {
+                var xDate = x.invert(mouse[0]),
+                  bisect = d3.bisector(function(d) {
+                    return d.year;
+                  }).right,
                   idx = bisect(d.values, xDate),
                   d0 = data[idx - 1],
                   d1 = data[idx],
                   d = xDate - d0.year > d1.year - xDate ? d1 : d0;
 
-              return (d[currentPlaces[i].id]).toFixed(1) + "%";
-            });
+                return (d[currentPlaces[i].id]).toFixed(1) + "%";
+              });
           });
-        };
+      };
+      
+      /******* Chart Update Pattern *******/
+
+      /* Listen for a signal from the parent document to change the selection:
+      
+        NOTE: MESSAGE PASSING HAS INHERENT SECURITY RISKS!
+        Please make sure that listeners only accept authenticated addresses (i.e., okpolicy.org).
+        For more information, see the Mozilla Dev Net documentation on Window.postMessage();. */
+      window.onmessage = function(event) {
+
+        //Do we trust the sender of this message?
+        //if (event.origin !== "http://www.okpolicy.org" || event.data !== "promptUpdate")
+        //return;
+
+        //Update the data:
+        selection = event.data;
+        currentPlaces[2] = places[places.findIndex(x => x.id == selection)]
+        legendText.data(currentPlaces);
+
+        y.domain([0, 15]);
+
+        lines.data(currentPlaces);
+
+        //Transition the lines:
+        lines.transition()
+          .attr("d", function(d) {
+            return line(d.values);
+          });
+
+        //Rescale the Y axis
+        var t0 = svg.transition().duration(150);
+        var t1 = t0.transition();
+        t1.selectAll(".y.axis").call(yAxis);
+
+        //Update the legend
+        legendText.transition()
+          .text(function(d) {
+            return d.id;
+          });
+
+        //Shift the gridlines / printable mode labels, if necessary
+        if (parent.ENABLE_PRINTABLE_CHARTS) {
+          ylines.transition()
+            .call(make_y_gridlines()
+              .tickSize(-width)
+              .tickFormat(""))
+
+          legendLabel.data(currentPlaces);
+          legendLabel.transition()
+            .text(function(d) {
+              return d.values[d.values.length - 1].unemp.toFixed(1) + "% (2016)";
+            });
+        }
+
+      };
     });
     
+    /******* Helper Functions *******/
+
     //Helper function to convert data from string to numeric form
     function numericize(d, i, columns) {
       for (var i = 1, n = columns.length; i < n; ++i)
@@ -371,8 +429,5 @@
       return d;
     }
 
-
-
-    
   </script>
 </body>

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <head>
   <style>
     body {
@@ -6,7 +7,7 @@
     }
 
     .line {
-      fill: none; 
+      fill: none;
       stroke: #2f507f;
       stroke-width: 1.5px;
     }
@@ -18,10 +19,10 @@
 
     .axis path,
     .axis line {
-        fill: none;
-        stroke: grey;
-        stroke-width: 1;
-        shape-rendering: crispEdges;
+      fill: none;
+      stroke: grey;
+      stroke-width: 1;
+      shape-rendering: crispEdges;
     }
 
     .grid line {
@@ -40,34 +41,38 @@
       stroke: grey;
     }
 
-    </style>
+  </style>
   <meta charset="utf-8">
-  
+
   <title>Population</title>
+  
 </head>
 
 <body>
-  
-    <svg class="Population" id="chart" width="480" height="260" viewBox="0 0 480 260"
-    preserveAspectRatio="xMidYMid meet"></svg>
-  
+
+  <svg class="Population" id="chart" width="480" height="260" viewBox="0 0 480 260" preserveAspectRatio="xMidYMid meet"></svg>
+
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
   <script>
+    
+    /******* Dynamic Resizing *******/
     
     var mychart = $("#chart"),
         aspect = mychart.width() / mychart.height(),
         container = mychart.parent();
-    
+
     $(window).on("resize", adjustSize);
     $(window).on("load", adjustSize);
-                 
+
     function adjustSize() {
-        var targetWidth = container.width();
-        mychart.attr("width", targetWidth);
-        mychart.attr("height", Math.round(targetWidth / aspect));
+      var targetWidth = container.width();
+      mychart.attr("width", targetWidth);
+      mychart.attr("height", Math.round(targetWidth / aspect));
     }
-    
+
+    /******* Variable Definitions & Data Setup *******/
     
     //Define the container SVG with margin conventions
     var svg = d3.select('svg'),
@@ -75,110 +80,128 @@
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom,
         graph = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
+
     var aspect = +svg.attr(width) / +svg.attr(height);
 
+    //Resize based on the size of the SVG container
     d3.select(window)
       .on("resize", function() {
         var targetWidth = container.width;
         svg.attr("width", targetWidth);
         svg.attr("height", targetWidth / aspect);
       });
-        
+
     //Import the raw data from CSV
-    d3.csv("data.csv", numericize, function (error, data) {
+    d3.csv("data.csv", numericize, function(error, data) {
       if (error) throw error;
-      
+
       //Define the scales of the x- and y-axis
       var x = d3.scaleTime()
-          .range([0, width]);
+        .range([0, width]);
 
       var y = d3.scaleLinear()
-          .range([height, 0]);
+        .range([height, 0]);
 
       //Helper variables for formatting dates
       var parseDate = d3.timeParse('%Y'),
-          formatValue = d3.format(",.2f");
-      
+        formatValue = d3.format(",.2f");
+
       data.forEach(function(d) {
         d.year = parseDate(d.year);
       })
-      
+
       //Helper variable for finding the nearest data point on mouseover
-      var bisectDate = d3.bisector(function(d) { return d.year; }).left;
+      var bisectDate = d3.bisector(function(d) {
+        return d.year;
+      }).left;
 
       var selection = window.parent.selection; //(default selection value)
       var keys = data.columns.slice(1);
 
       //Set the domains of the axes
-      x.domain(d3.extent(data, function(d) {return d.year}));
-      y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }) + 10000, 50000)]);
+      x.domain(d3.extent(data, function(d) {
+        return d.year
+      }));
+      y.domain([0, Math.max(d3.max(data, function(d) {
+        return d[selection];
+      }) + 10000, 50000)]);
+      
+      /******* Chart Construction *******/
 
-   // These functions add gridlines across the graph (DISABLED by default):
+      // These functions add gridlines across the graph (DISABLED by default):
       if (parent.ENABLE_PRINTABLE_CHARTS) {
-        function make_x_gridlines() {	return d3.axisBottom(x).ticks(10) }
-        function make_y_gridlines() {	return d3.axisLeft(y).ticks(10) }
+        function make_x_gridlines() {
+          return d3.axisBottom(x).ticks(10)
+        }
 
-        var xlines = graph.append("g")			
-            .attr("class", "grid")
-            .attr("transform", "translate(0," + height + ")")
-            .call(make_x_gridlines()
-                .tickSize(-height)
-                .tickFormat(""))
+        function make_y_gridlines() {
+          return d3.axisLeft(y).ticks(10)
+        }
 
-        var ylines = graph.append("g")			
-            .attr("class", "grid")
-            .call(make_y_gridlines()
-                .tickSize(-width)
-                .tickFormat(""))
+        var xlines = graph.append("g")
+          .attr("class", "grid")
+          .attr("transform", "translate(0," + height + ")")
+          .call(make_x_gridlines()
+            .tickSize(-height)
+            .tickFormat(""))
+
+        var ylines = graph.append("g")
+          .attr("class", "grid")
+          .call(make_y_gridlines()
+            .tickSize(-width)
+            .tickFormat(""))
       }
 
       //Create and append the axes
       var xAxis = d3.axisBottom(x)
-          .ticks(10)
-          .tickFormat(d3.timeFormat("%Y"));
+        .ticks(10)
+        .tickFormat(d3.timeFormat("%Y"));
 
       var yAxis = d3.axisLeft()
-          .ticks(10, "s")
-          .scale(y);
+        .ticks(10, "s")
+        .scale(y);
 
       graph.append("g")
-          .attr("class", "x axis")
-          .style("font", "11px Arial")
-          .attr("transform", "translate(0," + height + ")")
-          .call(xAxis);
+        .attr("class", "x axis")
+        .style("font", "11px Arial")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
 
       graph.append("g")
-          .attr("class", "y axis")
-          .style("font", "11px Arial")
-          .call(yAxis)
+        .attr("class", "y axis")
+        .style("font", "11px Arial")
+        .call(yAxis)
         .append("text")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 6)
-          .attr("dy", ".71em")
-          .style("text-anchor", "end")
-          .text("Population");
-      
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Population");
+
       //Create and append the line itself
       var line = d3.line()
-          .curve(d3.curveMonotoneX)
-          .x(function(d) { return x(d.year); })
-          .y(function(d) { return y(d[selection]); });
+        .curve(d3.curveMonotoneX)
+        .x(function(d) {
+          return x(d.year);
+        })
+        .y(function(d) {
+          return y(d[selection]);
+        });
 
       var path = graph.append("path")
-          .datum(data)
-          .attr("class", "line")
-          .attr("d", line);
+        .datum(data)
+        .attr("class", "line")
+        .attr("d", line);
 
       //Create and append a circle to highlight the nearest data point on mouseover
       if (!parent.ENABLE_PRINTABLE_CHARTS) {
         var focus = graph.append("g")
-            .attr("class", "focus")
-            .style("display", "none");
+          .attr("class", "focus")
+          .style("display", "none");
 
         focus.append("circle")
-            .attr("r", 4.5);
-        
+          .attr("r", 4.5);
+
         var f = d3.formatSpecifier('f');
         f.comma = true;
         f.precision = 0;
@@ -186,92 +209,107 @@
 
         //Add text that shows the exact value at that point
         focus.append("text")
-            .attr("x", -15)
-            .attr("dy", -10)
-            .style("font", "13px Arial")
-		  	    .style("font-weight", "bold");
-
+          .attr("x", -15)
+          .attr("dy", -10)
+          .style("font", "13px Arial")
+          .style("font-weight", "bold");
 
         graph.append("rect")
-            .attr("class", "overlay")
-            .attr("width", width)
-            .attr("height", height)
-            .on("mouseover", function() { focus.style("display", null); })
-            .on("mouseout", function() { focus.style("display", "none"); })
-            .on("mousemove", mousemove);
+          .attr("class", "overlay")
+          .attr("width", width)
+          .attr("height", height)
+          .on("mouseover", function() {
+            focus.style("display", null);
+          })
+          .on("mouseout", function() {
+            focus.style("display", "none");
+          })
+          .on("mousemove", mousemove);
 
         function mousemove() {
           var x0 = x.invert(d3.mouse(this)[0]),
-              i = bisectDate(data, x0, 1),
-              d0 = data[i - 1],
-              d1 = data[i],
-              d = x0 - d0.year > d1.year - x0 ? d1 : d0;
+            i = bisectDate(data, x0, 1),
+            d0 = data[i - 1],
+            d1 = data[i],
+            d = x0 - d0.year > d1.year - x0 ? d1 : d0;
           focus.attr("transform", "translate(" + x(d.year) + "," + y(d[selection]) + ")");
           focus.select("text").text(formatStr(d[selection]));
         }
       }
-
-    //Find the dropdown menu from the parent document and listen for a change in selection
-    var selector = window.parent.document.getElementById('dropdown');
-    selector = d3.select(selector)
-      .on("change.pop", function(d) {
-
-        //Update the data:
-          selection = this.options[this.selectedIndex].value;
-          y.domain([0, Math.max(d3.max(data, function(d) { return d[selection]; }) + 10000, 50000)]);
-          legendText.data([selection]);
-
-        //Transition the line
-          path.transition()
-              .attr("d", line);
-
-        //Rescale the y-axis to fit the data
-          d3.select('.y.axis').transition()
-              .call(yAxis);
       
-        //Update the legend
-          legendText.transition()
-              .text(function(d) {return d;})
-      
-        //Shift the gridlines, if necessary
-          if (parent.ENABLE_PRINTABLE_CHARTS) {
-            ylines.transition()
-              .call(make_y_gridlines()
-                .tickSize(-width)
-                .tickFormat(""))
-          }
-        });
-
-    //Create the legend
+      //Create the legend
       var legend = graph.append("g")
-          .attr("font-family", "sans-serif")
-          .attr("font-size", 10)
-          .attr("text-anchor", "start")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 10)
+        .attr("text-anchor", "start")
         .selectAll("g")
-          .data([selection])
+        .data([selection])
         .enter().append("g")
-          .attr("transform", "translate(" + ((-1*width)+23) + ", 5)");
+        .attr("transform", "translate(" + ((-1 * width) + 23) + ", 5)");
 
       var legendBox = legend.append("rect")
-          .attr("width", 19)
-          .attr("height", 19)
-          .attr("x", width-19)
-          .attr("fill", "#2f507f")
+        .attr("width", 19)
+        .attr("height", 19)
+        .attr("x", width - 19)
+        .attr("fill", "#2f507f")
 
       var legendText = legend.append("text")
-          .attr("x", width + 3)
-          .attr("y", 9.5)
-          .attr("dy", "0.32em")
-          .attr("class", "legend")
-          .text(function(d) {return d;});
+        .attr("x", width + 3)
+        .attr("y", 9.5)
+        .attr("dy", "0.32em")
+        .attr("class", "legend")
+        .text(function(d) {
+          return d;
+        });
+      
+      /******* Chart Update Pattern *******/
 
+      /* Listen for a signal from the parent document to change the selection:
+      
+        NOTE: MESSAGE PASSING HAS INHERENT SECURITY RISKS!
+        Please make sure that listeners only accept authenticated addresses (i.e., okpolicy.org).
+        For more information, see the Mozilla Dev Net documentation on Window.postMessage();. */
+      window.onmessage = function(event) {          
+        
+        //Do we trust the sender of this message?
+        //if (event.origin !== "http://www.okpolicy.org" || event.data !== "promptUpdate")
+        //return;
+        
+        //Update the data:
+        selection = event.data;
+        y.domain([0, Math.max(d3.max(data, function(d) {return d[selection]; }) + 10000, 50000)]);
+        legendText.data([selection]);
+
+        //Transition the line
+        path.transition()
+          .attr("d", line);
+
+        //Rescale the y-axis to fit the data
+        d3.select('.y.axis').transition()
+          .call(yAxis);
+
+        //Update the legend
+        legendText.transition()
+          .text(function(d) {
+            return d;
+          })
+
+        //Shift the gridlines, if necessary
+        if (parent.ENABLE_PRINTABLE_CHARTS) {
+          ylines.transition()
+            .call(make_y_gridlines()
+              .tickSize(-width)
+              .tickFormat(""))
+        }
+      };
     });
     
+    /******* Helper Functions *******/
+
     //Helper function to convert data from string to numeric form
     function numericize(d, i, columns) {
       //Convert data string values into integers
-      for (var i = 1, n = columns.length; 
-           i < n; ++i) d[columns[i]] = +d[columns[i]];
+      for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
       return d;
     }
 
