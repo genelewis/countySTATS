@@ -8,7 +8,7 @@ To display these charts on a local machine, download the files into a directory 
 
 ### Updating Data Points
 - - - -
-All the data for these charts are held in .CSV files, which can be updated in a text editor or in Excel.  I’ve included @genelewis’s additional .CSV files that have a bit more information in the folder `unusedStatistics`, but the CSV’s that the charts rely on are stripped down versions with _only_ the necessary data and nothing else.
+All the data for these charts are held in .CSV files, which can be updated in a text editor or in Excel.
 
 The code will take care of formatting the numbers; if editing the data points in Excel, there’s no need to convert into a specific number format (e.g., “Percentage”).  There’s also no hard-coded limit to the number of data points one chart can interpret (if a 78th county was created in Oklahoma, it could be safely added to both the .CSV files and the selector on `countystats.html` to be viewed.
 
@@ -16,9 +16,9 @@ The code will take care of formatting the numbers; if editing the data points in
 - - - -
 After any time county data has been updated, the printable, 2-page factsheets will also need to have their images of each chart updated to reflect the changes.  
 
-Each of the 6 charts here is built as an SVG, and this format can be saved and used to build the printable factsheets for each county.  In my estimation, the best way of doing this is by downloading the New York Times’ Chrome tool [SVG Crowbar](http://nytimes.github.io/svg-crowbar/).  The Crowbar bookmarklet can be used to save each chart individually, if albeit somewhat tediously.  Unfortunately, even after much research & experimentation I really wasn't able to smooth this process— really the only way to do save these SVGs is to download each one from your broswer individually.
+Each of the 6 charts here is built as an SVG, and this format can be saved and used to build the printable factsheets for each county.  The best way of doing this (that I've found) is by downloading the New York Times’ Chrome tool [SVG Crowbar](http://nytimes.github.io/svg-crowbar/).  The Crowbar bookmarklet can be used to save each chart individually, if albeit somewhat tediously.
 
-Since the printable charts aren’t interactive, you may wish for some of the charts to automatically display their values during this process (instead of having to hover over a bar to see its value, say).  There's a feature for that!  This can be done by locating the following line of code at the top of `countystats.html` :
+Since the printable charts aren’t interactive, you may wish for some of the charts to automatically and statically display their values during while you save them as images.  There's a feature for that!  This can be done by locating the following line of code at the top of `countystats.html` :
 
 ```
 /* Printable Charts (false by default):
@@ -39,7 +39,7 @@ and then changing the value from `True` to `False`.
 
 ### General Code Outline
 - - - -
-In the event any of these charts need to be modified (or a new chart added), here’s a quick rundown of how the code works to create these charts.  Again, all of this code relies heavily on the [D3.js library](https://d3js.org/); it’s helpful to have a general understanding of how D3 works (particularly with regards to its ENTER > UPDATE > EXIT strategy) before continuing on, but not necessary.
+In the event any of these charts need to be modified (or a new chart added), here’s a quick rundown of how the code works to create these charts.  Again, all of this code relies heavily on the [D3.js library](https://d3js.org/); *_it’s very helpful to have a general understanding of how D3 works (particularly with regards to its ENTER > UPDATE > EXIT strategy) before continuing on._*
 
 I’ll start by going through the code for the charts, and then briefly talk about the strategy I used in making the `countystats.html` page to display them.
 
