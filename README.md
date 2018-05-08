@@ -272,7 +272,8 @@ Finally, let’s review how `window.postMessage` works from the sender side.  A 
 
 The layout of everything is a little bit different on our actual website, but `countystats.html`  works great for testing as its own prototype, too.  All said and done, the entire thing should look something like this:
 
-Example Image
+![Screenshot image of prototype.](https://github.com/genelewis/countySTATS/blob/master/example_image.png)
+
 
 You can keep using this prototype page on your local machine to view any updates or tweaks before they’re published to the official OKPolicy website, and/or to save static SVG “images” with the NYT Crowbar bookmarklet if need be.
 
