@@ -1,5 +1,5 @@
 # Oklahoma Policy Institute: CountySTATS
-This project is a remake of the five (now six) charts used on OKPolicy CountySTATS:
+This project is a redesign of the five (now six) charts used on OKPolicy CountySTATS:
 https://okpolicy.org/resources/countystats-2015/
 
 These charts have been simplified, and now rely on HTML/JavaScript using the [D3.js library](https://d3js.org/) for added transitions and user interactivity.
@@ -14,13 +14,13 @@ The code will take care of formatting the numbers; if editing the data points in
 
 ### Converting Charts to an Image Format (for static/printable county factsheets)
 - - - -
-After any time county data has been updated, the printable, 2-page factsheets will also need to have their images of each chart updated to reflect the changes.  
+After any time county data has been updated, the printable, 2-page factsheets will also need to have their images of each chart updated to reflect the changes.
 
 Each of the 6 charts here is built as an SVG, and this format can be saved and used to build the printable factsheets for each county.  The best way of doing this (that I've found) is by downloading the New York Times’ Chrome tool [SVG Crowbar](http://nytimes.github.io/svg-crowbar/).  The Crowbar bookmarklet can be used to save each chart individually, if albeit somewhat tediously.
 
 Since the printable charts aren’t interactive, you may wish for some of the charts to automatically and statically display their values during while you save them as images.  There's a feature for that!  This can be done by locating the following line of code at the top of `countystats.html` :
 
-```
+```js
 /* Printable Charts (false by default):
    * 
    * Setting this variable to "true" will enable a "static mode" for
@@ -39,12 +39,11 @@ and then changing the value from `True` to `False`.
 
 ### General Code Outline
 - - - -
-In the event any of these charts need to be modified (or a new chart added), here’s a quick rundown of how the code works to create these charts.  Again, all of this code relies heavily on the [D3.js library](https://d3js.org/); *_it’s very helpful to have a general understanding of how D3 works (particularly with regards to its ENTER > UPDATE > EXIT strategy) before continuing on._*
+In the event any of these charts need to be modified (or a new chart added), here’s a quick rundown of how the code works to create these charts.  Again, all of this code relies heavily on the [D3.js library](https://d3js.org/); it’s very helpful to have a general understanding of how D3 works (particularly with regards to its ENTER > UPDATE > EXIT strategy) before continuing on.
 
 I’ll start by going through the code for the charts, and then briefly talk about the strategy I used in making the `countystats.html` page to display them.
 
 ##### Creating the Charts:
-
 Each chart has a basic HTML header that defines any of its necessary style elements, source scripts, and the overarching SVG container element.  Then, the top of every body defines an SVG element, imports any necessary scripts, and then includes a nifty little JQuery function that's responsible for resizing the chart according to the width of the browser (in tandem with some CSS).  Here's what it looks like:
 
 ```js
@@ -77,7 +76,8 @@ Each chart has a basic HTML header that defines any of its necessary style eleme
 
 The rest is all Javascript code embedded in a `<script>` element.  For the most part, each chart’s code follows the same basic outline:
 
-1. Define the SVG using [margin conventions](https://bl.ocks.org/mbostock/3019563) and use D3 to set variables for the scales along the x- and y-axes (as well as a coloring scale, if needed).
+###### 1. Define the SVG container.
+ We’ll use [margin conventions](https://bl.ocks.org/mbostock/3019563) and use D3 to set variables for the x- and y-axes scales (as well as a coloring scale, if needed).
 
 ```js
 //Define the container SVG with margin conventions
@@ -105,7 +105,8 @@ The rest is all Javascript code embedded in a `<script>` element.  For the most 
 
 Notice that we also append a `g` element to our main SVG that will fit to its margins.  We'll call this element `graph` and it will be responsible for being the main holder of the axes, legend, and other pieces of the graph.
 
-2. Open the data file using `d3.csv`.  This method may use an optional callback function to help read in and format the data, and will always use another callback function to build the chart itself during the following steps.
+###### 2. Open the data file using `d3.csv`.  
+Depending on the chart, you may see that this method uses an optional callback function to help read in and format the data.  It will always use another callback function to build the chart itself during the following steps.
 
 ```js
 //Import the raw data from CSV
@@ -115,7 +116,8 @@ Notice that we also append a `g` element to our main SVG that will fit to its ma
     //Begin to work with the data...
 ```
 
-3. Create any other helper variables, set the default selection value (‘Adair County’), and set the _domains_ of the x- and y-axes (note that this step is different than the way we previously set the _scale_).  Note also that at this point, we haven’t created any visuals inside of our original SVG container— we’ve just done a bit of math and housekeeping to make creating those visuals easier in the next step.
+###### 3. Create any other helper variables, set the default selection value (‘Adair County’), and set the /domains/ of the x- and y-axes.
+(N.B. that this step is different than the way we previously set the _scale_).  Note also that at this point, we haven’t created any visuals inside of our original SVG container— we’ve just done a bit of math and housekeeping to make creating those visuals easier in the next step.
 
 ```js
 var selection = window.parent.selection, //(default selection value)
@@ -133,9 +135,10 @@ y.domain([0, 100]).nice();
 
 We'll also use a helper function to create a variable called `dataset` that holds only the information that pertains to the currently selected county.  That will make it easier for us to use this data in a moment.
 
-And, note that we set out default selection value according to a global variable held by the parent document (`countystats.html`). By default this will be Adair County, but it could be something else if the page is loaded with a URL parameter like `okpolicy.org/countystats?county=Kingfisher`.
+And, note that we set our default selection value according to a global variable held by the parent document (`countystats.html`). By default this will be Adair County, but it could be something else if the page is loaded with a URL parameter like `okpolicy.org/countystats?county=Kingfisher`.
 
-4. Now we start creating visuals by appending other kinds of SVG elements (path, rect, g, etc.) to our initial container.  We accomplish this using the D3 ENTER > UPDATE > EXIT strategy, where we can essentially create one data point (i.e., a point on a line graph, a bar in a bar graph) for each item in the array of data that we loaded in from our CSV.  That process looks something like this:
+###### 4. Start creating visuals by appending other kinds of SVG elements (path, rect, g, etc.) to our initial container.  
+We accomplish this using the D3 ENTER > UPDATE > EXIT strategy, where we can essentially create one data point (e.g., one point on a line graph or one bar in a bar graph) for each item in the array of data that we loaded in from our CSV.  That process looks something like this:
 
 ```js
 //Begin appending bars to the graph:
@@ -161,21 +164,35 @@ var bars = graph.append("g")
 //Continue adding elements...
 ```
 
-First we use D3 to select all the elements of the type `rect`. Because we haven't created any yet, this returns an empty array.  However, we then pair this selection with data— the dataset for the selected county.  In this example, that dataset will have around 5 entries for different ethnic proportions of the county, plus 5 corresponding entries for state data. When we `enter` that data and then `append("rect")` to it, our D3 selection will now hold 10 new `rect` elements, each one paired with one of the values from our dataset array.  The ENTER > UPDATE > EXIT strategy is better explained in D3's documentation.
+First we use D3 to select all the elements of the type `rect`. Because we haven't created any yet, this returns an empty array.  However, we then pair this selection with data— the dataset for the selected county.  In this example, that dataset will have around 5 entries for different racial/ethnic proportions of the county, plus 5 corresponding entries for state data. When we `enter` that data and then `append("rect")` to it, our D3 selection will now hold 10 new `rect` elements, each one paired with one of the values from our dataset array.  (The ENTER > UPDATE > EXIT strategy is better explained in D3's documentation.)
 
-Another important thing to keep in mind here is that when we change our selection, say by switching the drop-down from ‘Adair County’ to ‘Tulsa County,’ we’ll have to update this data, and that’s what we’ll do in the next step.
+When we change our county selection by switching the drop-down menu, we’ll have to update this data— and that’s what we’ll do in the next step.
 
-5. Use D3 to grab the dropdown element from the parent document (`countystats.html`); then, set an event listener to look out for any time the selection on this dropdown menu gets changed.  The code for this part looks nearly identical in every chart:
+###### 5. Set up an event listener that will watch for the parent document to signal when updates are needed.
+The parent document (i.e., the main county stats page) will contain each of our six charts inside its own iframe.  When we select a new county, we want all six charts to update simultaneously and instantaneously.  To do this, we’ll use Javascript’s `window.postMessage()` function.
 
-``` js
-var selector = window.parent.document.getElementById('dropdown');
-selector = d3.select(selector);
-  .on("change.demo", function(d) {
+Each time the selected county is changed in the drop-down menu (or the county map), the parent document will use this function to send a message to each iframe document.  This message both acts as a signal (essentially telling the iframe, “Hey, you need to update!”) and as a message, with the message being the name of the county to update to.  The parent document might send each iframe a message saying “Tulsa County,” for example.
+
+We will then create an event listener for each chart— specifically, we’ll use the `.onmessage` event listener, which will fire every time a document receives a message that has been sent with `window.postMessage`.  Now when we send a message that says “Tulsa County,” each chart will do two things:
+
+	1. The `.onmessage` event will fire, saying that a message was received.  At this point, we don’t know what the message is or where it came from, just that one was received.  This will prime the code to get ready to update.
+	2. The message will be verified and then read to see which county should be displayed next.  If the content of the message is “Tulsa County,” the chart will know to switch to displaying data for Tulsa County.
+
+_The keyword above is “verified,” which is VERY IMPORTANT._  Messages can be sent and received from anywhere, which opens up a whole host of cross-site scripting vulnerabilities.  So, as soon as `.onmessage` fires and we know we’ve received a message, we’re going to check the origin of that message to make absolutely sure it’s coming from the expected sender (okpolicy.org) before moving on.  If the origin is anything other than okpolicy.org, we’ll just return right away to avoid doing anything bad.  This will keep us safe from XSS attacks (as long as the rest of the domain stays protected, too).
+
+```js
+/* Listen for a signal from the parent document to change the selection:
+      
+        NOTE: MESSAGE PASSING HAS INHERENT SECURITY RISKS!
+        Please make sure that listeners only accept authenticated addresses (i.e., okpolicy.org).
+        For more information, see the Mozilla Dev Net documentation on Window.postMessage();. */
+  	window.onmessage = function(event) { 
+  		//Do we trust the sender of this message?
+  		if (event.origin !== "http://okpolicy.org")
+      	return;
 ```
 
-One weird thing to watch out for is that each event listener must have its own **unique namespace**— otherwise, the listeners from each chart will overwrite each other when they get put together.  The code from the above example comes from the ‘Demographics’ chart, so I’ve given the event listener the unique namespace of `.demo`.  The other charts follow a similar convention.
-
-The callback function here then defines what parts of the chart should shift to represent the new county.  This varies depending on the chart, and the charts use D3 transitions to help make sure that the shift is smooth and able to be followed by the user’s eye.  In most instances, this means recalculating which slice of data from the .CSV we’re working with, and then some combination of moving plot points/bar lines and rescaling the x- and y-axes to keep the new data to a good fit.  We also update the labels on the legend here.  It will look something like this:
+The implicit else case here is where all of the updating actually happens.  This varies depending on the chart, and the charts use D3 transitions to help make sure that the shift is smooth and able to be followed by the user’s eye.  In most instances, this means recalculating which slice of data from the .CSV we’re working with, and then some combination of moving plot points/bar lines and rescaling the x- and y-axes to keep the new data to a good fit.  We also update the labels on the legend here.  The process will look something like this:
 
 ```js
 //Update the data:
@@ -207,15 +224,15 @@ The callback function here then defines what parts of the chart should shift to 
       .text(function(d) {return d;})
 ```
 
-6. Append the legend to each chart. There is no real need for this step to come last (we could just as easily do it when we build the bars/lines of the graph, or the axes), but I found it convenient to have the legend isolated in a section unto its own since it generally doesn't interact with other parts of the graph.
-
-7. Take care of other extraneous needs. At this point the basic chart will be built, but we'll sprinkle in a few more things for added functionality.  There will be some helper functions to extract data from the CSV, some functions that utilize `D3.tip` to control mouseover functionality, some functions that calculate the nearest value to display for the Population and Unemployment line graphs, and possibly a bit more. Generally speaking, these functions need not be worried about (and could be safely copied for the same sorts of functionality if someone wanted to create a new chart).
+###### 6. Take care of any other extraneous needs. 
+At this point the basic chart will be built, but we'll sprinkle in a few more things for added functionality/code elegance.  There will be some helper functions to extract data from the CSV, some functions that utilize `D3.tip` to control mouseover functionality, some functions that calculate the nearest value to display for the Population and Unemployment line graphs, and possibly a bit more. Generally speaking, these functions need not be worried about (and could be safely copied for the same sorts of functionality if someone wanted to create a new chart).
 - - - -
 ##### Putting It All Together:
+After creating the charts, the next thing we’d like to do is put them together so all 6 are visible on one page.  We’d also like to have a dropdown menu so users can select one of Oklahoma’s counties, and then have all 6 charts transition to data for that particular county.  (Clicking on a county on the map of Oklahoma also works.)
 
-After creating the charts, the next thing we’d like to do is put them together so all 6 are visible on one page.  We’d also like to have a dropdown menu so users can select one of Oklahoma’s counties, and then have all 6 charts transition to data for that particular county.  “One dropdown menu to rule them all,” so-to-speak.  We'd also like to have a section that will write out additional statistics for the county that's displayed, and will once again update when a new county is selected in the drop-down menu.
+We'd also like to have some additional statistics for the county that's displayed, and these stats should also get updated when a new county is selected in the drop-down menu (or map).
 
-I did all this in the `countystats.html` file. Essentially, all that is needed are some iframes to hold each chart; the code for that looks like this (note that the source file is just relative to my own local machine):
+I did all this in the `countystats.html` file, where each chart is held in its own iframe.  The code looks like this (note that the source file is just relative to my own local machine):
 
 ```html
   <div class="chart population" align="center">
@@ -230,16 +247,37 @@ I made use of CSS Grid to help make all the charts and stats align nicely.  Ther
 
 The `countystats.html` page itself uses D3 and a similar update method as the charts to assign values and rankings to all the metrics contained in the "Additional Stats" section. It also makes use of JavaScripts `pushState` method to control URL parameters; more about that can be found on Mozilla's website: https://developer.mozilla.org/en-US/docs/Web/API/History_API
 
-All said and done, the finished prototype looks something like this:
+Finally, let’s review how `window.postMessage` works from the sender side.  A change function is fired every time the dropdown menu selection changes (and we can also trigger it from map changes, too).  This function passes the same message, a variable called `selection`  which holds the name of the newly-selected county, to each of the 6 chart documents.  (The elements that are grabbed by `getElementByID` in this case are the iframes that hold the charts).  We’ll add the expected recipient’s domain as a parameter as well.  This parameter can be changed to the wildcard `*` if you want to test how this works on a local machine.  (You will need to comment out our `if (event.origin != “https://okpolicy.org”)` clause in the individual chart documents as well).
 
-![Example Image](https://github.com/genelewis/countySTATS/blob/master/example_image.png)
+```js
+/* This is the main change function. This function will trigger when the map is clicked,
+       and it will also fire automatically when a new county in the drop-down menu is selected. */
+    $('#dropdown').change(function(d) {
 
-And you can keep using this prototype page on your local machine to view any updates or tweaks before they’re published to the official OKPolicy website, and/or to save static SVG “images” with the NYT Crowbar bookmarklet if need be.
+      // Ensures that the selection variable has updated to the new selection:
+      var selection = this.options[this.selectedIndex].value;
+      
+      /* Passes a message to each chart prompting it to update.
+      
+         NOTE: MESSAGE PASSING HAS INHERENT SECURITY RISKS!
+         Please make sure that listeners only accept authenticated addresses (i.e., okpolicy.org).
+         For more information, see the Mozilla Dev Net documentation on Window.postMessage();. */
+      document.getElementById('income').contentWindow.postMessage(selection, "https://okpolicy.org");
+      document.getElementById('education').contentWindow.postMessage(selection, "https://okpolicy.org");
+      document.getElementById('employment').contentWindow.postMessage(selection, "https://okpolicy.org");
+      document.getElementById('population').contentWindow.postMessage(selection, "https://okpolicy.org");
+      document.getElementById('unemployment').contentWindow.postMessage(selection, "https://okpolicy.org");
+      document.getElementById('demographics').contentWindow.postMessage(selection, "https://okpolicy.org");
+```
+
+The layout of everything is a little bit different on our actual website, but `countystats.html`  works great for testing as its own prototype, too.  All said and done, the entire thing should look something like this:
+
+Example Image
+
+You can keep using this prototype page on your local machine to view any updates or tweaks before they’re published to the official OKPolicy website, and/or to save static SVG “images” with the NYT Crowbar bookmarklet if need be.
 
 - - - -
-
 ### Credits and Other Helpful Resources
-
 Much of the code that went into these charts was directly adapted from previous examples in D3 found on bl.ocks.org.  I’ve tried to credit all I can here.
 
 * [Grouped Bar Chart - mbostock](https://bl.ocks.org/mbostock/3887051)
@@ -260,11 +298,9 @@ And finally, here are a couple of other resources that I felt I should list.  I 
 * [Working with Transitions](https://bost.ocks.org/mike/transition/)
 * [Codecademy - JavaScript](https://www.codecademy.com/catalog/language/javascript)
 * [D3 Tutorial Table of Contents | DashingD3js.com](https://www.dashingd3js.com/table-of-contents)
-* And countless StackOverflow searches.
-
-There's also a folder in this repo called "Reference Examples," which has a couple of really quick examples of SVG and HTML to help get you started.
+* [Window.postMessage() | Mozilla Developer API](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)
 
 I hope this helps you, and I hope that this project can give us a better visual understanding of what kinds of problems (and successes) people are facing right now on a local level— and subsequently, statewide and nationally. Three cheers for data—
 
-Aaron Krusniak, OKPolicy Intern, Fall 2017
+Aaron Krusniak, OKPolicy Intern, Fall 2017 / Spring 2018
 #OKPolicy
