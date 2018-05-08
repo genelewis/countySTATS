@@ -2221,12 +2221,12 @@
          NOTE: MESSAGE PASSING HAS INHERENT SECURITY RISKS!
          Please make sure that listeners only accept authenticated addresses (i.e., okpolicy.org).
          For more information, see the Mozilla Dev Net documentation on Window.postMessage();. */
-      document.getElementById('income').contentWindow.postMessage(selection, "*");
-      document.getElementById('education').contentWindow.postMessage(selection, "*");
-      document.getElementById('employment').contentWindow.postMessage(selection, "*");
-      document.getElementById('population').contentWindow.postMessage(selection, "*");
-      document.getElementById('unemployment').contentWindow.postMessage(selection, "*");
-      document.getElementById('demographics').contentWindow.postMessage(selection, "*");
+      document.getElementById('income').contentWindow.postMessage(selection, "https://okpolicy.org");
+      document.getElementById('education').contentWindow.postMessage(selection, "https://okpolicy.org");
+      document.getElementById('employment').contentWindow.postMessage(selection, "https://okpolicy.org");
+      document.getElementById('population').contentWindow.postMessage(selection, "https://okpolicy.org");
+      document.getElementById('unemployment').contentWindow.postMessage(selection, "https://okpolicy.org");
+      document.getElementById('demographics').contentWindow.postMessage(selection, "https://okpolicy.org");
 
       // Updates the printable chart link and the permalink:
       link.transition()
